@@ -1,0 +1,20 @@
+<div class="alert alert-warning" id="hintDiv">
+   <a class="close" ng-click="close()">
+      &times;
+   </a>
+   <strong>The user and password aren't consistent！</strong>
+</div>
+
+<div class="container">
+      <form class="form-signin">
+        <h1 style="text-align:center;">Login</h1>
+        
+        <label for="inputUsername" class="sr-only">Username</label>
+        <input type="text" id="inputUsername" class="form-control" placeholder="Username" ng-model="username" required autofocus>
+        
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" ng-model="password" required>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login()">Login</button>
+      </form>
+</div>
