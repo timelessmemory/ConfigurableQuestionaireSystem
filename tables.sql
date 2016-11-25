@@ -11,7 +11,7 @@ create table question (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         questionaireId INT NOT NULL,
         title VARCHAR(100) NOT NULL,
-        type VARCHAR(10) NOT NULL
+        isSingle TINYINT(1) NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 create table questionOption (

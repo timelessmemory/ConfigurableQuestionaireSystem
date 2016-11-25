@@ -54,7 +54,7 @@ body {
 #hintDiv {
   display: none;
   text-align: center;
-  position: absolute;
+  position: fixed;
   width:100%;
   margin-top: -60px;
 }
@@ -79,4 +79,21 @@ body {
 
 .input-group-addon {
   cursor: pointer;
+}
+
+.compo {
+  margin: 30px 25px;
+}
+
+.unchecked::before {
+    position: absolute;
+    content: '';
+    width: 16px;
+    height: 17px;
+    background: url('../common/images/checkbox.gif');
+    background-position: -2px -1px;
+}
+
+.checked::before {
+    background-position: -2px -22px;
 }

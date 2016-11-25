@@ -2,7 +2,7 @@
   <nav class="navbar navbar-default">
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand">Questionaire backend configuration management</a>
+        <a class="navbar-brand">Questionaire Backend Configuration Management</a>
       </div>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#/create"><i class="glyphicon glyphicon-file"></i> Create User</a></li>

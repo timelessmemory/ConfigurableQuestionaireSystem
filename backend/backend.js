@@ -25,43 +25,62 @@ app.config(function($routeProvider) {
     .otherwise("/");
 });
 
-//clear route cache, reload user information
-app.run(['$rootScope', '$window', '$location', '$templateCache', function ($rootScope, $window, $location, $templateCache) {  
+//clear route cache, reload
+app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', function ($rootScope, $window, $location, $templateCache, $http) {  
     var routeChangeSuccessOff = $rootScope.$on('$routeChangeSuccess', routeChangeSuccess);  
 
-    function routeChangeSuccess(event, f,t) {
-        console.log(f.originalPath)
+    function routeChangeSuccess(event, params) {
+        // if (params.originalPath != "/" && window.localStorage.getItem("isLogin") != "true") {
+        //   window.location.href = "#/";
+        //   return;
+        // }
         $templateCache.removeAll();
-    }  
-}]); 
+    }
+
+    $rootScope.logout = function () {
+      $http({
+          url : 'controllers/logout.php',
+          method : 'get'
+      })
+      .success(function() {
+        window.localStorage.setItem("isLogin", false);
+        window.location.href = "#/";
+      })
+      .error(function(error, header, config, status) {
+          console.log(error);
+          window.location.href = "#/list";
+      });
+    };
+}]);
 
 app
-.controller("loginController", ['$scope', '$rootScope', '$http', 'storeDataService', function($scope, $rootScope, $http, storeDataService) {
+.controller("loginController", ['$scope', '$rootScope', '$http', 'storeDataService', '$timeout', function($scope, $rootScope, $http, storeDataService, $timeout) {
     $scope.username = '';
     $scope.password = '';
 
     $scope.login = function() {
       if ($scope.username != '' && $scope.password != '') {
-        // verify login
         $http({
-            url : '../basic/web/index.php?r=user/verify-login',
+            url : 'controllers/login.php',
             method : 'POST',
             data : $.param({ "name" : $scope.username, "password" : $scope.password} ),
             headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
             responseType : 'json'
         })
-        .success(function(data, header, config, status) {
-            var isPass = data.result;
+        .success(function(data, header, config) {
+            var code = data.code;
 
-            if (!isPass) {
-              //hint
-              $('#hintDiv').show();
+            if (code == 500) {
+              $('#hintDiv').show(500);
+              $timeout(function() {
+                $('#hintDiv').hide(2000);
+              }, 1000);
               return;
             }
-
-            queryAll($http, storeDataService, $scope);
+            window.localStorage.setItem("isLogin", true);
+            // queryAll($http, storeDataService, $scope);
         })
-        .error(function(error, header, config, status) {
+        .error(function(error, header, config) {
             window.location.href = "#/";
             console.log(error);
         });
@@ -70,17 +89,6 @@ app
 
     $scope.close = function() {
       $('#hintDiv').hide();
-    };
-
-    $rootScope.logout = function () {
-      $http({
-          url : '../basic/web/index.php?r=user/logout',
-          method : 'get'
-      })
-      .error(function(error, header, config, status) {
-          console.log(error);
-          window.location.href = "#/list";
-      });
     };
 }])
 
@@ -238,12 +246,111 @@ app
     };
 }])
 
-.controller("createController", ['$scope', '$http', 'storeDataService', function($scope, $http, storeDataService) {
-   $scope.user = {'name' : '', 'password' : '', 'description' : ''};
+.controller("createController", ['$scope', '$http', 'storeDataService', '$rootScope', function($scope, $http, storeDataService, $rootScope) {
+    
+    UE.getEditor('editor').ready(function() {
+        this.focus();
+        // alert(this.getContent())
+        // alert(this.hasContents())
+    });
 
-    $scope.cancel = function() {
-      window.location.href = "#/list";
+    $scope.showHead = false;
+
+    $scope.questionaire = {
+      'subject' : '', 
+      'description' : ''
     };
+
+    $scope.questions = [{
+      title : 'hello',
+      isSingle : true,
+      options : [{
+        isNext : true,
+        isCustOmized: false,
+        content : 'A'
+      }]
+    }];
+
+    $scope.currentIndex = 0;
+
+    $scope.switchCheckBox = function($event, value) {
+      // console.log(value)
+      if (value) {
+        $($event.target).addClass("checked");
+      } else {
+        $($event.target).removeClass("checked");
+      }
+    }
+
+    $scope.addOption = function() {
+      if (isOptionEmpty()) {
+        $scope.tip = "选项不得为空!";
+        tipWork();
+        return;
+      }
+
+      $scope.questions[$scope.currentIndex].options.push({
+        isNext : true,
+        isCustOmized: false,
+        content : ''
+      });
+    }
+
+    function validateCurrentQuestion() {
+      if ($scope.questions[$scope.currentIndex].title == "" || isOptionEmpty()) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    function isOptionEmpty() {
+      var currentQuestion = $scope.questions[$scope.currentIndex];
+      var maxIndex = currentQuestion.options.length - 1;
+
+      if (!currentQuestion.options[maxIndex].isCustOmized && currentQuestion.options[maxIndex].content == '') {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    $scope.lastQues =function() {
+      if (validateCurrentQuestion()) {
+        $scope.tip = "请先完成当前问题!";
+        tipWork();
+        return;
+      }
+      --$scope.currentIndex;
+    }
+
+    $scope.nextQues =function() {
+      if (validateCurrentQuestion()) {
+        $scope.tip = "请先完成当前问题!";
+        tipWork();
+        return;
+      }
+
+      ++$scope.currentIndex;
+
+      if ($scope.currentIndex == $scope.questions.length) {
+        $scope.questions.push({
+          title : '',
+          isSingle : true,
+          options : [{
+            isNext : true,
+            isCustOmized: false,
+            content : ''
+          }]
+        });
+      }
+
+      // console.log($scope.questions)
+    }
+
+    $scope.createQuestion = function() {
+      $scope.showHead = false;
+    }
 
     $scope.create = function() {
       if ($scope.user.name == '' || $scope.user.password == '' || $scope.user.description == '') return;
@@ -312,4 +419,12 @@ function queryAll(http, storeDataService, scope) {
     console.log(error);
     window.location.href = "#/";
   });
+}
+
+function tipWork() {
+  $('#hintDiv').show(500);
+
+  setTimeout(function() {
+    $('#hintDiv').hide(2000);
+  }, 1000);
 }
