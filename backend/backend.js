@@ -26,7 +26,7 @@ app.config(function($routeProvider) {
 });
 
 //clear route cache, reload
-app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', function ($rootScope, $window, $location, $templateCache, $http) {  
+app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', 'storeDataService', function ($rootScope, $window, $location, $templateCache, $http, storeDataService) {  
     var routeChangeSuccessOff = $rootScope.$on('$routeChangeSuccess', routeChangeSuccess);  
 
     function routeChangeSuccess(event, params) {
@@ -78,7 +78,7 @@ app
               return;
             }
             window.localStorage.setItem("isLogin", true);
-            // queryAll($http, storeDataService, $scope);
+            window.location.href = "#/list";
         })
         .error(function(error, header, config) {
             window.location.href = "#/";
@@ -93,12 +93,24 @@ app
 }])
 
 .controller("listController", ['$scope', '$http', '$document', '$timeout', 'storeDataService', function($scope, $http, $document, $timeout, storeDataService) {
-    $scope.users = storeDataService.getUserList();
-    $scope.titles = storeDataService.getTableTitle();
-    $scope.userId = 0;
-    $scope.user = {};
+    
+    $scope.questionaireId = 0;
+    $scope.questionaires = [];
+    $scope.questionaire = {};
     $scope.keyword = '';
-    $scope.isCheckeds = [];
+
+    $http({
+      url : 'controllers/query.php',
+      method : 'get',
+      headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+      responseType : 'json'
+    })
+    .success(function(data, header, config) {
+      $scope.questionaires = data;
+    })
+    .error(function(error, header, config) {
+      console.log(error);
+    });
 
     $document.bind("keypress", function(event) {
         if (event.keyCode == 13) {
@@ -107,6 +119,37 @@ app
     });
 
     $scope.detail = function(num) {
+      // query by id
+      $http({
+          url : 'controllers/queryone.php',
+          method : 'post',
+          data : $.param({ "id" : num }),
+          headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+          responseType : 'json'
+      })
+      .success(function(data, header, config, status) {
+          // angular.forEach($scope.questionaires, function(item) {
+          //   if (item.id == num) {
+          //     $scope.questionaire.id = num;
+          //     $scope.questionaire.subject = item.subject;
+          //     $scope.questionaire.description = item.description;
+          //     $scope.questionaire.createTime = item.createTime;
+          //     break;
+          //   }
+          // });
+
+          // $scope.questionaire.questions = data;
+          // console.log($scope.questionaire)
+          // storeDataService.setQuestionaire($scope.questionaire);
+          //  window.location.href = "#/detail";
+      })
+      .error(function(error, header, config, status) {
+          console.log(error);
+          window.location.href = "#/list";
+      });
+    };
+
+    $scope.edit = function(num) {
       // query by id
       $http({
           url : '../basic/web/index.php?r=user/query-detail',
@@ -118,7 +161,7 @@ app
       .success(function(data, header, config, status) {
           $scope.user = data.user;
           storeDataService.setUser($scope.user);
-           window.location.href = "#/detail";
+           window.location.href = "#/edit";
       })
       .error(function(error, header, config, status) {
           console.log(error);
@@ -136,7 +179,8 @@ app
       })
       .success(function(data, header, config, status) {
           $('#myModal').modal('hide');
-          queryAll($http, storeDataService, $scope );
+          // queryAll($http, storeDataService, $scope );
+          window.location.href = "#/list";
       })
       .error(function(error, header, config, status) {
           console.log(error);
@@ -144,8 +188,8 @@ app
       });
     };
 
-    $scope.sendUserId = function(userId) {
-      $scope.userId = userId;
+    $scope.sendId = function(id) {
+      $scope.questionaireId = id;
     };
 
     $scope.search = function() {
@@ -166,41 +210,21 @@ app
               window.location.href = "#/list";
           });
       } else {
-        queryAll($http, storeDataService, $scope );
+        // queryAll($http, storeDataService, $scope );
+        window.location.href = "#/list";
       }
     };
 
     //delay realTime search
-    var timeout;
-    $scope.$watch('searchWord', function(newVal) {
-      if (newVal) {
-        if (timeout) $timeout.cancel(timeout);
-        timeout = $timeout(function() {
-          $scope.realTimeRearch();
-        }, 350);
-      }
-    });
-
-    $scope.realTimeRearch = function() {
-      if ($scope.searchWord != '') {
-        //search
-         $http({
-          url : '../basic/web/index.php?r=user/search-condition',
-          method : 'post',
-          data : $.param({ "keyword" : $scope.searchWord}),
-          headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-          })
-          .success(function(data, header, config, status) {
-              $scope.users = data.users;
-          })
-          .error(function(error, header, config, status) {
-              console.log(error);
-              window.location.href = "#/list";
-          });
-      } else {
-        queryAll($http, storeDataService, $scope );
-      }
-    };
+    // var timeout;
+    // $scope.$watch('searchWord', function(newVal) {
+    //   if (newVal) {
+    //     if (timeout) $timeout.cancel(timeout);
+    //     timeout = $timeout(function() {
+    //       $scope.search();
+    //     }, 350);
+    //   }
+    // });
 }])
 
 .controller("detailController", ['$scope', 'storeDataService', function($scope, storeDataService) {
@@ -233,7 +257,8 @@ app
           headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
       })
       .success(function(data, header, config, status) {
-          queryAll($http, storeDataService, $scope );
+          // queryAll($http, storeDataService, $scope );
+          window.location.href = "#/list";
       })
       .error(function(error, header, config, status) {
           console.log(error);
@@ -254,7 +279,8 @@ app
         // alert(this.hasContents())
     });
 
-    $scope.showHead = false;
+    $scope.showHead = true;
+    $scope.isSubmit = false;
 
     $scope.questionaire = {
       'subject' : '', 
@@ -344,82 +370,91 @@ app
           }]
         });
       }
-
-      // console.log($scope.questions)
     }
 
     $scope.createQuestion = function() {
+      var description = UE.getEditor('editor').getContent();
+
+      if ($scope.questionaire.subject == "" || description == "") {
+        $scope.tip = "问卷主题或说明不得为空!";
+        tipWork();
+        return;
+      }
+
+      $scope.questionaire.description = description;
       $scope.showHead = false;
     }
 
-    $scope.create = function() {
-      if ($scope.user.name == '' || $scope.user.password == '' || $scope.user.description == '') return;
-      //insert
+    $scope.finishCreate = function() {
+      $scope.isSubmit = true;
+
+      if (validateCurrentQuestion()) {
+        $scope.isSubmit = false;
+        $scope.tip = "请先完成当前问题!";
+        tipWork();
+        return;
+      }
+
+      if ($scope.questionaire.subject == "" || $scope.questionaire.description == "") {
+        $scope.isSubmit = false;
+        return;
+      }
+      
+      $scope.questionaire.questions = $scope.questions;
+
       $http({
-          url : '../basic/web/index.php?r=user/create-one',
+          url : 'controllers/create.php',
           method : 'post',
-          data : $.param({'name' : $scope.user.name, 'password' : $scope.user.password, 'description' : $scope.user.description}),
+          data : $.param($scope.questionaire),
           headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
       })
-      .success(function(data, header, config, status) {
-          queryAll($http, storeDataService, $scope );
+      .success(function(data, header, config) {
+        if (data.code == 200) {
+        // queryAll($http, storeDataService, $scope );
+        window.location.href = "#/list";
+        } else {
+          $scope.tip = "创建失败，稍后再试";
+          $scope.isSubmit = false;
+          tipWork();
+        }
       })
-      .error(function(error, header, config, status) {
-          console.log(error);
-          window.location.href = "#/list";
+      .error(function(error, header, config) {
+          $scope.isSubmit = false;
+          $scope.tip = error;
+          tipWork();
       });
-    };
+    }
 }]);
 
 app.factory('storeDataService', function() {
-  var userList = [];
-  var title = [];
-  var user = {'name' : '', 'password' : '', 'description' : ''};
+  var questionaire = {'subject' : '', 'description' : '', 'createTime' : '', 'questions' : []};
 
   return {
-    setUserList: function(newUsername) { 
-      userList = newUsername; 
+    setQuestionaire : function(newQuestionaire) {
+      questionaire = newQuestionaire;
     },
-    getUserList: function() { 
-      return userList; 
-    },
-    getTableTitle: function() {
-      if (userList.length > 0) {
-         var item = userList[0];
-         for(var i in item) {
-           title.push(i);
-         }
-      }
-      return title;
-    },
-    setUser : function(newUser) {
-      user = newUser;
-    },
-    getUser : function() {
-      return user;
+    getQuestionaire : function() {
+      return questionaire;
     }
   };
 });
 
-function queryAll(http, storeDataService, scope) {
-  http({
-      url : '../basic/web/index.php?r=user/query-list',
-      method : 'get',
-      headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-      responseType : 'json'
-  })
-  .success(function(data, header, config, status) {
-    storeDataService.setUserList(data.users);
-
-    scope.users = storeDataService.getUserList();
-
-    window.location.href = "#/list";
-  })
-  .error(function(error, header, config, status) {
-    console.log(error);
-    window.location.href = "#/";
-  });
-}
+// function queryAll(http, storeDataService, scope) {
+//   http({
+//       url : 'controllers/query.php',
+//       method : 'get',
+//       headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+//       responseType : 'json'
+//   })
+//   .success(function(data, header, config) {
+//     storeDataService.setQuestionaireList(data);
+//     console.log(data)
+//     scope.questionaires = storeDataService.getQuestionaireList();
+//   })
+//   .error(function(error, header, config) {
+//     console.log(error);
+//   });
+// }
 
 function tipWork() {
   $('#hintDiv').show(500);

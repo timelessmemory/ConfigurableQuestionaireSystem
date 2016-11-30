@@ -7,6 +7,7 @@
 
     if ($name == '' or $password == '') {
     	echo json_encode(array("code" => 500));
+    	return;
     }
     
 	try {
@@ -34,6 +35,6 @@
 	    	echo json_encode(array("code" => 200));
 	    }
     } catch (Exception $e) {
-        echo $e->getMessage();
+        echo json_encode(array("code" => 500));
     }
 ?>

@@ -37,7 +37,7 @@
 
 <form ng-if="!showHead" name="form" novalidate>
   <div class="form-group compo">
-    <label for="question">问题{{currentIndex + 1}}:</label>
+    <label for="question">问题{{currentIndex + 1}}:(如需删除问题请完成创建后进入编辑页面进行操作)</label>
     <input type="text" class="form-control" id="question" ng-model="questions[currentIndex].title" required autofocus />
     <br/>
     <span>是否单选:</span>
@@ -58,5 +58,6 @@
     <button class="btn btn-success btn-xs" style="margin-right:30px;" ng-click="addOption()">继续添加选项</button>
     <button ng-show="currentIndex > 0" class="btn btn-info btn-xs" style="margin-right:30px;" ng-click="lastQues()">上一题</button>
     <button class="btn btn-info btn-xs" style="margin-right:30px;" ng-click="nextQues()">下一题</button>
+    <button class="btn btn-primary btn-xs" style="margin-right:30px;" ng-click="finishCreate()" ng-disabled="isSubmit">完成创建</button>
   </div>
 </form>

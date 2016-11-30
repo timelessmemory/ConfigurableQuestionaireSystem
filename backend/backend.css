@@ -56,7 +56,11 @@ body {
   text-align: center;
   position: fixed;
   width:100%;
-  margin-top: -60px;
+  margin-top: -168px;
+}
+
+.table>thead>tr>th {
+  text-align: center;
 }
 
 .nav-top {
@@ -66,9 +70,10 @@ body {
 }
 
 .table-responsive, .top-div {
-  width: 100%;
+  width: 96%;
+  margin-left: 2%;
   position:absolute;
-  top: 100px;
+  top: 150px;
 }
 
 .search-div {
