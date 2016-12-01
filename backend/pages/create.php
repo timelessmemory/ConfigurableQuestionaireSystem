@@ -1,5 +1,5 @@
 <div class="alert alert-warning" id="hintDiv">
-   <a class="close">
+   <a class="close" ng-click="close()">
       &times;
    </a>
    <strong>{{tip}}</strong>
@@ -19,29 +19,39 @@
   </nav>
 </header>
 
-<form class="top-div" name="form" ng-show="showHead" novalidate>
+<form class="top-div" style="top:100px;" ng-show="showHead" novalidate>
   <div class="form-group compo">
     <label for="subject">问卷主题:</label>
     <input type="text" class="form-control" id="subject" ng-model="questionaire.subject" required autofocus />
   </div>
-  <div class="form-group compo">
+  <div class="form-group compo" style="margin-bottom: 15px;">
     <label for="description">问卷说明:</label>
-    <div>
-        <script id="editor" type="text/plain" style="width:100%;height:500px;"></script>
-    </div>
+    <div class="ueditor" config="config" ready="ready" style="width:100%;height:500px;" ng-model="questionaire.description"></div>
   </div>
   <div style="text-align:right;">
     <button type="submit" class="btn btn-success" style="margin-right:30px;" ng-click="createQuestion()">确定</button>
   </div>
 </form>
 
-<form ng-if="!showHead" name="form" novalidate>
+<form class="top-div" ng-if="!showHead" style="top:100px;" novalidate>
   <div class="form-group compo">
     <label for="question">问题{{currentIndex + 1}}:(如需删除问题请完成创建后进入编辑页面进行操作)</label>
-    <input type="text" class="form-control" id="question" ng-model="questions[currentIndex].title" required autofocus />
+    <div class="ueditor" config="config" ready="ready" style="width:100%;height:200px;" ng-model="questions[currentIndex].title"></div>
     <br/>
     <span>是否单选:</span>
-    <input class="unchecked checked" id="single" type="checkbox" ng-model="questions[currentIndex].isSingle" ng-click="switchCheckBox($event, questions[currentIndex].isSingle)" />
+    <input class="unchecked" ng-class='{"checked": questions[currentIndex].isSingle}' type="checkbox" ng-model="questions[currentIndex].isSingle" />
+    <br/><br/>
+    <span>是否为选项设置跳题:</span>
+    <input class="unchecked" ng-class='{"checked": questions[currentIndex].isSetSkip}' type="checkbox" ng-model="questions[currentIndex].isSetSkip" ng-click="switchIsSetSkip($event, questions[currentIndex])" />
+    <br/>
+    <div ng-if="questions[currentIndex].isSetSkip">
+      <div style="margin-left:20px;">
+        <span>Group1</span>
+        <input type="text" class="form-control" ng-model="questions[currentIndex].group.gp1" />
+        <span>Group2</span>
+        <input type="text" class="form-control" ng-model="questions[currentIndex].group.gp2" />
+      </div>
+    </div>
     <br/>
     <br/>
     <label>选项:</label>
@@ -53,11 +63,16 @@
       <br/>
       <span>此选项是否由被调查者自行输入:</span>
       <input class="unchecked" type="checkbox" ng-model="item.isCustOmized" ng-click="switchCheckBox($event, item.isCustOmized)" />
+      <br/>
+      <div ng-if="questions[currentIndex].isSetSkip">
+        <span>是否跳题至Group1:</span>
+        <input class="unchecked" ng-class='{"checked": item.isSkipOne}' type="checkbox" ng-model="item.isSkipOne" ng-click="switchSkipIndex($event, item, questions[currentIndex].group)" />
+      </div>
       <br/><br/><br/>
     </div>
     <button class="btn btn-success btn-xs" style="margin-right:30px;" ng-click="addOption()">继续添加选项</button>
     <button ng-show="currentIndex > 0" class="btn btn-info btn-xs" style="margin-right:30px;" ng-click="lastQues()">上一题</button>
-    <button class="btn btn-info btn-xs" style="margin-right:30px;" ng-click="nextQues()">下一题</button>
+    <button class="btn btn-info btn-xs" style="margin-right:30px;margin-left: 73%;" ng-click="nextQues()">下一题</button>
     <button class="btn btn-primary btn-xs" style="margin-right:30px;" ng-click="finishCreate()" ng-disabled="isSubmit">完成创建</button>
   </div>
 </form>

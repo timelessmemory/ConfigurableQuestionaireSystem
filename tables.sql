@@ -19,7 +19,9 @@ create table questionOption (
         questionId INT NOT NULL,
         content VARCHAR(500),
         isHasNext TINYINT(1),
-        isCustomized TINYINT(1)
+        isCustomized TINYINT(1),
+        isSkip TINYINT(1),
+        skipIndex INT
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 create table answer (

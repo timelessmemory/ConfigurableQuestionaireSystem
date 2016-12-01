@@ -1,4 +1,4 @@
-var app = angular.module("backend", ['ngRoute']);
+var app = angular.module("backend", ['ngRoute', 'ng.ueditor']);
 
 app.config(function($routeProvider) {
     $routeProvider
@@ -128,20 +128,19 @@ app
           responseType : 'json'
       })
       .success(function(data, header, config, status) {
-          // angular.forEach($scope.questionaires, function(item) {
-          //   if (item.id == num) {
-          //     $scope.questionaire.id = num;
-          //     $scope.questionaire.subject = item.subject;
-          //     $scope.questionaire.description = item.description;
-          //     $scope.questionaire.createTime = item.createTime;
-          //     break;
-          //   }
-          // });
+          angular.forEach($scope.questionaires, function(item) {
+            if (item.id == num) {
+              $scope.questionaire.id = num;
+              $scope.questionaire.subject = item.subject;
+              $scope.questionaire.description = item.description;
+              $scope.questionaire.createTime = item.createTime;
+            }
+          });
 
-          // $scope.questionaire.questions = data;
+          $scope.questionaire.questions = data;
           // console.log($scope.questionaire)
-          // storeDataService.setQuestionaire($scope.questionaire);
-          //  window.location.href = "#/detail";
+          storeDataService.setQuestionaire($scope.questionaire);
+          window.location.href = "#/detail";
       })
       .error(function(error, header, config, status) {
           console.log(error);
@@ -152,16 +151,26 @@ app
     $scope.edit = function(num) {
       // query by id
       $http({
-          url : '../basic/web/index.php?r=user/query-detail',
+          url : 'controllers/queryone.php',
           method : 'post',
           data : $.param({ "id" : num }),
           headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
           responseType : 'json'
       })
       .success(function(data, header, config, status) {
-          $scope.user = data.user;
-          storeDataService.setUser($scope.user);
-           window.location.href = "#/edit";
+          angular.forEach($scope.questionaires, function(item) {
+            if (item.id == num) {
+              $scope.questionaire.id = num;
+              $scope.questionaire.subject = item.subject;
+              $scope.questionaire.description = item.description;
+              $scope.questionaire.createTime = item.createTime;
+            }
+          });
+
+          $scope.questionaire.questions = data;
+          // console.log($scope.questionaire)
+          storeDataService.setQuestionaire($scope.questionaire);
+          window.location.href = "#/edit";
       })
       .error(function(error, header, config, status) {
           console.log(error);
@@ -172,7 +181,7 @@ app
     $scope.delete = function(num) {
       //delete 
       $http({
-          url : '../basic/web/index.php?r=user/delete-one',
+          url : 'controllers/deleteone.php',
           method : 'post',
           data : $.param({ "id" : num }),
           headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -272,39 +281,73 @@ app
 }])
 
 .controller("createController", ['$scope', '$http', 'storeDataService', '$rootScope', function($scope, $http, storeDataService, $rootScope) {
-    
-    UE.getEditor('editor').ready(function() {
-        this.focus();
-        // alert(this.getContent())
-        // alert(this.hasContents())
-    });
+    $scope.config = {
+        toolbars: [
+            ['fullscreen', 'source', 'undo', 'redo'],
+            ['bold', 'fontfamily', 'fontsize', 'link', 'unlink', 'justifyleft', 'justifyright', 'justifycenter', 'justifyjustify', 'horizontal', 'indent', 'italic', 'underline', 'fontborder', 'simpleupload', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', 'preview']
+        ],
+        autoHeightEnabled: true,
+        autoFloatEnabled: true
+    }
 
-    $scope.showHead = true;
+    $scope.ready = function(editor){
+        editor.focus();
+    }
+
+    $scope.showHead = false;
     $scope.isSubmit = false;
+    $scope.currentIndex = 0;
 
     $scope.questionaire = {
       'subject' : '', 
       'description' : ''
     };
 
-    $scope.questions = [{
+    var initQuestion = {
       title : 'hello',
       isSingle : true,
-      options : [{
-        isNext : true,
-        isCustOmized: false,
-        content : 'A'
-      }]
-    }];
+      isSetSkip : false,
+      group : {
+        gp1 : '',
+        gp2 : ''
+      }
+    };
 
-    $scope.currentIndex = 0;
+    var initOption = {
+      isNext : true,
+      isCustOmized : false,
+      isSkip : initQuestion.isSetSkip,
+      isSkipOne : true,
+      content : ""
+    };
 
-    $scope.switchCheckBox = function($event, value) {
-      // console.log(value)
-      if (value) {
-        $($event.target).addClass("checked");
+    initOption.isSkipOne == true ? initOption.skipIndex = initQuestion.group.gp1 : initOption.skipIndex = initQuestion.group.gp2;
+
+    initQuestion.options = [initOption]
+
+    $scope.questions = [initQuestion];
+
+    $scope.$watch('questions[0].group', function() {
+      angular.forEach($scope.questions[0].options, function(op) {
+        if (op.isSkipOne) {
+          op.skipIndex = $scope.questions[0].group.gp1;
+        } else {
+          op.skipIndex = $scope.questions[0].group.gp2;
+        }
+      })
+    }, true)
+
+    $scope.switchIsSetSkip = function($event, item) {
+      angular.forEach(item.options, function(op) {
+        op.isSkip = item.isSetSkip;
+      })
+    }
+
+    $scope.switchSkipIndex = function($event, item, group) {
+      if (item.isSkipOne) {
+        item.skipIndex =  group.gp1;
       } else {
-        $($event.target).removeClass("checked");
+        item.skipIndex =  group.gp2;
       }
     }
 
@@ -315,11 +358,19 @@ app
         return;
       }
 
-      $scope.questions[$scope.currentIndex].options.push({
+      var currentQuestion = $scope.questions[$scope.currentIndex];
+
+      var addOption = {
         isNext : true,
         isCustOmized: false,
-        content : ''
-      });
+        content : '',
+        isSkip : currentQuestion.isSetSkip,
+        isSkipOne : true, 
+      };
+
+      addOption.isSkipOne == true ? addOption.skipIndex = currentQuestion.group.gp1 : addOption.skipIndex = currentQuestion.group.gp2;
+
+      currentQuestion.options.push(addOption);
     }
 
     function validateCurrentQuestion() {
@@ -360,32 +411,61 @@ app
       ++$scope.currentIndex;
 
       if ($scope.currentIndex == $scope.questions.length) {
-        $scope.questions.push({
+
+        var addQuestion = {
           title : '',
           isSingle : true,
-          options : [{
-            isNext : true,
-            isCustOmized: false,
-            content : ''
-          }]
-        });
+          isSetSkip : false,
+          group : {
+            gp1 : '',
+            gp2 : ''
+          }
+        };
+
+        var addOption = {
+          isNext : true,
+          isCustOmized : false,
+          isSkip : addQuestion.isSetSkip,
+          isSkipOne : true,
+          content : ""
+        };
+
+        addOption.isSkipOne == true ? addOption.skipIndex = addQuestion.group.gp1 : addOption.skipIndex = addQuestion.group.gp2;
+
+        addQuestion.options = [addOption]
+
+        $scope.questions.push(addQuestion);
+        
+        var max = $scope.questions.length - 1;
+
+        $scope.$watch(function() {
+          return $scope.questions[max].group
+        }, function() {
+          angular.forEach($scope.questions[max].options, function(op) {
+            if (op.isSkipOne) {
+              op.skipIndex = $scope.questions[max].group.gp1;
+            } else {
+              op.skipIndex = $scope.questions[max].group.gp2;
+            }
+          })
+        }, true)
       }
     }
 
     $scope.createQuestion = function() {
-      var description = UE.getEditor('editor').getContent();
 
-      if ($scope.questionaire.subject == "" || description == "") {
+      if ($scope.questionaire.subject == "" || $scope.questionaire.description == "") {
         $scope.tip = "问卷主题或说明不得为空!";
         tipWork();
         return;
       }
 
-      $scope.questionaire.description = description;
       $scope.showHead = false;
     }
 
     $scope.finishCreate = function() {
+      console.log($scope.questions)
+      return;
       $scope.isSubmit = true;
 
       if (validateCurrentQuestion()) {
@@ -411,7 +491,7 @@ app
       .success(function(data, header, config) {
         if (data.code == 200) {
         // queryAll($http, storeDataService, $scope );
-        window.location.href = "#/list";
+          window.location.href = "#/list";
         } else {
           $scope.tip = "创建失败，稍后再试";
           $scope.isSubmit = false;
@@ -424,6 +504,10 @@ app
           tipWork();
       });
     }
+
+    $scope.close = function() {
+      $('#hintDiv').hide();
+    };
 }]);
 
 app.factory('storeDataService', function() {

@@ -5,7 +5,7 @@
         <a class="navbar-brand">Questionaire Backend Configuration Management</a>
       </div>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#/create"><i class="glyphicon glyphicon-file"></i> Create User</a></li>
+        <li><a href="#/create"><i class="glyphicon glyphicon-file"></i> Create Questionaire</a></li>
         <li><a href='#/' ng-click="logout()"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
         <li><a>Welcome, <?php session_start(); echo $_SESSION['username']; ?></a></li>
       </ul>
@@ -58,10 +58,13 @@
    <tbody>
       <tr ng-repeat="questionaire in questionaires" class="active">
          <td style="width:10%;">{{$index + 1}}</td>
-         <td style="color:#5bc0de; cursor:pointer;text-decoration:underline;width:20%;" ng-click="detail(questionaire.id)" title="详细">{{questionaire.subject}}</td>
+         <td style="color:#5bc0de; cursor:pointer;text-decoration:underline;width:20%;" title="访问问卷"><a href="/questionaire/frontend/index.html?questionaireId={{questionaire.id}}">{{questionaire.subject}}</a></td>
          <td style="max-width:40%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{{questionaire.description}}">{{questionaire.description}}</td>
          <td style="width:20%;">{{questionaire.createTime}}</td>
          <td style="width:10%;">
+           <button type="button" title="详情" class="btn btn-default btn-xs" ng-click="detail(questionaire.id)">
+             <i class="glyphicon glyphicon-new-window"></i>
+           </button>
            <button type="button" title="编辑" class="btn btn-default btn-xs" ng-click="edit(questionaire.id)">
              <i class="glyphicon glyphicon-edit"></i>
            </button>
