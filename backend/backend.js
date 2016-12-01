@@ -186,12 +186,31 @@ app
           data : $.param({ "id" : num }),
           headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
       })
-      .success(function(data, header, config, status) {
+      .success(function(data, header, config) {
           $('#myModal').modal('hide');
-          // queryAll($http, storeDataService, $scope );
-          window.location.href = "#/list";
+
+          if (data.code == 200) {
+            $scope.tip = "删除成功!";
+            tipWork();
+
+            $http({
+              url : 'controllers/query.php',
+              method : 'get',
+              headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+              responseType : 'json'
+            })
+            .success(function(data, header, config) {
+              $scope.questionaires = data;
+            })
+            .error(function(error, header, config) {
+              console.log(error);
+            });
+          } else {
+            $scope.tip = "删除失败，稍后再试!";
+            tipWork();
+          }
       })
-      .error(function(error, header, config, status) {
+      .error(function(error, header, config) {
           console.log(error);
           window.location.href = "#/list";
       });
@@ -294,7 +313,7 @@ app
         editor.focus();
     }
 
-    $scope.showHead = false;
+    $scope.showHead = true;
     $scope.isSubmit = false;
     $scope.currentIndex = 0;
 
@@ -392,18 +411,50 @@ app
       }
     }
 
+    function isPositiveInteger(s) {
+       var reg = /^[0-9]+$/ ;
+       return reg.test(s);
+    }
+
+    function validateGroup() {
+      if (!$scope.questions[$scope.currentIndex].isSetSkip) {
+        return false;
+      }
+
+      var group = $scope.questions[$scope.currentIndex].group;
+
+      if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= ($scope.currentIndex + 1) || parseInt(group.gp2) <= ($scope.currentIndex + 1) || group.gp1 == group.gp2) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     $scope.lastQues =function() {
       if (validateCurrentQuestion()) {
         $scope.tip = "请先完成当前问题!";
         tipWork();
         return;
       }
+
+      if (validateGroup()) {
+        $scope.tip = "索引不合法!";
+        tipWork();
+        return;
+      }
+
       --$scope.currentIndex;
     }
 
     $scope.nextQues =function() {
       if (validateCurrentQuestion()) {
         $scope.tip = "请先完成当前问题!";
+        tipWork();
+        return;
+      }
+
+      if (validateGroup()) {
+        $scope.tip = "索引不合法!";
         tipWork();
         return;
       }
@@ -463,14 +514,22 @@ app
       $scope.showHead = false;
     }
 
+    // $scope.$watch('questionaire.description', function(v) {
+    //   console.log(v)
+    // })
+
     $scope.finishCreate = function() {
-      console.log($scope.questions)
-      return;
       $scope.isSubmit = true;
 
       if (validateCurrentQuestion()) {
         $scope.isSubmit = false;
         $scope.tip = "请先完成当前问题!";
+        tipWork();
+        return;
+      }
+
+      if (validateGroup()) {
+        $scope.tip = "索引不合法!";
         tipWork();
         return;
       }

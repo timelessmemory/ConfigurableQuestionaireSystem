@@ -43,13 +43,16 @@
                 return this.editor.ready(function() {
                   _self.editorReady = true;
                   _self.editor.addListener("contentChange", function() {
-                    ctrl.$setViewValue(_self.editor.getContent());
-                    if (!_updateByRender) {
-                      if (!$S.$$phase) {
-                        $S.$apply();
+                    //此处设置一个延迟，防止图片还没有从服务器返回，从而获取到的是loading图片
+                    setTimeout(function() {
+                      ctrl.$setViewValue(_self.editor.getContent());
+                      if (!_updateByRender) {
+                        if (!$S.$$phase) {
+                          $S.$apply();
+                        }
                       }
-                    }
-                    _updateByRender = false;
+                      _updateByRender = false;
+                    }, 50)
                   });
                   if (_self.modelContent && _self.modelContent.length > 0) {
                     _self.setEditorContent();

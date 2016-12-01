@@ -58,9 +58,11 @@
 		    foreach ($options as $option) {
 		    	$isNext = $option['isNext'] == 'true' ? true : false;
 		    	$isCustOmized = $option['isCustOmized'] == 'true' ? true : false;
+		    	$isSkip = $option['isSkip'] == 'true' ? true : false;
+		    	$skipIndex = $option['skipIndex'];
 		    	$content = $option['content'];
 
-		    	$sql = "insert into questionOption(questionId, content, isHasNext, isCustomized) values(:questionId, :content, :isHasNext, :isCustomized)";
+		    	$sql = "insert into questionOption(questionId, content, isHasNext, isCustomized, isSkip, skipIndex) values(:questionId, :content, :isHasNext, :isCustomized, :isSkip, :skipIndex)";
 		    	
 		    	$preparedStatement = $db->prepare($sql);
 		    	
@@ -68,7 +70,10 @@
 			        ":questionId" => $questionId,
 			        ":content" => $content,
 			        ":isHasNext" => $isNext,
-			        ":isCustomized" => $isCustOmized
+			        ":isCustomized" => $isCustOmized,
+			        ":isSkip" => $isSkip,
+			        ":skipIndex" => $skipIndex
+
 			    ];
 
 			    $result = $preparedStatement->execute($params);

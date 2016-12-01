@@ -55,6 +55,7 @@ body {
   width: 92%;
   margin-left: 4%;
   display: none;
+  z-index: 9999;
   text-align: center;
   position: fixed;
   margin-top: -168px;

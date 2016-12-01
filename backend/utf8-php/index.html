@@ -17,6 +17,7 @@
 <body>
 <div>
     <script id="editor" type="text/plain" style="width:1024px;height:500px;"></script>
+    <button onclick="test()">test</button>
 </div> 
 
 <script type="text/javascript">
@@ -25,7 +26,11 @@
         this.focus()
         // alert(this.getContent())
         // alert(this.hasContents())
-    }); 
+    });
+
+    function test() {
+        console.log(UE.getEditor('editor').getContent())
+    } 
 </script>
 </body>
 </html>

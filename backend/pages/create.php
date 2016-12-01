@@ -41,14 +41,14 @@
     <span>是否单选:</span>
     <input class="unchecked" ng-class='{"checked": questions[currentIndex].isSingle}' type="checkbox" ng-model="questions[currentIndex].isSingle" />
     <br/><br/>
-    <span>是否为选项设置跳题:</span>
+    <span>是否为选项设置跳题索引:</span>
     <input class="unchecked" ng-class='{"checked": questions[currentIndex].isSetSkip}' type="checkbox" ng-model="questions[currentIndex].isSetSkip" ng-click="switchIsSetSkip($event, questions[currentIndex])" />
     <br/>
     <div ng-if="questions[currentIndex].isSetSkip">
       <div style="margin-left:20px;">
-        <span>Group1</span>
+        <span>Group1索引</span>
         <input type="text" class="form-control" ng-model="questions[currentIndex].group.gp1" />
-        <span>Group2</span>
+        <span>Group2索引</span>
         <input type="text" class="form-control" ng-model="questions[currentIndex].group.gp2" />
       </div>
     </div>
@@ -59,10 +59,10 @@
       <span>选项内容:</span>
       <textarea class="form-control" rows="5" ng-disabled="item.isCustOmized" ng-model="item.content"></textarea>
       <span>选择此选项是否让被调查者继续回答下一题:</span>
-      <input class="unchecked checked" type="checkbox" ng-model="item.isNext" ng-click="switchCheckBox($event, item.isNext)" />
+      <input class="unchecked" ng-class='{"checked": item.isNext}' type="checkbox" ng-model="item.isNext" />
       <br/>
       <span>此选项是否由被调查者自行输入:</span>
-      <input class="unchecked" type="checkbox" ng-model="item.isCustOmized" ng-click="switchCheckBox($event, item.isCustOmized)" />
+      <input class="unchecked" ng-class='{"checked": item.isCustOmized}' type="checkbox" ng-model="item.isCustOmized" />
       <br/>
       <div ng-if="questions[currentIndex].isSetSkip">
         <span>是否跳题至Group1:</span>
@@ -72,7 +72,7 @@
     </div>
     <button class="btn btn-success btn-xs" style="margin-right:30px;" ng-click="addOption()">继续添加选项</button>
     <button ng-show="currentIndex > 0" class="btn btn-info btn-xs" style="margin-right:30px;" ng-click="lastQues()">上一题</button>
-    <button class="btn btn-info btn-xs" style="margin-right:30px;margin-left: 73%;" ng-click="nextQues()">下一题</button>
+    <button class="btn btn-info btn-xs" style="margin-right:30px;margin-left: 40%;" ng-click="nextQues()">下一题</button>
     <button class="btn btn-primary btn-xs" style="margin-right:30px;" ng-click="finishCreate()" ng-disabled="isSubmit">完成创建</button>
   </div>
 </form>

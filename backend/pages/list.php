@@ -1,3 +1,9 @@
+<div class="alert alert-warning" id="hintDiv">
+   <a class="close" ng-click="close()">
+      &times;
+   </a>
+   <strong>{{tip}}</strong>
+</div>
 <header class="nav-top">
   <nav class="navbar navbar-default">
     <div class="container">
@@ -55,6 +61,9 @@
          <th>操作</th>
       </tr>
    </thead>
+   <tbody ng-if="questionaires.length < 1">
+     <tr><td colspan="5" class="active">暂无数据</td></tr>
+   </tbody>
    <tbody>
       <tr ng-repeat="questionaire in questionaires" class="active">
          <td style="width:10%;">{{$index + 1}}</td>
