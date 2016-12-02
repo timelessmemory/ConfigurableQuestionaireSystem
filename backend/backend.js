@@ -26,7 +26,7 @@ app.config(function($routeProvider) {
 });
 
 //clear route cache, reload
-app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', 'storeDataService', function ($rootScope, $window, $location, $templateCache, $http, storeDataService) {  
+app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', function ($rootScope, $window, $location, $templateCache, $http) {  
     var routeChangeSuccessOff = $rootScope.$on('$routeChangeSuccess', routeChangeSuccess);  
 
     function routeChangeSuccess(event, params) {
@@ -54,7 +54,7 @@ app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', 'store
 }]);
 
 app
-.controller("loginController", ['$scope', '$rootScope', '$http', 'storeDataService', '$timeout', function($scope, $rootScope, $http, storeDataService, $timeout) {
+.controller("loginController", ['$scope', '$rootScope', '$http', '$timeout', function($scope, $rootScope, $http, $timeout) {
     $scope.username = '';
     $scope.password = '';
 
@@ -92,7 +92,7 @@ app
     };
 }])
 
-.controller("listController", ['$scope', '$http', '$document', '$timeout', 'storeDataService', function($scope, $http, $document, $timeout, storeDataService) {
+.controller("listController", ['$scope', '$http', '$document', '$timeout', function($scope, $http, $document, $timeout) {
     
     $scope.questionaireId = 0;
     $scope.questionaires = [];
@@ -128,18 +128,6 @@ app
           responseType : 'json'
       })
       .success(function(data, header, config, status) {
-          angular.forEach($scope.questionaires, function(item) {
-            if (item.id == num) {
-              $scope.questionaire.id = num;
-              $scope.questionaire.subject = item.subject;
-              $scope.questionaire.description = item.description;
-              $scope.questionaire.createTime = item.createTime;
-            }
-          });
-
-          $scope.questionaire.questions = data;
-          // console.log($scope.questionaire)
-          storeDataService.setQuestionaire($scope.questionaire);
           window.location.href = "#/detail";
       })
       .error(function(error, header, config, status) {
@@ -213,7 +201,6 @@ app
               window.location.href = "#/list";
           });
       } else {
-        // queryAll($http, storeDataService, $scope );
         window.location.href = "#/list";
       }
     };
@@ -230,7 +217,7 @@ app
     // });
 }])
 
-.controller("detailController", ['$scope', 'storeDataService', function($scope, storeDataService) {
+.controller("detailController", ['$scope', function($scope) {
     $scope.edit = function(num) {
 
       window.location.href = "#/edit";
@@ -241,7 +228,7 @@ app
     };
 }])
 
-.controller("createController", ['$scope', '$http', 'storeDataService', '$rootScope', function($scope, $http, storeDataService, $rootScope) {
+.controller("createController", ['$scope', '$http', '$rootScope', function($scope, $http, $rootScope) {
     $scope.config = {
         toolbars: [
             ['fullscreen', 'source', 'undo', 'redo'],
@@ -487,7 +474,6 @@ app
       })
       .success(function(data, header, config) {
         if (data.code == 200) {
-        // queryAll($http, storeDataService, $scope );
           window.location.href = "#/list";
         } else {
           $scope.tip = "创建失败，稍后再试";
@@ -507,11 +493,23 @@ app
     };
 }])
 
-.controller("editController", ['$scope', '$http', 'storeDataService', function($scope, $http, storeDataService) {
+.controller("editController", ['$scope', '$http', 'httpService', function($scope, $http, httpService) {
+    $scope.config = {
+        toolbars: [
+            ['fullscreen', 'source', 'undo', 'redo'],
+            ['bold', 'fontfamily', 'fontsize', 'link', 'unlink', 'justifyleft', 'justifyright', 'justifycenter', 'justifyjustify', 'horizontal', 'indent', 'italic', 'underline', 'fontborder', 'simpleupload', 'insertvideo', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', 'preview']
+        ],
+        autoHeightEnabled: true,
+        autoFloatEnabled: true
+    }
 
-  var num = window.localStorage.getItem("questionaireId");
+    $scope.ready = function(editor){
+        editor.focus();
+    }
 
-  $http({
+    var num = window.localStorage.getItem("questionaireId");
+
+    $http({
         url : 'controllers/queryone.php',
         method : 'post',
         data : $.param({ "id" : num }),
@@ -528,27 +526,43 @@ app
         $scope.questionaire = data.result;
 
         angular.forEach($scope.questionaire.questions, function(it) {
+          angular.forEach(it.options, function(op) {
+            op.isSkip = op.isSkip == '1' ? true : false;
+            op.isHasNext = op.isHasNext == '1' ? true : false;
+            op.isCustomized = op.isCustomized == '1' ? true : false;
+          });
+
+          it.isSingle = it.isSingle == '1' ? true : false;
           it.isSetSkip = it.options[0].isSkip;
           
-          var gp1 = 0, gp2 = 0;
-          angular.forEach(it.options, function(op) {
-            if (gp1 == 0) {
-              gp1 = op.skipIndex;
-            }
+          var gp1 = "", gp2 = "";
 
-            if (gp1 != op.skipIndex) {
-              gp2 = op.skipIndex;
-            }
-          });
+          if (it.isSetSkip) {
+            angular.forEach(it.options, function(op) {
+              if (gp1 == "") {
+                gp1 = op.skipIndex;
+              }
+
+              if (gp1 != op.skipIndex) {
+                gp2 = op.skipIndex;
+              }
+            });
+          }
 
           it.group = {
             'gp1' : gp1,
             'gp2' : gp2
           }
 
-          angular.forEach(it.options, function(op) {
-            op.isSkipOne = op.skipIndex == gp1 ? true : false;
-          })
+          if (it.isSetSkip) {
+            angular.forEach(it.options, function(op) {
+              op.isSkipOne = op.skipIndex == gp1 ? true : false;
+            })
+          } else {
+            angular.forEach(it.options, function(op) {
+              op.isSkipOne = true;
+            })
+          }
         });
     })
     .error(function(error, header, config, status) {
@@ -556,66 +570,65 @@ app
         window.location.href = "#/list";
     });
 
-    $scope.config = {
-        toolbars: [
-            ['fullscreen', 'source', 'undo', 'redo'],
-            ['bold', 'fontfamily', 'fontsize', 'link', 'unlink', 'justifyleft', 'justifyright', 'justifycenter', 'justifyjustify', 'horizontal', 'indent', 'italic', 'underline', 'fontborder', 'simpleupload', 'insertvideo', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', 'preview']
-        ],
-        autoHeightEnabled: true,
-        autoFloatEnabled: true
+    $scope.addOption = function() {
+
     }
 
-    $scope.ready = function(editor){
-        editor.focus();
+    $scope.addQuestion = function() {
+      
     }
 
-    $scope.saveQuestionaire = function() {
-      $http({
-          url : 'controllers/updateQuestionaire.php',
-          method : 'post',
-          data : $.param(),
-          headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-      })
-      .success(function(data, header, config) {
-          window.location.href = "#/list";
-      })
-      .error(function(error, header, config) {
-          console.log(error);
-          window.location.href = "#/list";
-      });
+    $scope.saveQuestionaire = function(questionaireId) {
+      console.log(questionaireId);
+      // httpService.post('controllers/updateQuestionaire.php', {"id" : questionaireId}, function(data, header, config) {
+      //     window.location.href = "#/list";
+      // }, function(error, header, config) {
+      //     console.log(error);
+      //     window.location.href = "#/list";
+      // })
     };
 
-    $scope.saveQuestion = function() {
-      $http({
-          url : 'controllers/updateQuestion.php',
-          method : 'post',
-          data : $.param(),
-          headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-      })
-      .success(function(data, header, config) {
-          window.location.href = "#/list";
-      })
-      .error(function(error, header, config) {
-          console.log(error);
-          window.location.href = "#/list";
-      });
+    $scope.saveQuestion = function(questionId) {
+      console.log(questionId)
+      // $http({
+      //     url : 'controllers/updateQuestion.php',
+      //     method : 'post',
+      //     data : $.param({"id" : questionId}),
+      //     headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+      // })
+      // .success(function(data, header, config) {
+      //     window.location.href = "#/list";
+      // })
+      // .error(function(error, header, config) {
+      //     console.log(error);
+      //     window.location.href = "#/list";
+      // });
     };
 
-    $scope.saveQuestionOption = function() {
-      $http({
-          url : 'controllers/updateQuestionOption.php',
-          method : 'post',
-          data : $.param(),
-          headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-      })
-      .success(function(data, header, config) {
-          window.location.href = "#/list";
-      })
-      .error(function(error, header, config) {
-          console.log(error);
-          window.location.href = "#/list";
-      });
+    $scope.saveQuestionOption = function(optionId) {
+      console.log(optionId)
+      // $http({
+      //     url : 'controllers/updateQuestionOption.php',
+      //     method : 'post',
+      //     data : $.param({"id" : optionId}),
+      //     headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+      // })
+      // .success(function(data, header, config) {
+      //     window.location.href = "#/list";
+      // })
+      // .error(function(error, header, config) {
+      //     console.log(error);
+      //     window.location.href = "#/list";
+      // });
     };
+
+    $scope.deleteQuestion = function(questionId) {
+
+    }
+
+    $scope.deleteQuestionOption = function(optionId) {
+
+    }
 
     $scope.switchIsSetSkip = function(item) {
       angular.forEach(item.options, function(op) {
@@ -640,35 +653,32 @@ app
     };
 }]);
 
-app.factory('storeDataService', function() {
-  var questionaire = {'subject' : '', 'description' : '', 'createTime' : '', 'questions' : []};
-
+app.factory('httpService', ['$http', function($http) {
   return {
-    setQuestionaire : function(newQuestionaire) {
-      questionaire = newQuestionaire;
+    get : function(url, params, successCallback, errorCallback) {
+        $http({
+            url : url,
+            method : 'get',
+            data : $.param(params),
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+            responseType : 'json'
+        })
+        .success(successCallback)
+        .error(errorCallback);
     },
-    getQuestionaire : function() {
-      return questionaire;
+    post : function(url, params, successCallback, errorCallback) {
+      $http({
+            url : url,
+            method : 'post',
+            data : $.param(params),
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+            responseType : 'json'
+      })
+      .success(successCallback)
+      .error(errorCallback);
     }
-  };
-});
-
-// function queryAll(http, storeDataService, scope) {
-//   http({
-//       url : 'controllers/query.php',
-//       method : 'get',
-//       headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-//       responseType : 'json'
-//   })
-//   .success(function(data, header, config) {
-//     storeDataService.setQuestionaireList(data);
-//     console.log(data)
-//     scope.questionaires = storeDataService.getQuestionaireList();
-//   })
-//   .error(function(error, header, config) {
-//     console.log(error);
-//   });
-// }
+  }
+}]);
 
 function tipWork() {
   $('#hintDiv').show(500);
