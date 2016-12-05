@@ -35,7 +35,7 @@
 
 <form class="top-div" ng-if="!showHead" style="top:100px;" novalidate>
   <div class="form-group compo">
-    <label for="question">问题{{currentIndex + 1}}:(如需删除问题请完成创建后进入编辑页面进行操作)</label>
+    <label for="question">问题{{currentIndex + 1}}:</label>
     <div class="ueditor" config="config" ready="ready" style="width:100%;height:200px;" ng-model="questions[currentIndex].title"></div>
     <br/>
     <span>是否单选:</span>
@@ -56,7 +56,7 @@
     <br/>
     <label>选项:</label>
     <div ng-repeat="item in questions[currentIndex].options">
-      <span>选项内容:</span>
+      <span>选项内容{{$index}}:</span>
       <textarea class="form-control" rows="5" ng-disabled="item.isCustOmized" ng-model="item.content"></textarea>
       <span>选择此选项是否让被调查者继续回答下一题:</span>
       <input class="unchecked" ng-class='{"checked": item.isNext}' type="checkbox" ng-model="item.isNext" />
@@ -68,11 +68,17 @@
         <span>是否跳题至Group1:</span>
         <input class="unchecked" ng-class='{"checked": item.isSkipOne}' type="checkbox" ng-model="item.isSkipOne" ng-click="switchSkipIndex($event, item, questions[currentIndex].group)" />
       </div>
+      <div style="text-align:right;margin-top: -20px;">
+        <button class="btn btn-danger btn-xs" ng-click="deleteOption(questions[currentIndex].options, $index)">删除该选项</button>
+      </div>
       <br/><br/><br/>
     </div>
     <button class="btn btn-success btn-xs" style="margin-right:30px;" ng-click="addOption()">继续添加选项</button>
-    <button ng-show="currentIndex > 0" class="btn btn-info btn-xs" style="margin-right:30px;" ng-click="lastQues()">上一题</button>
-    <button class="btn btn-info btn-xs" style="margin-right:30px;margin-left: 40%;" ng-click="nextQues()">下一题</button>
-    <button class="btn btn-primary btn-xs" style="margin-right:30px;" ng-click="finishCreate()" ng-disabled="isSubmit">完成创建</button>
+    <div style="text-align:right;margin-top: -20px;">
+      <button class="btn btn-danger btn-xs" style="margin-right:30px;" ng-click="deleteQuestion()">删除问题</button>
+      <button ng-show="currentIndex > 0" class="btn btn-info btn-xs" style="margin-left:4%;" ng-click="lastQues()">上一题</button>
+      <button class="btn btn-info btn-xs" style="margin-right:4%;margin-left: 4%;" ng-click="nextQues()">下一题</button>
+      <button class="btn btn-primary btn-xs" ng-click="finishCreate()" ng-disabled="isSubmit">完成创建</button>
+    </div>
   </div>
 </form>

@@ -76,10 +76,32 @@
           <button class="btn btn-danger btn-sm" style="margin-right:30px;" ng-click="deleteQuestionOption(item.id)">删除问题{{outerIndex + 1}}选项{{$index + 1}}</button>      
           <button class="btn btn-success btn-sm" ng-click="saveQuestionOption(item.id)">保存问题{{outerIndex + 1}}选项{{$index + 1}}的修改</button>      
         </div>
+        <br/><br/>
+      </div>
+      <br/><br/><br/>
+
+      <!--show add options-->
+      <div ng-repeat="option in question.addOptions">
+        <textarea class="form-control" rows="5" ng-disabled="option.isCustomized" ng-model="option.content"></textarea>
+        <span>选择此选项是否让被调查者继续回答下一题:</span>
+        <input class="unchecked" ng-class='{"checked": option.isHasNext}' type="checkbox" ng-model="option.isHasNext" />
+        <br/>
+        <span>此选项是否由被调查者自行输入:</span>
+        <input class="unchecked" ng-class='{"checked": option.isCustomized}' type="checkbox" ng-model="option.isCustomized" />
+        <br/>
+        <div ng-if="question.isSetSkip">
+          <span>是否跳题至Group1:</span>
+          <input class="unchecked" ng-class='{"checked": option.isSkipOne}' type="checkbox" ng-model="option.isSkipOne" ng-click="switchSkipIndex(option, question.group)" />
+        </div>
         <br/><br/><br/>
       </div>
+      <div style="text-align:right;" ng-if="question.addOptions.length > 0">
+        <button class="btn btn-success btn-sm" ng-click="saveAddQuestionOptions(question)">保存问题{{outerIndex + 1}}添加的选项</button>      
+      </div>
+      <br/><br/><br/>
+
       <div style="text-align:left;">
-        <button class="btn btn-info btn-sm" style="margin-top:-54px;" ng-click="addOption()">添加选项</button>      
+        <button class="btn btn-info btn-sm" style="margin-top:-160px;" ng-click="addOption(question)">添加选项</button>      
       </div>
     </div>
   </div>

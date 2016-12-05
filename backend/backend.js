@@ -242,7 +242,7 @@ app
         editor.focus();
     }
 
-    $scope.showHead = true;
+    $scope.showHead = false;
     $scope.isSubmit = false;
     $scope.currentIndex = 0;
 
@@ -359,7 +359,32 @@ app
       }
     }
 
-    $scope.lastQues =function() {
+    $scope.deleteQuestion = function() {
+      if ($scope.questions.length == 0 || $scope.questions.length == 1 && $scope.currentIndex == 0) {
+        $scope.tip = "问卷问题不得为空!";
+        tipWork();
+        return;
+      }
+
+      var pos = $scope.currentIndex;
+
+      if ($scope.currentIndex > 0) {
+        $scope.currentIndex--;
+      }
+      $scope.questions.splice(pos, 1);
+    }
+
+    $scope.deleteOption = function(options, index) {
+      if (options.length == 0 || options.length == 1 && index == 0) {
+        $scope.tip = "问题选项不得为空!";
+        tipWork();
+        return;
+      }
+
+      options.splice(index, 1);
+    }
+
+    $scope.lastQues = function() {
       if (validateCurrentQuestion()) {
         $scope.tip = "请先完成当前问题!";
         tipWork();
@@ -419,15 +444,19 @@ app
         var max = $scope.questions.length - 1;
 
         $scope.$watch(function() {
-          return $scope.questions[max].group
+          if ($scope.questions[max] != null) {
+            return $scope.questions[max].group
+          }
         }, function() {
-          angular.forEach($scope.questions[max].options, function(op) {
-            if (op.isSkipOne) {
-              op.skipIndex = $scope.questions[max].group.gp1;
-            } else {
-              op.skipIndex = $scope.questions[max].group.gp2;
-            }
-          })
+          if ($scope.questions[max] != null) {
+            angular.forEach($scope.questions[max].options, function(op) {
+              if (op.isSkipOne) {
+                op.skipIndex = $scope.questions[max].group.gp1;
+              } else {
+                op.skipIndex = $scope.questions[max].group.gp2;
+              }
+            })
+          }
         }, true)
       }
     }
@@ -526,6 +555,28 @@ app
         $scope.questionaire = data.result;
 
         angular.forEach($scope.questionaire.questions, function(it) {
+          it.addOptions = [];
+
+          $scope.$watch(function() {
+            return it.group
+          }, function() {
+            angular.forEach(it.options, function(op) {
+              if (op.isSkipOne) {
+                op.skipIndex = it.group.gp1;
+              } else {
+                op.skipIndex = it.group.gp2;
+              }
+            })
+
+            angular.forEach(it.addOptions, function(op) {
+              if (op.isSkipOne) {
+                op.skipIndex = it.group.gp1;
+              } else {
+                op.skipIndex = it.group.gp2;
+              }
+            })
+          }, true)
+
           angular.forEach(it.options, function(op) {
             op.isSkip = op.isSkip == '1' ? true : false;
             op.isHasNext = op.isHasNext == '1' ? true : false;
@@ -570,12 +621,34 @@ app
         window.location.href = "#/list";
     });
 
-    $scope.addOption = function() {
+    $scope.addOption = function(question) {
+      if (length = question.addOptions.length != 0) {
+        if (question.addOptions[length - 1].content == '') {
+          $scope.tip = "选项不得为空!";
+          tipWork();
+          return;
+        }
+      }
 
+      var addOption = {
+        isHasNext : true,
+        isCustomized: false,
+        content : '',
+        isSkip : question.isSetSkip,
+        isSkipOne : true, 
+      };
+
+      addOption.isSkipOne == true ? addOption.skipIndex = question.group.gp1 : addOption.skipIndex = question.group.gp2;
+
+      question.addOptions.push(addOption)
+    }
+
+    $scope.saveAddQuestionOptions = function(question) {
+      // console.log(question.addOptions)
     }
 
     $scope.addQuestion = function() {
-      
+
     }
 
     $scope.saveQuestionaire = function(questionaireId) {
@@ -632,6 +705,10 @@ app
 
     $scope.switchIsSetSkip = function(item) {
       angular.forEach(item.options, function(op) {
+        op.isSkip = item.isSetSkip;
+      })
+
+      angular.forEach(item.addOptions, function(op) {
         op.isSkip = item.isSetSkip;
       })
     }

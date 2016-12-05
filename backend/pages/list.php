@@ -71,7 +71,7 @@
          <td style="max-width:40%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{{questionaire.description}}">{{questionaire.description}}</td>
          <td style="width:20%;">{{questionaire.createTime}}</td>
          <td style="width:10%;">
-           <button type="button" title="详情" class="btn btn-default btn-xs" ng-click="detail(questionaire.id)">
+           <button type="button" title="生成问卷" class="btn btn-default btn-xs" ng-click="detail(questionaire.id)">
              <i class="glyphicon glyphicon-new-window"></i>
            </button>
            <button type="button" title="编辑" class="btn btn-default btn-xs" ng-click="edit(questionaire.id)">
