@@ -52,7 +52,7 @@
                         }
                       }
                       _updateByRender = false;
-                    }, 50)
+                    }, 200)
                   });
                   if (_self.modelContent && _self.modelContent.length > 0) {
                     _self.setEditorContent();

@@ -71,9 +71,9 @@ app
             var code = data.code;
 
             if (code == 500) {
-              $('#hintDiv').show(500);
+              $('#hintDiv').fadeIn(500);
               $timeout(function() {
-                $('#hintDiv').hide(2000);
+                $('#hintDiv').fadeOut(2000);
               }, 1000);
               return;
             }
@@ -88,7 +88,7 @@ app
     };
 
     $scope.close = function() {
-      $('#hintDiv').hide();
+      $('#hintDiv').fadeOut();
     };
 }])
 
@@ -242,7 +242,7 @@ app
         editor.focus();
     }
 
-    $scope.showHead = false;
+    $scope.showHead = true;
     $scope.isSubmit = false;
     $scope.currentIndex = 0;
 
@@ -340,11 +340,6 @@ app
       }
     }
 
-    function isPositiveInteger(s) {
-       var reg = /^[0-9]+$/ ;
-       return reg.test(s);
-    }
-
     function validateGroup() {
       if (!$scope.questions[$scope.currentIndex].isSetSkip) {
         return false;
@@ -376,7 +371,7 @@ app
 
     $scope.deleteOption = function(options, index) {
       if (options.length == 0 || options.length == 1 && index == 0) {
-        $scope.tip = "问题选项不得为空!";
+        $scope.tip = "问题至少需要一个选项!";
         tipWork();
         return;
       }
@@ -463,7 +458,7 @@ app
 
     $scope.createQuestion = function() {
 
-      if ($scope.questionaire.subject == "" || $scope.questionaire.description == "") {
+      if ($scope.questionaire.subject == "" || $scope.questionaire.subject == undefined || $scope.questionaire.description == "") {
         $scope.tip = "问卷主题或说明不得为空!";
         tipWork();
         return;
@@ -488,7 +483,7 @@ app
         return;
       }
 
-      if ($scope.questionaire.subject == "" || $scope.questionaire.description == "") {
+      if ($scope.questionaire.subject == "" || $scope.questionaire.subject == undefined || $scope.questionaire.description == "") {
         $scope.isSubmit = false;
         return;
       }
@@ -518,7 +513,7 @@ app
     }
 
     $scope.close = function() {
-      $('#hintDiv').hide();
+      $('#hintDiv').fadeOut();
     };
 }])
 
@@ -531,6 +526,8 @@ app
         autoHeightEnabled: true,
         autoFloatEnabled: true
     }
+
+    $scope.isSubmit = false;
 
     $scope.ready = function(editor){
         editor.focus();
@@ -553,6 +550,7 @@ app
         }
         
         $scope.questionaire = data.result;
+        $scope.questionaire.addQuestions = [];
 
         angular.forEach($scope.questionaire.questions, function(it) {
           it.addOptions = [];
@@ -585,6 +583,7 @@ app
 
           it.isSingle = it.isSingle == '1' ? true : false;
           it.isSetSkip = it.options[0].isSkip;
+          it.originIsSetSkip = it.options[0].isSkip;
           
           var gp1 = "", gp2 = "";
 
@@ -598,6 +597,11 @@ app
                 gp2 = op.skipIndex;
               }
             });
+          }
+
+          it.originGroup = {
+            'gp1' : gp1,
+            'gp2' : gp2
           }
 
           it.group = {
@@ -621,8 +625,16 @@ app
         window.location.href = "#/list";
     });
 
+    $scope.sendQuestionId = function(questionId) {
+      $scope.deleteQuestionId = questionId;
+    }
+
+    $scope.sendQuestionOptionId = function(optionId) {
+      $scope.deleteQuestionOptionId = optionId;
+    }
+
     $scope.addOption = function(question) {
-      if (length = question.addOptions.length != 0) {
+      if ((length = question.addOptions.length) != 0) {
         if (question.addOptions[length - 1].content == '') {
           $scope.tip = "选项不得为空!";
           tipWork();
@@ -643,39 +655,197 @@ app
       question.addOptions.push(addOption)
     }
 
+    $scope.addOptionAddQuestion = function(question) {
+      if ((length = question.options.length) != 0) {
+        if (question.options[length - 1].content == '') {
+          $scope.tip = "选项不得为空!";
+          tipWork();
+          return;
+        }
+      }
+      var addOption = {
+        isHasNext : true,
+        isCustomized: false,
+        content : '',
+        isSkip : question.isSetSkip,
+        isSkipOne : true, 
+      };
+
+      addOption.isSkipOne == true ? addOption.skipIndex = question.group.gp1 : addOption.skipIndex = question.group.gp2;
+
+      question.options.push(addOption)
+    }
+
+    $scope.deleteOption = function(options, index, question) {
+      if (options.length == 0 || options.length == 1 && index == 0 &&  question.options.length == 0) {
+        $scope.tip = "问题至少需要一个选项!";
+        tipWork();
+        return;
+      }
+      console.log(index)
+      console.log(options)
+      options.splice(index, 1);
+    }
+
+    $scope.deleteOptionAdd = function(options, index) {
+      if (options.length == 0 || options.length == 1 && index == 0) {
+        $scope.tip = "问题至少需要一个选项!";
+        tipWork();
+        return;
+      }
+      console.log(index)
+      console.log(options)
+      options.splice(index, 1);
+    }
+
     $scope.saveAddQuestionOptions = function(question) {
       // console.log(question.addOptions)
     }
 
     $scope.addQuestion = function() {
+        var addQuestion = {
+          title : '',
+          isSingle : true,
+          isSetSkip : false,
+          group : {
+            gp1 : '',
+            gp2 : ''
+          }
+        };
+
+        var addOption = {
+          isNext : true,
+          isCustOmized : false,
+          isSkip : addQuestion.isSetSkip,
+          isSkipOne : true,
+          content : ""
+        };
+
+        addOption.isSkipOne == true ? addOption.skipIndex = addQuestion.group.gp1 : addOption.skipIndex = addQuestion.group.gp2;
+
+        addQuestion.options = [addOption]
+
+        $scope.questionaire.addQuestions.push(addQuestion);
+        
+        var max = $scope.questionaire.addQuestions.length - 1;
+
+        $scope.$watch(function() {
+          if ($scope.questionaire.addQuestions[max] != null) {
+            return $scope.questionaire.addQuestions[max].group
+          }
+        }, function() {
+          if ($scope.questionaire.addQuestions[max] != null) {
+            angular.forEach($scope.questionaire.addQuestions[max].options, function(op) {
+              if (op.isSkipOne) {
+                op.skipIndex = $scope.questionaire.addQuestions[max].group.gp1;
+              } else {
+                op.skipIndex = $scope.questionaire.addQuestions[max].group.gp2;
+              }
+            })
+          }
+        }, true)
+    }
+
+    $scope.saveAddQuestion = function() {
 
     }
 
     $scope.saveQuestionaire = function(questionaireId) {
-      console.log(questionaireId);
-      // httpService.post('controllers/updateQuestionaire.php', {"id" : questionaireId}, function(data, header, config) {
-      //     window.location.href = "#/list";
-      // }, function(error, header, config) {
-      //     console.log(error);
-      //     window.location.href = "#/list";
-      // })
+
+      if ($scope.questionaire.subject == "" || $scope.questionaire.subject == undefined || $scope.questionaire.description == "") {
+        return;
+      }
+
+      $scope.isSubmit = true;
+
+      var data = {"id" : questionaireId, "subject" : $scope.questionaire.subject, "description" : $scope.questionaire.description}
+
+      httpService.post('controllers/updateQuestionaire.php', data, function(data, header, config) {
+          if (data.code == 200) {
+            $scope.tip = "更新成功!";
+            tipWork(function() {
+              window.location.href = "#/list";
+            });
+          } else {
+            $scope.tip = "更新失败，请稍后再试!";
+            tipWork();
+            $scope.isSubmit = false;
+          }
+      }, function(error, header, config) {
+          console.log(error);
+          window.location.href = "#/list";
+      })
     };
 
-    $scope.saveQuestion = function(questionId) {
-      console.log(questionId)
-      // $http({
-      //     url : 'controllers/updateQuestion.php',
-      //     method : 'post',
-      //     data : $.param({"id" : questionId}),
-      //     headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-      // })
-      // .success(function(data, header, config) {
-      //     window.location.href = "#/list";
-      // })
-      // .error(function(error, header, config) {
-      //     console.log(error);
-      //     window.location.href = "#/list";
-      // });
+    //原先设置了跳题索引现要进行索引更新可以以原先索引的值为条件进行批量更新
+    //原先没有进行跳题设置，现改为可以跳题，如需进行批量更新则需要根据每个选项的跳题group进行更新
+    $scope.saveQuestion = function(questionId, question, index) {
+
+      if (question.title == "") {
+        return;
+      }
+
+      $scope.isSubmit = true;
+
+      var data = {
+        "id" : questionId,
+        "title" : question.title,
+        "isSingle" : question.isSingle
+      };
+
+      data.isSetSkip = question.isSetSkip;
+
+      if (question.isSetSkip) {
+        var group = question.group;
+
+        if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= index || parseInt(group.gp2) <= index || group.gp1 == group.gp2) {
+          $scope.tip = "索引不合法!";
+          tipWork();
+          return;
+        }
+
+        if (question.originGroup.gp1 != '') {
+          data.isChange = false;
+
+          if (!(question.originGroup.gp1 == question.group.gp1 && question.originGroup.gp2 == question.group.gp2)) {
+            data.origingp1 = question.originGroup.gp1;
+            data.gp1 = question.group.gp1;
+            data.origingp2 = question.originGroup.gp2;
+            data.gp2 = question.group.gp2;
+          }
+        } else {
+          data.isChange = true;
+          var pairs = [];
+          angular.forEach(question.options, function(op) {
+            pairs.push({"id" : op.id, "skipIndex" : op.skipIndex})
+          });
+          data.pairs = pairs;
+        }
+      } else {
+        if (question.originIsSetSkip) {
+          var optionUpdateIds = [];
+          angular.forEach(question.options, function(op) {
+            optionUpdateIds.push(op.id)
+          });
+          data.optionIds = optionUpdateIds;
+        }
+      }
+
+      httpService.post('controllers/updateQuestion.php', data, function(data, header, config) {
+          // if (data.code == 200) {
+          //   $scope.tip = "更新成功!";
+          //   tipWork(function() {
+          //     window.location.href = "#/list";
+          //   });
+          // } else {
+          //   $scope.tip = "更新失败，请稍后再试!";
+          //   tipWork();
+          //   $scope.isSubmit = false;
+          // }
+      }, function(error, header, config) {
+          console.log(error);
+          window.location.href = "#/list";
+      })
     };
 
     $scope.saveQuestionOption = function(optionId) {
@@ -696,11 +866,17 @@ app
     };
 
     $scope.deleteQuestion = function(questionId) {
-
+      $('#questionModal').modal('hide');
+      console.log(questionId)
     }
 
     $scope.deleteQuestionOption = function(optionId) {
+      $('#optionModal').modal('hide');
+      console.log(optionId)
+    }
 
+    $scope.deleteQuestionAdd = function(pos) {
+      $scope.questionaire.addQuestions.splice(pos, 1);
     }
 
     $scope.switchIsSetSkip = function(item) {
@@ -709,6 +885,12 @@ app
       })
 
       angular.forEach(item.addOptions, function(op) {
+        op.isSkip = item.isSetSkip;
+      })
+    }
+
+    $scope.switchIsSetSkipAdd = function(item) {
+      angular.forEach(item.options, function(op) {
         op.isSkip = item.isSetSkip;
       })
     }
@@ -722,7 +904,7 @@ app
     }
 
     $scope.close = function() {
-      $('#hintDiv').hide();
+      $('#hintDiv').fadeOut();
     };
 
     $scope.cancel = function() {
@@ -757,10 +939,15 @@ app.factory('httpService', ['$http', function($http) {
   }
 }]);
 
-function tipWork() {
-  $('#hintDiv').show(500);
+function tipWork(callback) {
+  $('#hintDiv').fadeIn(500);
 
   setTimeout(function() {
-    $('#hintDiv').hide(2000);
+    $('#hintDiv').fadeOut(2000, callback);
   }, 1000);
+}
+
+function isPositiveInteger(s) {
+   var reg = /^[0-9]+$/ ;
+   return reg.test(s);
 }
