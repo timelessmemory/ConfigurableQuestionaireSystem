@@ -31,23 +31,28 @@
 	    $isSetSkip = $_POST["isSetSkip"];
 
 	    if ($isSetSkip == "true") {
-	    	$isChange = $_POST["isChange"];
+	    	
+	    	$pairs = $_POST["pairs"];
 
-	    	if ($isChange == "true") {
-	    		$pairs = $_POST["pairs"];
-	    		
+	    	if (!is_null($pairs)) {
 	    		foreach ($pairs as $pair) {
 	    			$opId = $pair['id'];
 	    			$skipIndex = $pair['skipIndex'];
-	    		}
-	    	} else {
-	    		$origingp1 = $_POST["origingp1"];
 
-	    		if (!is_null($origingp1)) {
-	    			$gp1 = $_POST["gp1"];
-			    	$origingp2 = $_POST["origingp2"];
-			    	$gp2 = $_POST["gp2"];
-			    	echo $gp1;
+	    			$sql = "update questionOption set skipIndex = :skipIndex, isSkip = 1 where id = :optionId";
+	    			$preparedStatement = $db->prepare($sql);
+
+				    $params =[
+				        ":skipIndex" => $skipIndex,
+				        ":optionId" => $opId
+				    ];
+
+				    $result = $preparedStatement->execute($params);
+
+				    if (!$result) {
+				    	echo json_encode(array("code" => 500));
+				    	return;
+				    }
 	    		}
 	    	}
 	    } else {
@@ -55,7 +60,19 @@
 
 	    	if (!is_null($optionIds)) {
 	    		foreach ($optionIds as $optionId) {
-	    			echo $optionId;
+	    			$sql = "update questionOption set isSkip = 0 where id = :optionId";
+	    			$preparedStatement = $db->prepare($sql);
+
+				    $params =[
+				        ":optionId" => $optionId
+				    ];
+
+				    $result = $preparedStatement->execute($params);
+
+				    if (!$result) {
+				    	echo json_encode(array("code" => 500));
+				    	return;
+				    }
 	    		}
 	    	}
 	    }

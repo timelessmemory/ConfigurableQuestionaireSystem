@@ -2,29 +2,39 @@
 	header('Content-Type: application/json');
     header("Content-Type:text/html;charset=UTF-8");
     
-    $optionId = $_POST["id"];
-    $content = $_POST["content"];
-    $isHasNext = $_POST["isHasNext"] == "true" ? true : false;
-    $isCustomized = $_POST["isCustomized"] == "true" ? true : false;
+    $questionId = $_POST["id"];
+
+    if ($questionId == '') {
+    	echo json_encode(array("code" => 500));
+    	return;
+    }
     
 	try {
-	    $sql = "update questionOption set content = :content, isHasNext = :isHasNext, isCustomized = :isCustomized where id = :optionId";
-
 	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
 	    $db = new PDO($dsn, 'root', 'root');
 	    $db->query('set names utf8;');
 
-	    $preparedStatement = $db->prepare($sql);
-
 	    $params =[
-	        ":content" => $content,
-	        ":isHasNext" => $isHasNext,
-	        ":isCustomized" => $isCustomized,
-	        ":optionId" => $optionId
+	        ":questionId" => $questionId
 	    ];
 
+	    $sql = "delete from question where id = :questionId";
+
+	    $preparedStatement = $db->prepare($sql);
+
 	    $result = $preparedStatement->execute($params);
-	    
+
+	    if (!$result) {
+	    	echo json_encode(array("code" => 500));
+	    	return;
+	    }
+
+    	$sql = "delete from questionOption where questionId = :questionId";
+
+    	$preparedStatement = $db->prepare($sql);
+
+	    $result = $preparedStatement->execute($params);
+
 	    if (!$result) {
 	    	echo json_encode(array("code" => 500));
 	    	return;

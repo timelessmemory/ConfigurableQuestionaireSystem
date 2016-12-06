@@ -102,7 +102,7 @@
       </div>
       <div style="text-align:right;">
         <button class="btn btn-danger btn-sm" style="margin-right:30px;margin-top:28px;" data-target="#questionModal" data-toggle="modal" ng-click="sendQuestionId(question.id)">删除问题{{outerIndex + 1}}</button>      
-        <button class="btn btn-success btn-sm" style="margin-top:30px;"  ng-click="saveQuestion(question.id, question, outerIndex + 1)">保存问题{{outerIndex + 1}}题干的修改</button>      
+        <button class="btn btn-success btn-sm" style="margin-top:30px;" ng-disabled="isSubmit" ng-click="saveQuestion(question.id, question, outerIndex + 1)">保存问题{{outerIndex + 1}}题干的修改</button>      
       </div>
       <br/>
       <br/>
@@ -119,10 +119,11 @@
         <div ng-if="question.isSetSkip">
           <span>是否跳题至Group1:</span>
           <input class="unchecked" ng-class='{"checked": item.isSkipOne}' type="checkbox" ng-model="item.isSkipOne" ng-click="switchSkipIndex(item, question.group)" />
+          (跳题设置修改后请点击题干修改保存按钮进行保存)
         </div>
         <div style="text-align:right;">
           <button class="btn btn-danger btn-sm" style="margin-right:30px;" data-target="#optionModal" data-toggle="modal" ng-click="sendQuestionOptionId(item.id)">删除问题{{outerIndex + 1}}选项{{$index + 1}}</button>      
-          <button class="btn btn-success btn-sm" ng-click="saveQuestionOption(item.id)">保存问题{{outerIndex + 1}}选项{{$index + 1}}的修改</button>      
+          <button class="btn btn-success btn-sm" ng-disabled="isSubmit" ng-click="saveQuestionOption(item.id, item)">保存问题{{outerIndex + 1}}选项{{$index + 1}}的修改</button>      
         </div>
         <br/><br/>
       </div>
@@ -147,7 +148,7 @@
         <br/><br/><br/>
       </div>
       <div style="text-align:right;" ng-if="question.addOptions.length > 0">
-        <button class="btn btn-success btn-sm" ng-click="saveAddQuestionOptions(question)">保存问题{{outerIndex + 1}}添加的选项</button>      
+        <button class="btn btn-success btn-sm" ng-disabled="isSubmit" ng-click="saveAddQuestionOptions(question, outerIndex + 1)">保存问题{{outerIndex + 1}}添加的选项</button>      
       </div>
       <br/><br/><br/>
 
@@ -210,10 +211,10 @@
     <button class="btn btn-default" ng-click="cancel()">返回</button>
   </div>
   <div style="text-align:right;margin-top:-30px;margin-right: 22%;margin-bottom: 20px;">
-    <button class="btn btn-info btn-sm" ng-click="addQuestion()">添加问题</button>
+    <button class="btn btn-info btn-sm" ng-click="addQuestion(questionaire)">添加问题</button>
   </div>
   <div style="text-align:right;margin-top:-50px;margin-right: 2%;">
-    <button class="btn btn-success btn-sm" ng-click="saveAddQuestion()">保存添加的问题</button>      
+    <button class="btn btn-success btn-sm" ng-disabled="isSubmit" ng-if="questionaire.addQuestions.length > 0" ng-click="saveAddQuestion(questionaire)">保存添加的问题</button>      
   </div>
 </form>
 

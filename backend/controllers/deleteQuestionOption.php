@@ -3,12 +3,14 @@
     header("Content-Type:text/html;charset=UTF-8");
     
     $optionId = $_POST["id"];
-    $content = $_POST["content"];
-    $isHasNext = $_POST["isHasNext"] == "true" ? true : false;
-    $isCustomized = $_POST["isCustomized"] == "true" ? true : false;
+
+    if ($optionId == '') {
+    	echo json_encode(array("code" => 500));
+    	return;
+    }
     
 	try {
-	    $sql = "update questionOption set content = :content, isHasNext = :isHasNext, isCustomized = :isCustomized where id = :optionId";
+	    $sql = "delete from questionOption where id = :optionId";
 
 	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
 	    $db = new PDO($dsn, 'root', 'root');
@@ -17,9 +19,6 @@
 	    $preparedStatement = $db->prepare($sql);
 
 	    $params =[
-	        ":content" => $content,
-	        ":isHasNext" => $isHasNext,
-	        ":isCustomized" => $isCustomized,
 	        ":optionId" => $optionId
 	    ];
 
@@ -29,7 +28,7 @@
 	    	echo json_encode(array("code" => 500));
 	    	return;
 	    }
-
+	    
 	    echo json_encode(array("code" => 200));
     } catch (Exception $e) {
         echo json_encode(array("code" => 500));

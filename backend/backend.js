@@ -599,11 +599,6 @@ app
             });
           }
 
-          it.originGroup = {
-            'gp1' : gp1,
-            'gp2' : gp2
-          }
-
           it.group = {
             'gp1' : gp1,
             'gp2' : gp2
@@ -635,7 +630,7 @@ app
 
     $scope.addOption = function(question) {
       if ((length = question.addOptions.length) != 0) {
-        if (question.addOptions[length - 1].content == '') {
+        if (!question.addOptions[length - 1].isCustomized && question.addOptions[length - 1].content == '') {
           $scope.tip = "选项不得为空!";
           tipWork();
           return;
@@ -657,7 +652,7 @@ app
 
     $scope.addOptionAddQuestion = function(question) {
       if ((length = question.options.length) != 0) {
-        if (question.options[length - 1].content == '') {
+        if (!question.options[length - 1].isCustomized && question.options[length - 1].content == '') {
           $scope.tip = "选项不得为空!";
           tipWork();
           return;
@@ -698,11 +693,71 @@ app
       options.splice(index, 1);
     }
 
-    $scope.saveAddQuestionOptions = function(question) {
-      // console.log(question.addOptions)
+    $scope.saveAddQuestionOptions = function(question, index) {
+      if ((length = question.addOptions.length) != 0) {
+        if (!question.addOptions[length - 1].isCustomized && question.addOptions[length - 1].content == '') {
+          $scope.tip = "选项不得为空!";
+          tipWork();
+          return;
+        }
+      }
+
+      if (question.isSetSkip) {
+        var group = question.group;
+
+        if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= index || parseInt(group.gp2) <= index || group.gp1 == group.gp2) {
+          $scope.tip = "索引不合法!";
+          tipWork();
+          return;
+        }
+      }
+
+      $scope.isSubmit = true;
+
+      var data = {"id" : question.id, "addOptions" : question.addOptions}
+
+      httpService.post('controllers/addQuestionOption.php', data, function(data, header, config) {
+          if (data.code == 200) {
+            $scope.tip = "更新成功!";
+            tipWork(function() {
+              window.location.href = "#/list";
+            });
+          } else {
+            $scope.tip = "更新失败，请稍后再试!";
+            tipWork();
+            $scope.isSubmit = false;
+          }
+      }, function(error, header, config) {
+          console.log(error);
+          window.location.href = "#/list";
+      })
     }
 
-    $scope.addQuestion = function() {
+    $scope.addQuestion = function(questionaire) {
+        if ((length = questionaire.addQuestions.length) != 0) {
+          var maxQues = questionaire.addQuestions[length - 1];
+
+          if (maxQues.isSetSkip) {
+            var group = maxQues.group;
+            var index = questionaire.questions.length + length;
+
+            if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= index || parseInt(group.gp2) <= index || group.gp1 == group.gp2) {
+              $scope.tip = "索引不合法!";
+              tipWork();
+              return;
+            }
+          }
+
+          var maxLength = maxQues.options.length;
+          var maxOption = maxQues.options[maxLength - 1];
+
+          if (maxQues.title == "" || (!maxOption.isCustomized && maxOption.content == "")) {
+            $scope.tip = "问题或选项不得为空!";
+            tipWork();
+            return;
+          }
+        }
+
         var addQuestion = {
           title : '',
           isSingle : true,
@@ -714,8 +769,8 @@ app
         };
 
         var addOption = {
-          isNext : true,
-          isCustOmized : false,
+          isHasNext : true,
+          isCustomized : false,
           isSkip : addQuestion.isSetSkip,
           isSkipOne : true,
           content : ""
@@ -746,8 +801,53 @@ app
         }, true)
     }
 
-    $scope.saveAddQuestion = function() {
+    $scope.saveAddQuestion = function(questionaire) {
+      if ((length = questionaire.addQuestions.length) != 0) {
+        var maxQues = questionaire.addQuestions[length - 1];
 
+        if (maxQues.isSetSkip) {
+          var group = maxQues.group;
+          var index = questionaire.questions.length + length;
+
+          if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= index || parseInt(group.gp2) <= index || group.gp1 == group.gp2) {
+            $scope.tip = "索引不合法!";
+            tipWork();
+            return;
+          }
+        }
+
+        var maxLength = maxQues.options.length;
+        var maxOption = maxQues.options[maxLength - 1];
+
+        if ((!maxOption.isCustomized && maxOption.content == "") || maxQues.title == "") {
+          $scope.tip = "问题或选项不得为空!";
+          tipWork();
+          return;
+        }
+      }
+
+      $scope.isSubmit = true;
+
+      var data = {
+        "id" : questionaire.id,
+        "addQuestions" : questionaire.addQuestions 
+      }
+
+      httpService.post('controllers/addQuestion.php', data, function(data, header, config) {
+          if (data.code == 200) {
+            $scope.tip = "更新成功!";
+            tipWork(function() {
+              window.location.href = "#/list";
+            });
+          } else {
+            $scope.tip = "更新失败，请稍后再试!";
+            tipWork();
+            $scope.isSubmit = false;
+          }
+      }, function(error, header, config) {
+          console.log(error);
+          window.location.href = "#/list";
+      })
     }
 
     $scope.saveQuestionaire = function(questionaireId) {
@@ -780,7 +880,6 @@ app
     //原先设置了跳题索引现要进行索引更新可以以原先索引的值为条件进行批量更新
     //原先没有进行跳题设置，现改为可以跳题，如需进行批量更新则需要根据每个选项的跳题group进行更新
     $scope.saveQuestion = function(questionId, question, index) {
-
       if (question.title == "") {
         return;
       }
@@ -804,23 +903,14 @@ app
           return;
         }
 
-        if (question.originGroup.gp1 != '') {
-          data.isChange = false;
+        var pairs = [];
 
-          if (!(question.originGroup.gp1 == question.group.gp1 && question.originGroup.gp2 == question.group.gp2)) {
-            data.origingp1 = question.originGroup.gp1;
-            data.gp1 = question.group.gp1;
-            data.origingp2 = question.originGroup.gp2;
-            data.gp2 = question.group.gp2;
-          }
-        } else {
-          data.isChange = true;
-          var pairs = [];
-          angular.forEach(question.options, function(op) {
-            pairs.push({"id" : op.id, "skipIndex" : op.skipIndex})
-          });
-          data.pairs = pairs;
-        }
+        angular.forEach(question.options, function(op) {
+          pairs.push({"id" : op.id, "skipIndex" : op.skipIndex})
+        });
+
+        data.pairs = pairs;
+
       } else {
         if (question.originIsSetSkip) {
           var optionUpdateIds = [];
@@ -832,47 +922,92 @@ app
       }
 
       httpService.post('controllers/updateQuestion.php', data, function(data, header, config) {
-          // if (data.code == 200) {
-          //   $scope.tip = "更新成功!";
-          //   tipWork(function() {
-          //     window.location.href = "#/list";
-          //   });
-          // } else {
-          //   $scope.tip = "更新失败，请稍后再试!";
-          //   tipWork();
-          //   $scope.isSubmit = false;
-          // }
+          if (data.code == 200) {
+            $scope.tip = "更新成功!";
+            tipWork(function() {
+              window.location.href = "#/list";
+            });
+          } else {
+            $scope.tip = "更新失败，请稍后再试!";
+            tipWork();
+            $scope.isSubmit = false;
+          }
       }, function(error, header, config) {
           console.log(error);
           window.location.href = "#/list";
       })
     };
 
-    $scope.saveQuestionOption = function(optionId) {
-      console.log(optionId)
-      // $http({
-      //     url : 'controllers/updateQuestionOption.php',
-      //     method : 'post',
-      //     data : $.param({"id" : optionId}),
-      //     headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-      // })
-      // .success(function(data, header, config) {
-      //     window.location.href = "#/list";
-      // })
-      // .error(function(error, header, config) {
-      //     console.log(error);
-      //     window.location.href = "#/list";
-      // });
+    $scope.saveQuestionOption = function(optionId, item) {
+
+      if (item.content == "") {
+        return;
+      }
+
+      $scope.isSubmit = true;
+
+      var data = {
+        "id" : optionId,
+        "content" : item.content,
+        "isHasNext" : item.isHasNext,
+        "isCustomized" : item.isCustomized
+      };
+
+      httpService.post('controllers/updateQuestionOption.php', data, function(data, header, config) {
+          if (data.code == 200) {
+            $scope.tip = "更新成功!";
+            tipWork(function() {
+              window.location.href = "#/list";
+            });
+          } else {
+            $scope.tip = "更新失败，请稍后再试!";
+            tipWork();
+            $scope.isSubmit = false;
+          }
+      }, function(error, header, config) {
+          console.log(error);
+          window.location.href = "#/list";
+      })
     };
 
     $scope.deleteQuestion = function(questionId) {
-      $('#questionModal').modal('hide');
-      console.log(questionId)
+      httpService.post('controllers/deleteQuestion.php', {"id" : questionId}, function(data, header, config) {
+          $('#questionModal').modal('hide');
+
+          if (data.code == 200) {
+            $scope.tip = "删除成功!";
+            tipWork(function() {
+              window.location.href = "#/list";
+            });
+          } else {
+            $scope.tip = "删除失败，请稍后再试!";
+            tipWork();
+          }
+      }, function(error, header, config) {
+          $('#questionModal').modal('hide');
+          console.log(error);
+          window.location.href = "#/list";
+      })
     }
 
     $scope.deleteQuestionOption = function(optionId) {
-      $('#optionModal').modal('hide');
-      console.log(optionId)
+      httpService.post('controllers/deleteQuestionOption.php', {"id" : optionId}, function(data, header, config) {
+          $('#optionModal').modal('hide');
+
+          if (data.code == 200) {
+            $scope.tip = "删除成功!";
+            tipWork(function() {
+              window.location.href = "#/list";
+            });
+          } else {
+            $scope.tip = "删除失败，请稍后再试!";
+            tipWork();
+          }
+      }, function(error, header, config) {
+          $('#optionModal').modal('hide');
+          console.log(error);
+          window.location.href = "#/list";
+      })
     }
 
     $scope.deleteQuestionAdd = function(pos) {
