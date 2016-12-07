@@ -13,6 +13,73 @@
     <script src="index.js"></script>
   </head>
   <body ng-controller="mainController">
-        {{name}}
+    <div class="alert alert-warning" id="hintDiv">
+       <a class="close" ng-click="close()">
+          &times;
+       </a>
+       <strong>{{tip}}</strong>
+    </div>
+    <div class="questionaire">
+      <div class="header">
+      </div>
+      <div class="container-box">
+        <div class="part-head" ng-if="!isStart">
+          <div class="subject">
+            {{questionaire.subject}}
+          </div>
+          <div class="description" ng-bind-html="questionaire.description | to_html">
+          </div>
+          <div class="head-footer">
+            <div style="text-align:left;">
+              <input class="unchecked" ng-class='{"checked": formData.isAgree}' type="checkbox" ng-model="formData.isAgree" />
+              <span>同意以上收集個人資料說明及隱私保護政策並繼續填寫問卷。</span>
+            </div>
+            <div style="text-align:left;">
+              <input class="unchecked" ng-class='{"checked": tmp.isAgree}' type="checkbox" ng-model="tmp.isAgree" />
+              <span>同意</span>
+            </div>
+            <div style="text-align:center;margin-top: 100px;">
+              <button style="width: 97px;" class="btn btn-info" ng-click="start()">Start</button>
+            </div>
+          </div>
+        </div>
+        <div class="content" ng-if="isStart && !isEnd">
+          <label class="sort-number">第{{questionIndex + 1}}题</label>
+          <div class="title" ng-bind-html="questions[questionIndex].title | to_html">
+          </div>
+          <div class="option-single" ng-if="questions[questionIndex].isSingle == '1'">
+            <div ng-repeat="option in questions[questionIndex].options">
+              <div class="option" ng-if="!(option.isCustomized == '1')">
+                  <input type="radio" class="uncheck" ng-class='{"check": option.isSelect}' ng-click="isSelect( option, questions[questionIndex].options)" name="question" value="{{option.content}}" ng-model="qs.answer">
+                  <label class="op-text">{{option.content}}</label>
+              </div>
+              <div ng-if="option.isCustomized == '1'">
+                <label>其它:</label>
+                <input type="text" class="form-control cust-input option" ng-model="qs.answer" />
+              </div>
+            </div>
+          </div>
+          <div  class="option-multi" ng-if="!(questions[questionIndex].isSingle == '1')">
+            <div ng-repeat="option in questions[questionIndex].options">
+              <div class="option" ng-if="!(option.isCustomized == '1')">
+                  <input type="checkbox" class="unchecked" ng-class='{"checked": isCheck(option.content)}' ng-click="operate($event, option.content)">
+                  <label class="op-text">{{option.content}}</label>
+              </div>
+              <div ng-if="option.isCustomized == '1'">
+                <label>其它:</label>
+                <input type="text" class="form-control cust-input option" ng-model="qs.answer" />
+              </div>
+            </div>
+          </div>
+          <div style="text-align:left;margin-top: 100px;">
+            <button style="width:97px;" ng-if="questionIndex > 0" class="btn btn-default" ng-click="back()">Back</button>
+            <button style="width:97px;margin-left:50px;" class="btn btn-info" ng-click="next()">Next</button>
+          </div>
+        </div>
+        <div class="end" ng-if="isEnd">
+          END
+        </div>
+      </div>
+    </div>
   </body>
 </html>

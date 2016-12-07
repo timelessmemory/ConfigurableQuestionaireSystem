@@ -1074,6 +1074,12 @@ app.factory('httpService', ['$http', function($http) {
   }
 }]);
 
+app.filter("to_html", ['$sce', function($sce) {
+  return function(input) {
+    return $sce.trustAsHtml(input);
+  }
+}]);
+
 function tipWork(callback) {
   $('#hintDiv').fadeIn(500);
 

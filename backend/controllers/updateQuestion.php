@@ -4,7 +4,7 @@
     
     $questionId = $_POST["id"];
     $title = $_POST["title"];
-    $isSingle = $_POST["isSingle"];
+    $isSingle = $_POST["isSingle"] == "true" ? true : false;
     
 	try {
 	    $sql = "update question set title = :title, isSingle = :isSingle where id = :questionId";
