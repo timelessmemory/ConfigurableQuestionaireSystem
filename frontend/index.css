@@ -146,3 +146,12 @@ body {
     left: 50px;
     top: 70px;
 }
+
+.tip {
+	color: #000;
+    font-size: 20px;
+    line-height: 135%;
+    width: 100%;
+    text-align: center;
+    margin-top: 6%;
+}

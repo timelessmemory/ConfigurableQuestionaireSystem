@@ -21,6 +21,7 @@ create table questionOption (
         isHasNext TINYINT(1),
         isCustomized TINYINT(1),
         isSkip TINYINT(1),
+        isSkipOne TINYINT(1),
         skipIndex INT
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 

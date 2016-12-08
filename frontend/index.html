@@ -43,7 +43,7 @@
             </div>
           </div>
         </div>
-        <div class="content" ng-if="isStart && !isEnd">
+        <div class="content" ng-if="isStart && !isEnd && !isSubmit">
           <label class="sort-number">第{{questionIndex + 1}}题</label>
           <div class="title" ng-bind-html="questions[questionIndex].title | to_html">
           </div>
@@ -55,7 +55,7 @@
               </div>
               <div ng-if="option.isCustomized == '1'">
                 <label>其它:</label>
-                <input type="text" class="form-control cust-input option" ng-model="qs.answer" />
+                <input type="text" class="form-control cust-input option" ng-model="qs.custSingle" />
               </div>
             </div>
           </div>
@@ -77,7 +77,50 @@
           </div>
         </div>
         <div class="end" ng-if="isEnd">
-          END
+          <div class="subject" style="margin-top: 20%;">
+            {{questionaire.subject}}
+          </div>
+          <div class="tip">請點擊”SUBMIT”以完成問卷，謝謝。</div>
+          <div style="text-align:center;margin-top: 100px;">
+            <button style="width:97px;" class="btn btn-default" ng-click="return()">Back</button>
+            <button style="width:97px;margin-left:50px;" class="btn btn-info" ng-click="submitBreak()">Submit</button>
+          </div>
+        </div>
+        <div class="submit" ng-if="isSubmit">
+          <div class="subject" style="margin-top: 10%;">
+            {{questionaire.subject}}
+          </div>
+
+          <div style="margin: 21px 86px;">
+            <div style="font-size:26px;">個人資料</div>
+            <br/>
+            <div>
+                <label>請在下方表示你同意如此使用你的個人資料。如您未勾選同意，將使主辦機構及其委託的第三方公司群碩軟件開發（上海）有限公司無法與閣下聯繫，因此使得閣下亦無法參與相關之市場調查研究(包含焦點調查小組)。
+                </label>
+            </div>
+            <div class="form-group">
+                <label>姓名:</label>
+                <input type="text" ng-model="formData.name" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>聯絡電話 (僅用作調查之聯絡，資料在調查完結後將被銷毀。):</label>
+                <input type="text" ng-model="formData.mobile" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>電郵地址 (僅用作調查之聯絡，資料在調查完結後將被銷毀。):</label>
+                <input type="email" ng-model="formData.email" class="form-control">
+            </div>
+            <div>
+                <input type="checkbox" class="unchecked" ng-class='{"checked": formData.agree}' ng-model="formData.agree" />
+                <label style="display:inline;">本人<input type="text" ng-model="formData.name" class="form-control" style="width:20%;display:inline-block;height:20px;">同意香港聯合利華有限公司及其委託的第三方公司群碩軟件開發（上海）有限公司使用個人資料於擬作出的問卷及市場調查研究(包含焦點調查小組)。
+                </label>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top: 100px;">
+            <button style="width:97px;" class="btn btn-default" ng-click="returnBack()">Back</button>
+            <button style="width:97px;margin-left:50px;" class="btn btn-info" ng-click="submit()">Submit</button>
+          </div>
         </div>
       </div>
     </div>

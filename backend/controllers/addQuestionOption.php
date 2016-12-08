@@ -11,9 +11,10 @@
 			$isHasNext = $option['isHasNext'] == "true" ? true : false;
 			$isCustomized = $option['isCustomized'] == "true" ? true : false;
 			$isSkip = $option['isSkip'] == "true" ? true : false;
+			$isSkipOne = $option['isSkipOne'] == "true" ? true : false;
 			$skipIndex = $option['skipIndex'];
 
-			$sql = "insert into questionOption(content, isHasNext, isCustomized, isSkip, skipIndex, questionId) values(:content, :isHasNext, :isCustomized, :isSkip, :skipIndex, :questionId)";
+			$sql = "insert into questionOption(content, isHasNext, isCustomized, isSkip, isSkipOne, skipIndex, questionId) values(:content, :isHasNext, :isCustomized, :isSkip, :isSkipOne, :skipIndex, :questionId)";
 
 		    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
 		    $db = new PDO($dsn, 'root', 'root');
@@ -26,6 +27,7 @@
 		        ":isHasNext" => $isHasNext,
 		        ":isCustomized" => $isCustomized,
 		        ":isSkip" => $isSkip,
+		        ":isSkipOne" => $isSkipOne,
 		        ":skipIndex" => $skipIndex,
 		        ":questionId" => $questionId,
 		    ];

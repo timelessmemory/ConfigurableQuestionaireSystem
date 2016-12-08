@@ -59,10 +59,11 @@
 		    	$isNext = $option['isNext'] == 'true' ? true : false;
 		    	$isCustOmized = $option['isCustOmized'] == 'true' ? true : false;
 		    	$isSkip = $option['isSkip'] == 'true' ? true : false;
+		    	$isSkipOne = $option['isSkipOne'] == 'true' ? true : false;
 		    	$skipIndex = $option['skipIndex'];
 		    	$content = $option['content'];
 
-		    	$sql = "insert into questionOption(questionId, content, isHasNext, isCustomized, isSkip, skipIndex) values(:questionId, :content, :isHasNext, :isCustomized, :isSkip, :skipIndex)";
+		    	$sql = "insert into questionOption(questionId, content, isHasNext, isCustomized, isSkip, isSkipOne, skipIndex) values(:questionId, :content, :isHasNext, :isCustomized, :isSkip, :isSkipOne, :skipIndex)";
 		    	
 		    	$preparedStatement = $db->prepare($sql);
 		    	
@@ -72,6 +73,7 @@
 			        ":isHasNext" => $isNext,
 			        ":isCustomized" => $isCustOmized,
 			        ":isSkip" => $isSkip,
+			        ":isSkipOne" => $isSkipOne,
 			        ":skipIndex" => $skipIndex
 
 			    ];

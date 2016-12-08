@@ -38,12 +38,14 @@
 	    		foreach ($pairs as $pair) {
 	    			$opId = $pair['id'];
 	    			$skipIndex = $pair['skipIndex'];
+	    			$isSkipOne = $pair['isSkipOne'] == 'true' ? true : false;
 
-	    			$sql = "update questionOption set skipIndex = :skipIndex, isSkip = 1 where id = :optionId";
+	    			$sql = "update questionOption set skipIndex = :skipIndex, isSkip = 1, isSkipOne = :isSkipOne where id = :optionId";
 	    			$preparedStatement = $db->prepare($sql);
 
 				    $params =[
 				        ":skipIndex" => $skipIndex,
+				        ":isSkipOne" => $isSkipOne,
 				        ":optionId" => $opId
 				    ];
 

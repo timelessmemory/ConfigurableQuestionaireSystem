@@ -577,6 +577,7 @@ app
 
           angular.forEach(it.options, function(op) {
             op.isSkip = op.isSkip == '1' ? true : false;
+            op.isSkipOne = op.isSkipOne == '1' ? true : false;
             op.isHasNext = op.isHasNext == '1' ? true : false;
             op.isCustomized = op.isCustomized == '1' ? true : false;
           });
@@ -589,11 +590,11 @@ app
 
           if (it.isSetSkip) {
             angular.forEach(it.options, function(op) {
-              if (gp1 == "") {
+              if (op.isSkipOne) {
                 gp1 = op.skipIndex;
               }
 
-              if (gp1 != op.skipIndex) {
+              if (!op.isSkipOne) {
                 gp2 = op.skipIndex;
               }
             });
@@ -604,11 +605,7 @@ app
             'gp2' : gp2
           }
 
-          if (it.isSetSkip) {
-            angular.forEach(it.options, function(op) {
-              op.isSkipOne = op.skipIndex == gp1 ? true : false;
-            })
-          } else {
+          if (!it.isSetSkip) {
             angular.forEach(it.options, function(op) {
               op.isSkipOne = true;
             })
@@ -900,13 +897,14 @@ app
         if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= index || parseInt(group.gp2) <= index || group.gp1 == group.gp2) {
           $scope.tip = "索引不合法!";
           tipWork();
+          $scope.isSubmit = false;
           return;
         }
 
         var pairs = [];
 
         angular.forEach(question.options, function(op) {
-          pairs.push({"id" : op.id, "skipIndex" : op.skipIndex})
+          pairs.push({"id" : op.id, 'isSkipOne' : op.isSkipOne, "skipIndex" : op.skipIndex})
         });
 
         data.pairs = pairs;
