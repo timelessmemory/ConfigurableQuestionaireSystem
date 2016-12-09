@@ -1,4 +1,4 @@
-var app = angular.module("backend", ['ngRoute', 'ng.ueditor']);
+var app = angular.module("backend", ['ngRoute', 'ng.ueditor', 'ngclipboard']);
 
 app.config(function($routeProvider) {
     $routeProvider
@@ -9,10 +9,6 @@ app.config(function($routeProvider) {
     .when('/list', {
       templateUrl : 'pages/list.php',
       controller  : 'listController'
-    })
-    .when('/detail', {
-      templateUrl : 'pages/detail.php',
-      controller  : 'detailController'
     })
     .when('/edit', {
       templateUrl : 'pages/edit.php',
@@ -30,10 +26,10 @@ app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', functi
     var routeChangeSuccessOff = $rootScope.$on('$routeChangeSuccess', routeChangeSuccess);  
 
     function routeChangeSuccess(event, params) {
-        // if (params.originalPath != "/" && window.localStorage.getItem("isLogin") != "true") {
-        //   window.location.href = "#/";
-        //   return;
-        // }
+        if (params.originalPath != "/" && window.localStorage.getItem("isLogin") != "true") {
+          window.location.href = "#/";
+          return;
+        }
         $templateCache.removeAll();
     }
 
@@ -57,6 +53,11 @@ app
 .controller("loginController", ['$scope', '$rootScope', '$http', '$timeout', function($scope, $rootScope, $http, $timeout) {
     $scope.username = '';
     $scope.password = '';
+
+    if (window.localStorage.getItem('isLogin') == 'true') {
+      window.location.href = "#/list";
+      return;
+    }
 
     $scope.login = function() {
       if ($scope.username != '' && $scope.password != '') {
@@ -98,6 +99,7 @@ app
     $scope.questionaires = [];
     $scope.questionaire = {};
     $scope.keyword = '';
+    $scope.domain = window.location.host;
 
     $http({
       url : 'controllers/query.php',
@@ -117,24 +119,6 @@ app
             $scope.search();
         }
     });
-
-    $scope.detail = function(num) {
-      // query by id
-      $http({
-          url : 'controllers/queryone.php',
-          method : 'post',
-          data : $.param({ "id" : num }),
-          headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-          responseType : 'json'
-      })
-      .success(function(data, header, config, status) {
-          window.location.href = "#/detail";
-      })
-      .error(function(error, header, config, status) {
-          console.log(error);
-          window.location.href = "#/list";
-      });
-    };
 
     $scope.edit = function(num) {
       window.localStorage.setItem("questionaireId", num);
@@ -185,23 +169,33 @@ app
 
     $scope.search = function() {
       if ($scope.keyword != '') {
-        //search
-         $http({
-          url : '../basic/web/index.php?r=user/search-condition',
-          method : 'post',
-          data : $.param({ "keyword" : $scope.keyword}),
-          headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+          $http({
+            url : 'controllers/searchCondition.php',
+            method : 'post',
+            data : $.param({ "keyword" : $scope.keyword}),
+            headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
           })
-          .success(function(data, header, config, status) {
-              $scope.users = data.users;
+          .success(function(data, header, config) {
+              $scope.questionaires = data;
               $scope.keyword = '';
           })
-          .error(function(error, header, config, status) {
+          .error(function(error, header, config) {
               console.log(error);
               window.location.href = "#/list";
           });
       } else {
-        window.location.href = "#/list";
+        $http({
+          url : 'controllers/query.php',
+          method : 'get',
+          headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+          responseType : 'json'
+        })
+        .success(function(data, header, config) {
+          $scope.questionaires = data;
+        })
+        .error(function(error, header, config) {
+          console.log(error);
+        });
       }
     };
 
@@ -215,17 +209,6 @@ app
     //     }, 350);
     //   }
     // });
-}])
-
-.controller("detailController", ['$scope', function($scope) {
-    $scope.edit = function(num) {
-
-      window.location.href = "#/edit";
-    };
-
-    $scope.cancel = function() {
-      window.location.href = "#/list";
-    };
 }])
 
 .controller("createController", ['$scope', '$http', '$rootScope', function($scope, $http, $rootScope) {

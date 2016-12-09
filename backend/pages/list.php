@@ -45,7 +45,7 @@
 
 <div class="input-group search-div" style="width:98%;">
   <!-- <input style="width:150px;" type="text" class="form-control" ng-model="searchWord" placeholder="Real time search" aria-describedby="basic-addon2"> -->
-  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="keyword" placeholder="Please input keyword" aria-describedby="basic-addon2">
+  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="keyword" placeholder="问卷主题" aria-describedby="basic-addon2">
   <span class="input-group-addon" id="basic-addon2" ng-click="search()"><i class="glyphicon glyphicon-search"></i> </span>
 </div>
 
@@ -67,12 +67,12 @@
    <tbody>
       <tr ng-repeat="questionaire in questionaires" class="active">
          <td style="width:10%;">{{$index + 1}}</td>
-         <td style="color:#5bc0de; cursor:pointer;text-decoration:underline;width:20%;" title="访问问卷"><a href="/questionaire/frontend/index.html?questionaireId={{questionaire.id}}">{{questionaire.subject}}</a></td>
+         <td style="color:#5bc0de; cursor:pointer;text-decoration:underline;width:20%;" title="访问问卷"><a href="/questionaire/frontend/index.html?questionaireId={{questionaire.id}}">{{questionaire.subject}}<i class="glyphicon glyphicon-new-window"></i></a></td>
          <td style="max-width:40%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{{questionaire.description}}">{{questionaire.description}}</td>
          <td style="width:20%;">{{questionaire.createTime}}</td>
          <td style="width:10%;">
-           <button type="button" title="生成问卷" class="btn btn-default btn-xs" ng-click="detail(questionaire.id)">
-             <i class="glyphicon glyphicon-new-window"></i>
+           <button type="button" title="复制链接" class="btn btn-default btn-xs" ngclipboard data-clipboard-text="{{domain}}/questionaire/frontend/index.html?questionaireId={{questionaire.id}}">
+             <i class="glyphicon  glyphicon-link"></i>
            </button>
            <button type="button" title="编辑" class="btn btn-default btn-xs" ng-click="edit(questionaire.id)">
              <i class="glyphicon glyphicon-edit"></i>
