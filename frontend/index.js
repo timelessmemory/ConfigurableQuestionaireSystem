@@ -8,6 +8,7 @@ frontend
 	$scope.isStart = false;
 	$scope.isEnd = false;
 	$scope.isSubmit = false;
+	$scope.final = false;
 
 	var backIndex = [];
 
@@ -452,11 +453,34 @@ frontend
     	}
 
     	$scope.formData.answers = answers;
-    	console.log($scope.formData)
+
+    	saveData($scope.questionaire.id, $scope.formData, function(data, header, config) {
+	        if (data.code == 500) {
+	          $scope.valid = false;
+	          $scope.tip = "请求错误,请稍后再试!";
+	          tipWork();
+	          return; 
+	        }
+	        
+	        $scope.isSubmit = false;
+	        $scope.final = true;
+	    });
     }
 
     $scope.submitBreak = function() {
     	$scope.formData.answers = answers;
+
+    	saveData($scope.questionaire.id, $scope.formData, function(data, header, config) {
+	        if (data.code == 500) {
+	          $scope.valid = false;
+	          $scope.tip = "请求错误,请稍后再试!";
+	          tipWork();
+	          return; 
+	        }
+	        
+	        $scope.isEnd = false;
+	        $scope.final = true;
+	    });
     }
 
     $scope.return = function() {
@@ -472,6 +496,20 @@ frontend
     $scope.close = function() {
       $('#hintDiv').fadeOut();
     };
+
+    function saveData(id, data, successCallBack) {
+    	$http({
+	        url : 'controllers/saveAnswer.php',
+	        method : 'post',
+	        data : $.param({ "data" : data, "id" : id}),
+	        headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+	        responseType : 'json'
+	    })
+	    .success(successCallBack)
+	    .error(function(error, header, config) {
+	        console.log(error);
+	    });
+    }
 }])
 
 .filter("to_html", ['$sce', function($sce) {

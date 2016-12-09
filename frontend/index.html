@@ -46,7 +46,7 @@
             </div>
           </div>
         </div>
-        <div class="content" ng-if="isStart && !isEnd && !isSubmit">
+        <div class="content" ng-if="isStart && !isEnd && !isSubmit && !final">
           <label class="sort-number">第{{questionIndex + 1}}题</label>
           <div class="title" ng-bind-html="questions[questionIndex].title | to_html">
           </div>
@@ -123,6 +123,12 @@
           <div style="text-align:center;margin-top: 100px;">
             <button style="width:97px;" class="btn btn-default" ng-click="returnBack()">Back</button>
             <button style="width:97px;margin-left:50px;" class="btn btn-info" ng-click="submit()">Submit</button>
+          </div>
+        </div>
+
+        <div class="end" ng-if="final">
+          <div class="subject" style="margin-top: 20%;">
+            已成功收到您回覆的表格。謝謝您寶貴的時間！
           </div>
         </div>
       </div>

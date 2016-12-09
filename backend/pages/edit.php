@@ -14,7 +14,7 @@
         <li><a href="#/list"><i class="glyphicon glyphicon-th-list"></i> Questionaire List</a></li>
         <li><a href="#/create"><i class="glyphicon glyphicon-file"></i> Create Questionaire</a></li>
         <li><a href='#/' ng-click="logout()"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
-        <li><a>Welcome, <?php session_start(); echo $_SESSION['username']; ?></a></li>
+        <li><a>Welcome, <?php session_start(); $name = $_SESSION['username'] == '' ? '<script>window.localStorage.setItem("isLogin", "false")</script>' : $_SESSION['username']; echo $name; ?></a></li>
       </ul>
     </div>
   </nav>
