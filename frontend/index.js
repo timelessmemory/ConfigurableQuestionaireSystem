@@ -4,7 +4,8 @@ frontend
 .controller('mainController', ['$scope', '$http', function($scope, $http) {
 	var questionaireId = location.search.substr(1).substring(15);
 
-	$scope.isStart = true;
+	$scope.valid = true;
+	$scope.isStart = false;
 	$scope.isEnd = false;
 	$scope.isSubmit = false;
 
@@ -42,6 +43,7 @@ frontend
     })
     .success(function(data, header, config) {
         if (data.code == 500) {
+          $scope.valid = false;
           $scope.tip = "请求数据错误!";
           tipWork();
           return; 
@@ -347,7 +349,7 @@ frontend
     			if (isHasNext) {
     				$scope.qs.answer = "";
     				selecteds = [];
-    				
+
 	    			questionLastIndexs.push($scope.questionIndex);
 
     				$scope.questionIndex++;

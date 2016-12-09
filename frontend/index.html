@@ -23,7 +23,10 @@
       <div class="header">
       </div>
       <div class="container-box">
-        <div class="part-head" ng-if="!isStart">
+        <div class="part-head" style="text-align:center;" ng-if="!valid">
+           <p style="font-size:30px;margin-top:20%;">404</p>
+        </div>
+        <div class="part-head" ng-if="!isStart && valid">
           <div class="subject">
             {{questionaire.subject}}
           </div>
