@@ -36,5 +36,12 @@ You can edit information of questionaires you created in this page. The most imp
 ![finish.png](http://7xqayl.com1.z0.glb.clouddn.com/finish.png)	
 Based on configuration, questionaire shows at this page, and you can provide link for users to join research.
 
+### role
+include three roles
 
+### privacy collection
+whether collect privacy
+
+### i18n
+support chinese and english
 
