@@ -4,11 +4,16 @@
     
     $subject = $_POST["subject"];
     $description = $_POST["description"];
+    $isProvicy = $_POST["isProvicy"];
+    $required_fst = $_POST["required_fst"];
+    $agree_fst = $_POST["agree_fst"];
+    $required_snd = $_POST["required_snd"];
+    $agree_snd = $_POST["agree_snd"];
     $questions = $_POST["questions"];
     
 	try {
 		$questionaireId = 0;
-	    $sql = "insert into questionaire(subject, description, createTime) values(:subject, :description, :createTime)";
+	    $sql = "insert into questionaire(subject, description, isProvicy, agree_fst, required_fst, agree_snd, required_snd, createTime) values(:subject, :description, :isProvicy, :agree_fst, :required_fst, :agree_snd, :required_snd, :createTime)";
 
 	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
 	    $db = new PDO($dsn, 'root', 'root');
@@ -19,6 +24,11 @@
 	    $params =[
 	        ":subject" => $subject,
 	        ":description" => $description,
+	        ":isProvicy" => $isProvicy,
+	        ":required_fst" => $required_fst,
+	        ":agree_fst" => $agree_fst,
+	        ":required_snd" => $required_snd,
+	        ":agree_snd" => $agree_snd,
 	        ":createTime" => date('y-m-d H:i:s', time())
 	    ];
 

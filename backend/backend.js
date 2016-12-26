@@ -18,6 +18,10 @@ app.config(function($routeProvider) {
       templateUrl : 'pages/create.php',
       controller  : 'createController'
     })
+    .when('/role', {
+      templateUrl : 'pages/role.php',
+      controller  : 'roleController'
+    })
     .otherwise("/");
 });
 
@@ -231,7 +235,12 @@ app
 
     $scope.questionaire = {
       'subject' : '', 
-      'description' : ''
+      'description' : '',
+      'isProvicy' : false,
+      'required_fst' : false,
+      'agree_fst' : '',
+      'required_snd' : false,
+      'agree_snd' : ''
     };
 
     var initQuestion = {
@@ -441,10 +450,21 @@ app
 
     $scope.createQuestion = function() {
 
-      if ($scope.questionaire.subject == "" || $scope.questionaire.subject == undefined || $scope.questionaire.description == "") {
-        $scope.tip = "问卷主题或说明不得为空!";
+      if ($scope.questionaire.subject == "" || $scope.questionaire.subject == undefined) {
+        $scope.tip = "问卷主题不得为空!";
         tipWork();
         return;
+      }
+
+      if ($scope.questionaire.isProvicy && $scope.questionaire.description == "") {
+        $scope.tip = "问卷说明不得为空!";
+        tipWork();
+        return;
+      } else {
+        $scope.questionaire.required_fst = false;
+        $scope.questionaire.agree_fst = "";
+        $scope.questionaire.required_snd = false;
+        $scope.questionaire.agree_snd = "";
       }
 
       $scope.showHead = false;
@@ -466,7 +486,7 @@ app
         return;
       }
 
-      if ($scope.questionaire.subject == "" || $scope.questionaire.subject == undefined || $scope.questionaire.description == "") {
+      if ($scope.questionaire.subject == "" || $scope.questionaire.subject == undefined) {
         $scope.isSubmit = false;
         return;
       }
@@ -832,13 +852,31 @@ app
 
     $scope.saveQuestionaire = function(questionaireId) {
 
-      if ($scope.questionaire.subject == "" || $scope.questionaire.subject == undefined || $scope.questionaire.description == "") {
+      if ($scope.questionaire.subject == "" || $scope.questionaire.subject == undefined) {
         return;
+      }
+
+      if ($scope.questionaire.isProvicy && $scope.questionaire.description == "") {
+        return;
+      } else {
+        $scope.questionaire.required_fst = false;
+        $scope.questionaire.agree_fst = "";
+        $scope.questionaire.required_snd = false;
+        $scope.questionaire.agree_snd = "";
       }
 
       $scope.isSubmit = true;
 
-      var data = {"id" : questionaireId, "subject" : $scope.questionaire.subject, "description" : $scope.questionaire.description}
+      var data = {
+        "id" : questionaireId, 
+        "subject" : $scope.questionaire.subject, 
+        "description" : $scope.questionaire.description, 
+        "isProvicy" : $scope.questionaire.isProvicy,
+        'required_fst' : $scope.questionaire.required_fst,
+        'agree_fst' : $scope.questionaire.agree_fst,
+        'required_snd' : $scope.questionaire.required_snd,
+        'agree_snd' : $scope.questionaire.agree_snd
+      }
 
       httpService.post('controllers/updateQuestionaire.php', data, function(data, header, config) {
           if (data.code == 200) {
@@ -1026,6 +1064,10 @@ app
     $scope.cancel = function() {
       window.location.href = "#/list";
     };
+}])
+
+.controller('roleController', ['$scope', function($scope) {
+  
 }]);
 
 app.factory('httpService', ['$http', function($http) {
