@@ -1103,6 +1103,22 @@ app
             }, function(error, header, config) {
                 console.log(error);
             })
+
+            httpService.get('controllers/getBrandOperator.php', {}, function(data, header, config) {
+                if (data.code != 500) {
+                    $scope.operators = data;
+                }
+            }, function(error, header, config) {
+                console.log(error);
+            })
+         } else if (data.role == "brand_admin") {
+            httpService.get('controllers/getBrandOperator.php', {brand : data.brand}, function(data, header, config) {
+                if (data.code != 500) {
+                    $scope.operators = data;
+                }
+            }, function(error, header, config) {
+                console.log(error);
+            })
          }
       }
   }, function(error, header, config) {
@@ -1218,7 +1234,10 @@ app
     $scope.isShowAdmin = false;
   }
 
-  
+  function validateUserNameExist() {
+    
+  }
+
 }]);
 
 app.factory('httpService', ['$http', function($http) {

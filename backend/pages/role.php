@@ -178,31 +178,31 @@
 		      </tr>
 		   </thead>
 
-		   <tbody ng-if="admins.length < 1">
+		   <tbody ng-if="operators.length < 1">
 		     <tr><td colspan="6" class="active">暂无数据</td></tr>
 		   </tbody>
 
 		   <tbody>
-		      <tr ng-repeat="admin in admins" class="active">
-		         <td style="width:2%;">{{admin.id}}</td>
-		         <td style="width:20%;" ng-if="!admin.editMode">{{admin.brand}}</td>
-		         <td style="width:20%;" ng-if="admin.editMode"><input type="text" class="form-control" ng-model="admin.editBrand"></td>
-		         <td style="width:15%;" ng-if="!admin.editMode">{{admin.name}}</td>
-		         <td style="width:15%;" ng-if="admin.editMode"><input type="text" class="form-control" ng-model="admin.editName"></td>
-		         <td style="width:15%;" class="show-as-dot" ng-if="!admin.editMode">{{admin.password}}</td>
-		         <td style="width:15%;" ng-if="admin.editMode"><input type="text" class="form-control" ng-model="admin.editPassword"></td>
-		         <td style="width:10%;">{{admin.createTime}}</td>
+		      <tr ng-repeat="operator in operators" class="active">
+		         <td style="width:2%;">{{operator.id}}</td>
+		         <td style="width:20%;" ng-if="!operator.editMode">{{operator.brand}}</td>
+		         <td style="width:20%;" ng-if="operator.editMode"><input type="text" class="form-control" ng-model="operator.editBrand"></td>
+		         <td style="width:15%;" ng-if="!operator.editMode">{{operator.name}}</td>
+		         <td style="width:15%;" ng-if="operator.editMode"><input type="text" class="form-control" ng-model="operator.editName"></td>
+		         <td style="width:15%;" class="show-as-dot" ng-if="!operator.editMode">{{operator.password}}</td>
+		         <td style="width:15%;" ng-if="operator.editMode"><input type="text" class="form-control" ng-model="operator.editPassword"></td>
+		         <td style="width:10%;">{{operator.createTime}}</td>
 		         <td style="width:38%;">
-		           <button ng-if="!admin.editMode" type="button" title="编辑" class="btn btn-default btn-xs" ng-click="enterEditMode(admin)">
+		           <button ng-if="!operator.editMode" type="button" title="编辑" class="btn btn-default btn-xs" ng-click="enterOperatorEditMode(operator)">
 		             <i class="glyphicon glyphicon-edit"></i>
 		           </button>
-		           <button ng-if="admin.editMode" type="button" title="保存" class="btn btn-default btn-xs" ng-click="saveEditAdmin(admin)">
+		           <button ng-if="operator.editMode" type="button" title="保存" class="btn btn-default btn-xs" ng-click="saveEditOperator(operator)">
 		             <i class="glyphicon glyphicon-ok"></i>
 		           </button>
-		           <button ng-if="admin.editMode" type="button" title="取消" class="btn btn-default btn-xs" ng-click="cancelEditAdmin(admin)">
+		           <button ng-if="operator.editMode" type="button" title="取消" class="btn btn-default btn-xs" ng-click="cancelEditOperator(operator)">
 		             <i class="glyphicon glyphicon-remove"></i>
 		           </button>
-		           <button type="button" title="删除" class="btn btn-default btn-xs" data-target="#myModal" data-toggle="modal" ng-click="showDeleteAdminDialog(admin)">
+		           <button type="button" title="删除" class="btn btn-default btn-xs" data-target="#operatorModal" data-toggle="modal" ng-click="showDeleteOperatorDialog(operator)">
 		             <i class="glyphicon glyphicon-trash"></i>
 		           </button>
 		         </td>
@@ -211,7 +211,7 @@
 		  </table>
 
 		  <table class="table table-hover table-bordered" style="text-align:center;table-layout:fixed;">
-			   <thead style="font-size:15px;" ng-if="addAdmins.length > 0">
+			   <thead style="font-size:15px;" ng-if="addOperators.length > 0">
 			      <tr class="text-capitalize">
 			         <th>编号</th>
 			         <th>品牌</th>
@@ -221,16 +221,16 @@
 			      </tr>
 			   </thead>
 			   <tbody>
-				   	<tr ng-repeat="ad in addAdmins">
+				   	<tr ng-repeat="ad in addOperators">
 				   		<td>{{$index + 1}}</td>
 				      	<td><input type="text" class="form-control" ng-model="ad.brand"></td>
 				      	<td><input type="text" class="form-control" ng-model="ad.name"></td>
 				      	<td><input type="text" class="form-control" ng-model="ad.password"></td>
 				      	<td>
-				      		<button type="button" title="保存" class="btn btn-default btn-xs" ng-click="saveAddAdmin(ad, $index)">
+				      		<button type="button" title="保存" class="btn btn-default btn-xs" ng-click="saveAddOperator(ad, $index)">
 					            <i class="glyphicon glyphicon-ok"></i>
 					        </button>
-					        <button type="button" title="取消" class="btn btn-default btn-xs" ng-click="cancelAddAdmin($index)">
+					        <button type="button" title="取消" class="btn btn-default btn-xs" ng-click="cancelAddOperator($index)">
 					            <i class="glyphicon glyphicon-remove"></i>
 					        </button>
 				      	</td>

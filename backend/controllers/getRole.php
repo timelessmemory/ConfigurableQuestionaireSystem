@@ -5,7 +5,7 @@
     $id = $_GET["id"];
 
 	try {
-	    $sql = "select role from user where id = :id";
+	    $sql = "select role, brand from user where id = :id";
 
 	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
 	    $db = new PDO($dsn, 'root', 'root');
@@ -21,7 +21,7 @@
 
 	    $result = $preparedStatement->fetch(PDO::FETCH_ASSOC);
 	    
-	    echo json_encode(array("code" => 200, "role" => $result['role']));
+	    echo json_encode(array("code" => 200, "role" => $result['role'], "brand" => $result['brand']));
     } catch (Exception $e) {
         echo json_encode(array("code" => 500));
     }
