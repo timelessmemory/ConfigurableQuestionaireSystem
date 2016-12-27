@@ -2,16 +2,15 @@
 	header('Content-Type: application/json');
     header("Content-Type:text/html;charset=UTF-8");
     
-    $name = $_POST["name"];
-    $password = $_POST["password"];
+    $id = $_GET["id"];
 
-    if ($name == '' or $password == '') {
+    if ($id == '') {
     	echo json_encode(array("code" => 500));
     	return;
     }
     
 	try {
-	    $sql = "select id from user where name = :name and password = :password";
+	    $sql = "delete from user where id = :id";
 
 	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
 	    $db = new PDO($dsn, 'root', 'root');
@@ -20,20 +19,17 @@
 	    $preparedStatement = $db->prepare($sql);
 
 	    $params =[
-	        ":name" => $name,
-	        ":password" => $password,
+	        ":id" => $id
 	    ];
 
-	    $preparedStatement->execute($params);
-	    $result = $preparedStatement->fetch(PDO::FETCH_ASSOC);
-
-	    if ($result == "") {
+	    $result = $preparedStatement->execute($params);
+	    
+	    if (!$result) {
 	    	echo json_encode(array("code" => 500));
-	    } else {
-	    	session_start();
-	    	$_SESSION['username'] = $name;
-	    	echo json_encode(array("code" => 200, "id" => $result["id"]));
+	    	return;
 	    }
+	    
+	    echo json_encode(array("code" => 200));
     } catch (Exception $e) {
         echo json_encode(array("code" => 500));
     }

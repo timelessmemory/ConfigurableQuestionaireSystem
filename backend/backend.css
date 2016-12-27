@@ -1,3 +1,21 @@
+::-webkit-scrollbar {
+    background-color: transparent;
+    width: 7px;
+    height: 7px;
+}
+
+::-webkit-scrollbar-track {
+      background: #c8c9ca;
+      border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+      background:#38c4a9;
+      min-height:6px;
+      width:5px;
+      border-radius:4px;
+} /* 滑块颜色 */
+
 body {
   padding-top: 230px;
   padding-bottom: 80px;
@@ -105,20 +123,8 @@ body {
     background-position: -2px -22px;
 }
 
-::-webkit-scrollbar {
-    background-color: transparent;
-    width: 7px;
-    height: 7px;
+.show-as-dot {
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
 }
-
-::-webkit-scrollbar-track {
-      background: #c8c9ca;
-      border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-      background:#38c4a9;
-      min-height:6px;
-      width:5px;
-      border-radius:4px;
-} /* 滑块颜色 */

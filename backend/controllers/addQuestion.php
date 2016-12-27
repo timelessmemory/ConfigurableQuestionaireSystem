@@ -54,7 +54,6 @@
 			        ":isSkip" => $isSkip,
 			        ":isSkipOne" => $isSkipOne,
 			        ":skipIndex" => $skipIndex
-
 			    ];
 
 			    $result = $preparedStatement->execute($params);

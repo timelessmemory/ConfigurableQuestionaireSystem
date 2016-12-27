@@ -43,5 +43,6 @@ create table user (
         role VARCHAR(20) NOT NULL,
         brand VARCHAR(100),
         name VARCHAR(20) NOT NULL,
-        password VARCHAR(30) NOT NULL
+        password VARCHAR(100) NOT NULL,
+        createTime datetime NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;

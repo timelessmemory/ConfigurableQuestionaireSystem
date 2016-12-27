@@ -1,4 +1,4 @@
-var app = angular.module("backend", ['ngRoute', 'ng.ueditor', 'ngclipboard']);
+var app = angular.module("backend", ['ngRoute', 'ng.ueditor', 'ngclipboard', 'angular-md5']);
 
 app.config(function($routeProvider) {
     $routeProvider
@@ -43,7 +43,8 @@ app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', functi
           method : 'get'
       })
       .success(function() {
-        window.localStorage.setItem("isLogin", false);
+        window.localStorage.removeItem("isLogin");
+        window.localStorage.removeItem("userId");
         window.location.href = "#/";
       })
       .error(function(error, header, config, status) {
@@ -54,7 +55,7 @@ app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', functi
 }]);
 
 app
-.controller("loginController", ['$scope', '$rootScope', '$http', '$timeout', function($scope, $rootScope, $http, $timeout) {
+.controller("loginController", ['$scope', '$rootScope', '$http', '$timeout', 'md5', function($scope, $rootScope, $http, $timeout, md5) {
     $scope.username = '';
     $scope.password = '';
 
@@ -68,7 +69,7 @@ app
         $http({
             url : 'controllers/login.php',
             method : 'POST',
-            data : $.param({ "name" : $scope.username, "password" : $scope.password} ),
+            data : $.param({ "name" : $scope.username, "password" : md5.createHash($scope.password)} ),
             headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
             responseType : 'json'
         })
@@ -83,6 +84,7 @@ app
               return;
             }
             window.localStorage.setItem("isLogin", true);
+            window.localStorage.setItem("userId", data.id);
             window.location.href = "#/list";
         })
         .error(function(error, header, config) {
@@ -97,13 +99,25 @@ app
     };
 }])
 
-.controller("listController", ['$scope', '$http', '$document', '$timeout', function($scope, $http, $document, $timeout) {
+.controller("listController", ['$scope', '$http', '$document', '$timeout', 'httpService', function($scope, $http, $document, $timeout, httpService) {
     
     $scope.questionaireId = 0;
     $scope.questionaires = [];
     $scope.questionaire = {};
     $scope.keyword = '';
     $scope.domain = window.location.host;
+
+    var queryparams = {
+      id : window.localStorage.getItem("userId")
+    }
+
+    httpService.get('controllers/getRole.php', queryparams, function(data, header, config) {
+        if (data.code == 200) {
+           $scope.currentRole = data.role;
+        }
+    }, function(error, header, config) {
+        console.log(error);
+    })
 
     $http({
       url : 'controllers/query.php',
@@ -1066,7 +1080,144 @@ app
     };
 }])
 
-.controller('roleController', ['$scope', function($scope) {
+.controller('roleController', ['$scope', 'md5', 'httpService', function($scope, md5, httpService) {
+  $scope.isShowAdmin = false;
+  var deleteAdminId;
+  $scope.currentRole = ""
+
+  var queryparams = {
+    id : window.localStorage.getItem("userId")
+  }
+
+  httpService.get('controllers/getRole.php', queryparams, function(data, header, config) {
+      if (data.code == 200) {
+         $scope.currentRole = data.role;
+
+         if (data.role == "system_admin") {
+            $scope.isShowAdmin = true;
+
+            httpService.get('controllers/getBrandAdmin.php', {}, function(data, header, config) {
+                if (data.code != 500) {
+                    $scope.admins = data;
+                }
+            }, function(error, header, config) {
+                console.log(error);
+            })
+         }
+      }
+  }, function(error, header, config) {
+      console.log(error);
+  })
+
+  $scope.addAdmins = []
+
+  $scope.addAdmin = function() {
+    $scope.addAdmins.push({
+      brand : '',
+      name : '',
+      password : ''
+    })
+  }
+
+  $scope.saveAddAdmin = function(ad, index) {
+      if (ad.brand =="" || ad.name == "" || ad.password == "") {
+        $scope.tip = "请填写所有必填项!";
+        tipWork();
+        return;
+      }
+
+      ad.password = md5.createHash(ad.password)
+
+      httpService.post('controllers/saveAddAdmin.php', ad, function(data, header, config) {
+
+          if (data.code == 200) {
+            ad.id = data.id;
+            ad.createTime = data.createTime;
+            $scope.admins.push(ad);
+            $scope.addAdmins.splice(index);
+          }
+      }, function(error, header, config) {
+          console.log(error);
+      })
+  }  
+
+  $scope.saveEditAdmin = function(admin) {
+    if (admin.brand == admin.editBrand && admin.name == admin.editName && admin.password == md5.createHash(admin.editPassword)) {
+      $scope.tip = "更新成功!";
+      tipWork();
+      return;
+    }
+
+    var data = {
+      id : admin.id,
+      brand : admin.editBrand,
+      name : admin.editName,
+      password : md5.createHash(admin.editPassword)
+    }
+
+    httpService.post('controllers/updateAdmin.php', data, function(data, header, config) {
+
+        if (data.code == 200) {
+          admin.brand = admin.editBrand;
+          admin.name = admin.editName;
+          admin.password = md5.createHash(admin.editPassword)
+          admin.editMode = false;
+          $scope.tip = "更新成功!";
+          tipWork();
+        }
+    }, function(error, header, config) {
+        console.log(error);
+    })
+  }
+
+  $scope.showDeleteAdminDialog = function(admin) {
+    admin.editMode = false;
+    deleteAdminId = admin.id;
+  }
+
+  $scope.deleteAdmin = function() {
+    httpService.get('controllers/deleteAdmin.php', {id : deleteAdminId}, function(data, header, config) {
+
+        if (data.code == 200) {
+          $('#myModal').modal('hide');
+
+          httpService.get('controllers/getBrandAdmin.php', {}, function(data, header, config) {
+              if (data.code != 500) {
+                  $scope.admins = data;
+              }
+          }, function(error, header, config) {
+              console.log(error);
+          })
+        }
+    }, function(error, header, config) {
+        $('#myModal').modal('hide');
+        console.log(error);
+    })
+  }
+
+  $scope.enterEditMode = function(admin) {
+    admin.editBrand = admin.brand;
+    admin.editName = admin.name;
+    admin.editPassword = admin.password;
+    admin.editMode = true;
+  }
+
+  $scope.cancelAddAdmin = function(index) {
+    $scope.addAdmins.splice(index, 1);
+  } 
+
+  $scope.cancelEditAdmin = function(admin) {
+    admin.editMode = false;
+  }
+
+  $scope.switchAdmin = function() {
+    $scope.isShowAdmin = true;
+  }
+
+  $scope.switchOperator = function() {
+    $scope.isShowAdmin = false;
+  }
+
   
 }]);
 
@@ -1074,9 +1225,8 @@ app.factory('httpService', ['$http', function($http) {
   return {
     get : function(url, params, successCallback, errorCallback) {
         $http({
-            url : url,
+            url : url + "?" + $.param(params),
             method : 'get',
-            data : $.param(params),
             headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
             responseType : 'json'
         })
