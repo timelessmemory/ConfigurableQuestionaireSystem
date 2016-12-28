@@ -39,7 +39,7 @@ app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', functi
 
     $rootScope.logout = function () {
       $http({
-          url : 'controllers/logout.php',
+          url : 'controllers/index.php?module=user&action=logout',
           method : 'get'
       })
       .success(function() {
@@ -67,7 +67,7 @@ app
     $scope.login = function() {
       if ($scope.username != '' && $scope.password != '') {
         $http({
-            url : 'controllers/login.php',
+            url : 'controllers/index.php?module=user&action=login',
             method : 'POST',
             data : $.param({ "name" : $scope.username, "password" : md5.createHash($scope.password)} ),
             headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -111,16 +111,23 @@ app
       id : window.localStorage.getItem("userId")
     }
 
-    httpService.get('controllers/getRole.php', queryparams, function(data, header, config) {
+    httpService.get('controllers/index.php?module=user&action=getRole', queryparams, function(data, header, config) {
         if (data.code == 200) {
+
            $scope.currentRole = data.role;
+
+           if (data.role == "system_admin") {
+
+           } else {
+
+           }
         }
     }, function(error, header, config) {
         console.log(error);
     })
 
     $http({
-      url : 'controllers/query.php',
+      url : 'controllers/index.php?module=questionaire&action=queryQuestionaires',
       method : 'get',
       headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
       responseType : 'json'
@@ -146,7 +153,7 @@ app
     $scope.delete = function(num) {
       //delete 
       $http({
-          url : 'controllers/deleteone.php',
+          url : 'controllers/index.php?module=questionaire&action=deleteQuestionaire',
           method : 'post',
           data : $.param({ "id" : num }),
           headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -159,7 +166,7 @@ app
             tipWork();
 
             $http({
-              url : 'controllers/query.php',
+              url : 'controllers/index.php?module=questionaire&action=queryQuestionaires',
               method : 'get',
               headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
               responseType : 'json'
@@ -188,7 +195,7 @@ app
     $scope.search = function() {
       if ($scope.keyword != '') {
           $http({
-            url : 'controllers/searchCondition.php',
+            url : 'controllers/index.php?module=questionaire&action=searchQuestionaire',
             method : 'post',
             data : $.param({ "keyword" : $scope.keyword}),
             headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -203,7 +210,7 @@ app
           });
       } else {
         $http({
-          url : 'controllers/query.php',
+          url : 'controllers/index.php?module=questionaire&action=queryQuestionaires',
           method : 'get',
           headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
           responseType : 'json'
@@ -508,7 +515,7 @@ app
       $scope.questionaire.questions = $scope.questions;
 
       $http({
-          url : 'controllers/create.php',
+          url : 'controllers/index.php?module=questionaire&action=createQuestionaire',
           method : 'post',
           data : $.param($scope.questionaire),
           headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -553,7 +560,7 @@ app
     var num = window.localStorage.getItem("questionaireId");
 
     $http({
-        url : 'controllers/queryone.php',
+        url : 'controllers/index.php?module=questionaire&action=queryQuestionaire',
         method : 'post',
         data : $.param({ "id" : num }),
         headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -730,7 +737,7 @@ app
 
       var data = {"id" : question.id, "addOptions" : question.addOptions}
 
-      httpService.post('controllers/addQuestionOption.php', data, function(data, header, config) {
+      httpService.post('controllers/index.php?module=question&action=addQuestionOption', data, function(data, header, config) {
           if (data.code == 200) {
             $scope.tip = "更新成功!";
             tipWork(function() {
@@ -847,7 +854,7 @@ app
         "addQuestions" : questionaire.addQuestions 
       }
 
-      httpService.post('controllers/addQuestion.php', data, function(data, header, config) {
+      httpService.post('controllers/index.php?module=question&action=addQuestion', data, function(data, header, config) {
           if (data.code == 200) {
             $scope.tip = "更新成功!";
             tipWork(function() {
@@ -892,7 +899,7 @@ app
         'agree_snd' : $scope.questionaire.agree_snd
       }
 
-      httpService.post('controllers/updateQuestionaire.php', data, function(data, header, config) {
+      httpService.post('controllers/index.php?module=questionaire&action=updateQuestionaire', data, function(data, header, config) {
           if (data.code == 200) {
             $scope.tip = "更新成功!";
             tipWork(function() {
@@ -954,7 +961,7 @@ app
         }
       }
 
-      httpService.post('controllers/updateQuestion.php', data, function(data, header, config) {
+      httpService.post('controllers/index.php?module=question&action=updateQuestion', data, function(data, header, config) {
           if (data.code == 200) {
             $scope.tip = "更新成功!";
             tipWork(function() {
@@ -986,7 +993,7 @@ app
         "isCustomized" : item.isCustomized
       };
 
-      httpService.post('controllers/updateQuestionOption.php', data, function(data, header, config) {
+      httpService.post('controllers/index.php?module=question&action=updateQuestionOption', data, function(data, header, config) {
           if (data.code == 200) {
             $scope.tip = "更新成功!";
             tipWork(function() {
@@ -1004,7 +1011,7 @@ app
     };
 
     $scope.deleteQuestion = function(questionId) {
-      httpService.post('controllers/deleteQuestion.php', {"id" : questionId}, function(data, header, config) {
+      httpService.post('controllers/index.php?module=question&action=deleteQuestion', {"id" : questionId}, function(data, header, config) {
           $('#questionModal').modal('hide');
 
           if (data.code == 200) {
@@ -1024,7 +1031,7 @@ app
     }
 
     $scope.deleteQuestionOption = function(optionId) {
-      httpService.post('controllers/deleteQuestionOption.php', {"id" : optionId}, function(data, header, config) {
+      httpService.post('controllers/index.php?module=question&action=deleteQuestionOption', {"id" : optionId}, function(data, header, config) {
           $('#optionModal').modal('hide');
 
           if (data.code == 200) {
@@ -1092,14 +1099,14 @@ app
     id : window.localStorage.getItem("userId")
   }
 
-  httpService.get('controllers/getRole.php', queryparams, function(data, header, config) {
+  httpService.get('controllers/index.php?module=user&action=getRole', queryparams, function(data, header, config) {
       if (data.code == 200) {
          $scope.currentRole = data.role;
 
          if (data.role == "system_admin") {
             $scope.isShowAdmin = true;
 
-            httpService.get('controllers/getBrandAdmin.php', {}, function(data, header, config) {
+            httpService.get('controllers/index.php?module=user&action=getBrandAdmin', {}, function(data, header, config) {
                 if (data.code != 500) {
                     $scope.admins = data;
                 }
@@ -1107,7 +1114,7 @@ app
                 console.log(error);
             })
 
-            httpService.get('controllers/getBrandOperator.php', {}, function(data, header, config) {
+            httpService.get('controllers/index.php?module=user&action=getBrandOperator', {}, function(data, header, config) {
                 if (data.code != 500) {
                     $scope.operators = data;
                 }
@@ -1116,7 +1123,7 @@ app
             })
          } else if (data.role == "brand_admin") {
             currentBrand = data.brand;
-            httpService.get('controllers/getBrandOperator.php', {brand : data.brand}, function(data, header, config) {
+            httpService.get('controllers/index.php?module=user&action=getBrandOperator', {brand : data.brand}, function(data, header, config) {
                 if (data.code != 500) {
                     $scope.operators = data;
                 }
@@ -1154,7 +1161,7 @@ app
         } else {
           ad.password = md5.createHash(ad.password)
 
-          httpService.post('controllers/saveAddAdmin.php', ad, function(data, header, config) {
+          httpService.post('controllers/index.php?module=user&action=saveAddAdmin', ad, function(data, header, config) {
 
               if (data.code == 200) {
                 ad.id = data.id;
@@ -1179,12 +1186,12 @@ app
   }
 
   $scope.deleteAdmin = function() {
-    httpService.get('controllers/deleteUser.php', {id : deleteAdminId}, function(data, header, config) {
+    httpService.get('controllers/index.php?module=user&action=deleteUser', {id : deleteAdminId}, function(data, header, config) {
 
         if (data.code == 200) {
           $('#myModal').modal('hide');
 
-          httpService.get('controllers/getBrandAdmin.php', {}, function(data, header, config) {
+          httpService.get('controllers/index.php?module=user&action=getBrandAdmin', {}, function(data, header, config) {
               if (data.code != 500) {
                   $scope.admins = data;
               }
@@ -1222,7 +1229,7 @@ app
   }
 
   function validateUserNameExist(name, successCallback) {
-    httpService.get('controllers/checkUsername.php', {name : name}, successCallback, function(error, header, config) {
+    httpService.get('controllers/index.php?module=user&action=checkUsername', {name : name}, successCallback, function(error, header, config) {
         console.log(error);
     })
   }
@@ -1264,7 +1271,7 @@ app
       } else {
         ad.password = md5.createHash(ad.password)
 
-        httpService.post('controllers/saveAddOperator.php', ad, function(data, header, config) {
+        httpService.post('controllers/index.php?module=user&action=saveAddOperator', ad, function(data, header, config) {
 
             if (data.code == 200) {
               ad.id = data.id;
@@ -1297,7 +1304,7 @@ app
   }
 
   $scope.deleteOperator = function() {
-    httpService.get('controllers/deleteUser.php', {id : deleteOperatorId}, function(data, header, config) {
+    httpService.get('controllers/index.php?module=user&action=deleteUser', {id : deleteOperatorId}, function(data, header, config) {
 
         if (data.code == 200) {
           $('#operatorModal').modal('hide');
@@ -1335,7 +1342,7 @@ app
           tipWork();
           return;
         } else {
-          httpService.post('controllers/updateUser.php', updateData, function(data, header, config) {
+          httpService.post('controllers/index.php?module=user&action=updateUser', updateData, function(data, header, config) {
 
               if (data.code == 200) {
                 metaData.brand = metaData.editBrand;
@@ -1351,7 +1358,7 @@ app
         }
       })
     } else {
-      httpService.post('controllers/updateUser.php', updateData, function(data, header, config) {
+      httpService.post('controllers/index.php?module=user&action=updateUser', updateData, function(data, header, config) {
 
           if (data.code == 200) {
             metaData.brand = metaData.editBrand;
@@ -1373,7 +1380,7 @@ app.factory('httpService', ['$http', function($http) {
   return {
     get : function(url, params, successCallback, errorCallback) {
         $http({
-            url : url + "?" + $.param(params),
+            url : url + "&" + $.param(params),
             method : 'get',
             headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
             responseType : 'json'

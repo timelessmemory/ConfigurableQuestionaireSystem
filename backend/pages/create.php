@@ -13,7 +13,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#/list"><i class="glyphicon glyphicon-th-list"></i> Questionaire List</a></li>
         <li><a href='javascript:void(0);' ng-click="logout()"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
-        <li><a>Welcome, <?php session_start(); $name = $_SESSION['username'] == '' ? '<script>window.localStorage.setItem("isLogin", "false")</script>' : $_SESSION['username']; echo $name; ?></a></li>
+        <li><a>Welcome, <?php session_start(); $name = $_SESSION['username'] == '' ? '<script>window.localStorage.setItem("isLogin", "false");window.location.href = "#/";</script>' : $_SESSION['username']; echo $name; ?></a></li>
       </ul>
     </div>
   </nav>
