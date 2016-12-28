@@ -79,7 +79,7 @@
 	  <div ng-if="isShowAdmin">
 	  	<div style="text-align:right;margin-top:10px;">
 	  		<button class="btn btn-info btn-sm" ng-click="addAdmin()">
-	  			<label class="glyphicon glyphicon-plus"></label> 添加
+	  			<label class="glyphicon glyphicon-plus"></label> 添加品牌管理员
 	  		</button>
 	  	</div>
 	  	<div class="table-responsive" style="position:relative;margin-left:0px;top:0px;width:100%;">
@@ -161,7 +161,7 @@
 	  <div ng-if="!isShowAdmin || currentRole == 'brand_admin'">
 	  	<div style="text-align:right;margin-top:10px;">
 	  		<button class="btn btn-info btn-sm" ng-click="addOperator()">
-	  			<label class="glyphicon glyphicon-plus"></label> 添加
+	  			<label class="glyphicon glyphicon-plus"></label> 添加品牌操作员
 	  		</button>
 	  	</div>
 	  	<div class="table-responsive" style="position:relative;margin-left:0px;top:0px;width:100%;">
@@ -185,8 +185,8 @@
 		   <tbody>
 		      <tr ng-repeat="operator in operators" class="active">
 		         <td style="width:2%;">{{operator.id}}</td>
-		         <td style="width:20%;" ng-if="!operator.editMode">{{operator.brand}}</td>
-		         <td style="width:20%;" ng-if="operator.editMode"><input type="text" class="form-control" ng-model="operator.editBrand"></td>
+		         <td style="width:20%;" ng-if="(!operator.editMode && currentRole == 'system_admin') || currentRole == 'brand_admin'">{{operator.brand}}</td>
+		         <td style="width:20%;" ng-if="operator.editMode && currentRole == 'system_admin'"><input type="text" class="form-control" ng-model="operator.editBrand"></td>
 		         <td style="width:15%;" ng-if="!operator.editMode">{{operator.name}}</td>
 		         <td style="width:15%;" ng-if="operator.editMode"><input type="text" class="form-control" ng-model="operator.editName"></td>
 		         <td style="width:15%;" class="show-as-dot" ng-if="!operator.editMode">{{operator.password}}</td>
@@ -202,7 +202,7 @@
 		           <button ng-if="operator.editMode" type="button" title="取消" class="btn btn-default btn-xs" ng-click="cancelEditOperator(operator)">
 		             <i class="glyphicon glyphicon-remove"></i>
 		           </button>
-		           <button type="button" title="删除" class="btn btn-default btn-xs" data-target="#operatorModal" data-toggle="modal" ng-click="showDeleteOperatorDialog(operator)">
+		           <button type="button" title="删除" class="btn btn-default btn-xs" data-target="#operatorModal" data-toggle="modal" ng-click="showDeleteOperatorDialog(operator, $index)">
 		             <i class="glyphicon glyphicon-trash"></i>
 		           </button>
 		         </td>
@@ -223,7 +223,8 @@
 			   <tbody>
 				   	<tr ng-repeat="ad in addOperators">
 				   		<td>{{$index + 1}}</td>
-				      	<td><input type="text" class="form-control" ng-model="ad.brand"></td>
+				      	<td ng-if="currentRole == 'system_admin'"><input type="text" class="form-control" ng-model="ad.brand"></td>
+				      	<td ng-if="currentRole != 'system_admin'">{{ad.brand}}</td>
 				      	<td><input type="text" class="form-control" ng-model="ad.name"></td>
 				      	<td><input type="text" class="form-control" ng-model="ad.password"></td>
 				      	<td>

@@ -1083,7 +1083,10 @@ app
 .controller('roleController', ['$scope', 'md5', 'httpService', function($scope, md5, httpService) {
   $scope.isShowAdmin = false;
   var deleteAdminId;
+  var deleteOperatorId;
+  var deleteOperatorIndex;
   $scope.currentRole = ""
+  var currentBrand = "";
 
   var queryparams = {
     id : window.localStorage.getItem("userId")
@@ -1112,6 +1115,7 @@ app
                 console.log(error);
             })
          } else if (data.role == "brand_admin") {
+            currentBrand = data.brand;
             httpService.get('controllers/getBrandOperator.php', {brand : data.brand}, function(data, header, config) {
                 if (data.code != 500) {
                     $scope.operators = data;
@@ -1142,48 +1146,31 @@ app
         return;
       }
 
-      ad.password = md5.createHash(ad.password)
+      validateUserNameExist(ad.name, function(data, header, config) {
+        if (data.result) {
+          $scope.tip = "用户名已存在!";
+          tipWork();
+          return;
+        } else {
+          ad.password = md5.createHash(ad.password)
 
-      httpService.post('controllers/saveAddAdmin.php', ad, function(data, header, config) {
+          httpService.post('controllers/saveAddAdmin.php', ad, function(data, header, config) {
 
-          if (data.code == 200) {
-            ad.id = data.id;
-            ad.createTime = data.createTime;
-            $scope.admins.push(ad);
-            $scope.addAdmins.splice(index);
-          }
-      }, function(error, header, config) {
-          console.log(error);
+              if (data.code == 200) {
+                ad.id = data.id;
+                ad.createTime = data.createTime;
+                $scope.admins.push(ad);
+                $scope.addAdmins.splice(index);
+              }
+          }, function(error, header, config) {
+              console.log(error);
+          })
+        }
       })
   }  
 
   $scope.saveEditAdmin = function(admin) {
-    if (admin.brand == admin.editBrand && admin.name == admin.editName && admin.password == md5.createHash(admin.editPassword)) {
-      $scope.tip = "更新成功!";
-      tipWork();
-      return;
-    }
-
-    var data = {
-      id : admin.id,
-      brand : admin.editBrand,
-      name : admin.editName,
-      password : md5.createHash(admin.editPassword)
-    }
-
-    httpService.post('controllers/updateAdmin.php', data, function(data, header, config) {
-
-        if (data.code == 200) {
-          admin.brand = admin.editBrand;
-          admin.name = admin.editName;
-          admin.password = md5.createHash(admin.editPassword)
-          admin.editMode = false;
-          $scope.tip = "更新成功!";
-          tipWork();
-        }
-    }, function(error, header, config) {
-        console.log(error);
-    })
+    saveEdit(admin);
   }
 
   $scope.showDeleteAdminDialog = function(admin) {
@@ -1192,7 +1179,7 @@ app
   }
 
   $scope.deleteAdmin = function() {
-    httpService.get('controllers/deleteAdmin.php', {id : deleteAdminId}, function(data, header, config) {
+    httpService.get('controllers/deleteUser.php', {id : deleteAdminId}, function(data, header, config) {
 
         if (data.code == 200) {
           $('#myModal').modal('hide');
@@ -1234,8 +1221,150 @@ app
     $scope.isShowAdmin = false;
   }
 
-  function validateUserNameExist() {
-    
+  function validateUserNameExist(name, successCallback) {
+    httpService.get('controllers/checkUsername.php', {name : name}, successCallback, function(error, header, config) {
+        console.log(error);
+    })
+  }
+
+  $scope.addOperators = []
+
+  $scope.addOperator = function() {
+    if ($scope.currentRole == "system_admin") {
+      $scope.addOperators.push({
+        brand : '',
+        name : '',
+        password : ''
+      })
+    } else {
+      $scope.addOperators.push({
+        brand : currentBrand,
+        name : '',
+        password : ''
+      })
+    }
+  }
+
+  $scope.cancelAddOperator = function(index) {
+    $scope.addOperators.splice(index, 1);
+  } 
+
+  $scope.saveAddOperator = function(ad, index) {
+    if (ad.brand =="" || ad.name == "" || ad.password == "") {
+      $scope.tip = "请填写所有必填项!";
+      tipWork();
+      return;
+    }
+
+    validateUserNameExist(ad.name, function(data, header, config) {
+      if (data.result) {
+        $scope.tip = "用户名已存在!";
+        tipWork();
+        return;
+      } else {
+        ad.password = md5.createHash(ad.password)
+
+        httpService.post('controllers/saveAddOperator.php', ad, function(data, header, config) {
+
+            if (data.code == 200) {
+              ad.id = data.id;
+              ad.createTime = data.createTime;
+              $scope.operators.push(ad);
+              $scope.addOperators.splice(index);
+            }
+        }, function(error, header, config) {
+            console.log(error);
+        })
+      }
+    })
+  } 
+
+  $scope.enterOperatorEditMode = function(operator) {
+    operator.editBrand = operator.brand;
+    operator.editName = operator.name;
+    operator.editPassword = operator.password;
+    operator.editMode = true;
+  }
+
+  $scope.cancelEditOperator = function(operator) {
+    operator.editMode = false;
+  }
+
+  $scope.showDeleteOperatorDialog = function(operator, index) {
+    operator.editMode = false;
+    deleteOperatorId = operator.id;
+    deleteOperatorIndex = index;
+  }
+
+  $scope.deleteOperator = function() {
+    httpService.get('controllers/deleteUser.php', {id : deleteOperatorId}, function(data, header, config) {
+
+        if (data.code == 200) {
+          $('#operatorModal').modal('hide');
+
+          $scope.operators.splice(deleteOperatorIndex, 1);
+        }
+    }, function(error, header, config) {
+        $('#myModal').modal('hide');
+        console.log(error);
+    })
+  }
+
+  $scope.saveEditOperator = function(operator) {
+      saveEdit(operator);
+  }
+
+  function saveEdit(metaData) {
+    if (metaData.brand == metaData.editBrand && metaData.name == metaData.editName && metaData.password == md5.createHash(metaData.editPassword)) {
+      $scope.tip = "更新成功!";
+      tipWork();
+      return;
+    }
+
+    var updateData = {
+      id : metaData.id,
+      brand : metaData.editBrand,
+      name : metaData.editName,
+      password : md5.createHash(metaData.editPassword)
+    }
+
+    if (metaData.name != metaData.editName) {
+      validateUserNameExist(metaData.editName, function(data, header, config) {
+        if (data.result) {
+          $scope.tip = "用户名已存在!";
+          tipWork();
+          return;
+        } else {
+          httpService.post('controllers/updateUser.php', updateData, function(data, header, config) {
+
+              if (data.code == 200) {
+                metaData.brand = metaData.editBrand;
+                metaData.name = metaData.editName;
+                metaData.password = md5.createHash(metaData.editPassword)
+                metaData.editMode = false;
+                $scope.tip = "更新成功!";
+                tipWork();
+              }
+          }, function(error, header, config) {
+              console.log(error);
+          })
+        }
+      })
+    } else {
+      httpService.post('controllers/updateUser.php', updateData, function(data, header, config) {
+
+          if (data.code == 200) {
+            metaData.brand = metaData.editBrand;
+            metaData.name = metaData.editName;
+            metaData.password = md5.createHash(metaData.editPassword)
+            metaData.editMode = false;
+            $scope.tip = "更新成功!";
+            tipWork();
+          }
+      }, function(error, header, config) {
+          console.log(error);
+      })
+    }
   }
 
 }]);
