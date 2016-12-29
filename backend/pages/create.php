@@ -25,6 +25,11 @@
     <input type="text" class="form-control" id="subject" ng-model="questionaire.subject" required autofocus />
   </div>
 
+  <div class="form-group compo" ng-if="currentRole == 'system_admin'">
+    <label for="brand">品牌:</label>
+    <input type="text" class="form-control" id="brand" ng-model="questionaire.brand" />
+  </div>
+
   <div class="form-group compo">
     <label>是否收集隐私:</label>
     <input class="unchecked" ng-class='{"checked": questionaire.isProvicy}' type="checkbox" ng-model="questionaire.isProvicy" />

@@ -57,7 +57,7 @@
       <tr class="text-capitalize">
          <th>编号</th>
          <th>问卷主题</th>
-         <th>问卷说明</th>
+         <th>品牌</th>
          <th>创建日期</th>
          <th>操作</th>
       </tr>
@@ -69,7 +69,7 @@
       <tr ng-repeat="questionaire in questionaires" class="active">
          <td style="width:10%;">{{$index + 1}}</td>
          <td style="color:#5bc0de; cursor:pointer;text-decoration:underline;width:20%;" title="访问问卷"><a href="/questionaire/frontend/index.html?questionaireId={{questionaire.id}}">{{questionaire.subject}}<i class="glyphicon glyphicon-new-window"></i></a></td>
-         <td style="max-width:40%;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" title="{{questionaire.description}}">{{questionaire.description}}</td>
+         <td style="max-width:40%;">{{questionaire.brand}}</td>
          <td style="width:20%;">{{questionaire.createTime}}</td>
          <td style="width:10%;">
            <button type="button" title="复制链接" class="btn btn-default btn-xs" ngclipboard data-clipboard-text="{{domain}}/questionaire/frontend/index.html?questionaireId={{questionaire.id}}">
@@ -81,6 +81,12 @@
            <button type="button" title="删除" class="btn btn-default btn-xs" data-target="#myModal" data-toggle="modal" ng-click="sendId(questionaire.id)">
              <i class="glyphicon glyphicon-trash"></i>
            </button>
+           <button type="button" title="下载答案" class="btn btn-default btn-xs" ng-click="download(questionaire.id)">
+             <i class="glyphicon glyphicon-download"></i>
+           </button>
+           <!-- <a class="btn btn-default btn-xs" href="http://localhost/questionaire/backend/controllers/question/answer_files/answer1.xlsx" title="下载答案">
+             <i class="glyphicon glyphicon-download"></i>
+           </a> -->
          </td>
       </tr>
    </tbody>

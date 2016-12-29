@@ -2,17 +2,31 @@
 	header('Content-Type: application/json');
     header("Content-Type:text/html;charset=UTF-8");
     
-	try {
-	    $sql = "select * from questionaire";
+    $brand = $_GET['brand'];
 
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
-	    $db->query('set names utf8;');
+    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
+    $db = new PDO($dsn, 'root', 'root');
+    $db->query('set names utf8;');
 
-	    $preparedStatement = $db->prepare($sql);
+    if ($brand) {
+    	$sql = "select * from questionaire where brand = :brand";
+
+    	$params = [
+    		":brand" => $brand
+    	];
+
+    	$preparedStatement = $db->prepare($sql);
+
+	    $preparedStatement->execute($params);
+    } else {
+    	$sql = "select * from questionaire";
+
+    	$preparedStatement = $db->prepare($sql);
 
 	    $preparedStatement->execute([]);
+    }
 
+	try {
 	    $result = $preparedStatement->fetchAll(PDO::FETCH_ASSOC);
 	    
 	    echo json_encode($result);

@@ -117,33 +117,48 @@ app
            $scope.currentRole = data.role;
 
            if (data.role == "system_admin") {
+                $http({
+                  url : 'controllers/index.php?module=questionaire&action=queryQuestionaires',
+                  method : 'get',
+                  headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+                  responseType : 'json'
+                })
+                .success(function(data, header, config) {
+                  $scope.questionaires = data;
+                })
+                .error(function(error, header, config) {
+                  console.log(error);
+                });
 
+                $document.bind("keypress", function(event) {
+                    if (event.keyCode == 13) {
+                        $scope.search();
+                    }
+                });
            } else {
+                $http({
+                  url : 'controllers/index.php?module=questionaire&action=queryQuestionaires&brand=' + data.brand,
+                  method : 'get',
+                  headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+                  responseType : 'json'
+                })
+                .success(function(data, header, config) {
+                  $scope.questionaires = data;
+                })
+                .error(function(error, header, config) {
+                  console.log(error);
+                });
 
+                $document.bind("keypress", function(event) {
+                    if (event.keyCode == 13) {
+                        $scope.search();
+                    }
+                });
            }
         }
     }, function(error, header, config) {
         console.log(error);
     })
-
-    $http({
-      url : 'controllers/index.php?module=questionaire&action=queryQuestionaires',
-      method : 'get',
-      headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-      responseType : 'json'
-    })
-    .success(function(data, header, config) {
-      $scope.questionaires = data;
-    })
-    .error(function(error, header, config) {
-      console.log(error);
-    });
-
-    $document.bind("keypress", function(event) {
-        if (event.keyCode == 13) {
-            $scope.search();
-        }
-    });
 
     $scope.edit = function(num) {
       window.localStorage.setItem("questionaireId", num);
@@ -234,9 +249,13 @@ app
     //     }, 350);
     //   }
     // });
+
+    $scope.download = function(id) {
+      window.location.href = "controllers/index.php?module=question&action=download&id=" + id;
+    }
 }])
 
-.controller("createController", ['$scope', '$http', '$rootScope', function($scope, $http, $rootScope) {
+.controller("createController", ['$scope', '$http', '$rootScope', 'httpService', function($scope, $http, $rootScope, httpService) {
     $scope.config = {
         toolbars: [
             ['fullscreen', 'source', 'undo', 'redo'],
@@ -246,16 +265,9 @@ app
         autoFloatEnabled: true
     }
 
-    $scope.ready = function(editor){
-        editor.focus();
-    }
-
-    $scope.showHead = true;
-    $scope.isSubmit = false;
-    $scope.currentIndex = 0;
-
     $scope.questionaire = {
       'subject' : '', 
+      'brand' : '',
       'description' : '',
       'isProvicy' : false,
       'required_fst' : false,
@@ -263,6 +275,32 @@ app
       'required_snd' : false,
       'agree_snd' : ''
     };
+
+    var queryparams = {
+      id : window.localStorage.getItem("userId")
+    }
+
+    $scope.currentRole = "";
+
+    httpService.get('controllers/index.php?module=user&action=getRole', queryparams, function(data, header, config) {
+        if (data.code == 200) {
+          $scope.currentRole = data.role;
+
+          if (data.role != "system_admin") {
+            $scope.questionaire.brand = data.brand;
+          }
+        }
+    }, function(error, header, config) {
+      console.log(error);
+    })
+
+    $scope.ready = function(editor){
+        editor.focus();
+    }
+
+    $scope.showHead = true;
+    $scope.isSubmit = false;
+    $scope.currentIndex = 0;
 
     var initQuestion = {
       title : '',
