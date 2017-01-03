@@ -42,7 +42,7 @@ create table user (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         role VARCHAR(20) NOT NULL,
         brand VARCHAR(100),
-        name VARCHAR(20) NOT NULL,
+        name VARCHAR(200) NOT NULL,
         password VARCHAR(100) NOT NULL,
         createTime datetime NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;

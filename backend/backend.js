@@ -350,9 +350,23 @@ app
       }
     }
 
+    $scope.returnOrigin = function(value, options) {
+      if (value) {
+        angular.forEach(options, function(item) {
+          item.skipIndex = "";
+        })
+      }
+    }
+
     $scope.addOption = function() {
       if (isOptionEmpty()) {
         $scope.tip = "选项不得为空!";
+        tipWork();
+        return;
+      }
+
+      if (isIndexEmpty()) {
+        $scope.tip = "索引不合法!";
         tipWork();
         return;
       }
@@ -391,18 +405,41 @@ app
       }
     }
 
+    function isIndexEmpty() {
+      var currentQuestion = $scope.questions[$scope.currentIndex];
+      var maxIndex = currentQuestion.options.length - 1;
+
+      var skipIndex = currentQuestion.options[maxIndex].skipIndex;
+
+      if (currentQuestion.isSingle && currentQuestion.isSetSkip) {
+        if (skipIndex == '') {
+          return true;
+        } else {
+          if (!isPositiveInteger(skipIndex) || parseInt(skipIndex) <= ($scope.currentIndex + 1)) {
+            return true;
+          } else {
+            return false;
+          }
+        }
+      }
+    }
+
     function validateGroup() {
       if (!$scope.questions[$scope.currentIndex].isSetSkip) {
         return false;
       }
 
-      var group = $scope.questions[$scope.currentIndex].group;
+      if (!$scope.questions[$scope.currentIndex].isSingle) {
+        var group = $scope.questions[$scope.currentIndex].group;
 
-      if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= ($scope.currentIndex + 1) || parseInt(group.gp2) <= ($scope.currentIndex + 1) || group.gp1 == group.gp2) {
-        return true;
-      } else {
-        return false;
+        if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= ($scope.currentIndex + 1) || parseInt(group.gp2) <= ($scope.currentIndex + 1) || group.gp1 == group.gp2) {
+          return true;
+        } else {
+          return false;
+        }
       }
+
+      return false;
     }
 
     $scope.deleteQuestion = function() {
@@ -437,6 +474,12 @@ app
         return;
       }
 
+      if (isIndexEmpty()) {
+        $scope.tip = "索引不合法!";
+        tipWork();
+        return;
+      }
+
       if (validateGroup()) {
         $scope.tip = "索引不合法!";
         tipWork();
@@ -449,6 +492,12 @@ app
     $scope.nextQues =function() {
       if (validateCurrentQuestion()) {
         $scope.tip = "请先完成当前问题!";
+        tipWork();
+        return;
+      }
+
+      if (isIndexEmpty()) {
+        $scope.tip = "索引不合法!";
         tipWork();
         return;
       }
@@ -519,11 +568,14 @@ app
         $scope.tip = "问卷说明不得为空!";
         tipWork();
         return;
-      } else {
+      } 
+
+      if (!$scope.questionaire.isProvicy) {
         $scope.questionaire.required_fst = false;
         $scope.questionaire.agree_fst = "";
         $scope.questionaire.required_snd = false;
         $scope.questionaire.agree_snd = "";
+        $scope.questionaire.description = "";
       }
 
       $scope.showHead = false;
@@ -539,7 +591,15 @@ app
         return;
       }
 
+      if (isIndexEmpty()) {
+        $scope.isSubmit = false;
+        $scope.tip = "索引不合法!";
+        tipWork();
+        return;
+      }
+
       if (validateGroup()) {
+        $scope.isSubmit = false;
         $scope.tip = "索引不合法!";
         tipWork();
         return;
@@ -590,6 +650,7 @@ app
     }
 
     $scope.isSubmit = false;
+    $scope.currentRole = "";
 
     $scope.ready = function(editor){
         editor.focus();
@@ -612,7 +673,23 @@ app
         }
         
         $scope.questionaire = data.result;
+        $scope.questionaire.isProvicy = $scope.questionaire.isProvicy == '1' ? true : false;
+        $scope.questionaire.required_fst = $scope.questionaire.required_fst == '1' ? true : false;
+        $scope.questionaire.required_snd = $scope.questionaire.required_snd == '1' ? true : false;
+
         $scope.questionaire.addQuestions = [];
+
+        var queryparams = {
+          id : window.localStorage.getItem("userId")
+        }
+
+        httpService.get('controllers/index.php?module=user&action=getRole', queryparams, function(data, header, config) {
+            if (data.code == 200) {
+              $scope.currentRole = data.role;
+            }
+        }, function(error, header, config) {
+          console.log(error);
+        })
 
         angular.forEach($scope.questionaire.questions, function(it) {
           it.addOptions = [];
@@ -917,11 +994,14 @@ app
 
       if ($scope.questionaire.isProvicy && $scope.questionaire.description == "") {
         return;
-      } else {
+      }
+
+      if (!$scope.questionaire.isProvicy) {
         $scope.questionaire.required_fst = false;
         $scope.questionaire.agree_fst = "";
         $scope.questionaire.required_snd = false;
         $scope.questionaire.agree_snd = "";
+        $scope.questionaire.description = "";
       }
 
       $scope.isSubmit = true;
@@ -929,6 +1009,7 @@ app
       var data = {
         "id" : questionaireId, 
         "subject" : $scope.questionaire.subject, 
+        "brand" : $scope.questionaire.brand, 
         "description" : $scope.questionaire.description, 
         "isProvicy" : $scope.questionaire.isProvicy,
         'required_fst' : $scope.questionaire.required_fst,

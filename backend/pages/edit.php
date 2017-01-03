@@ -73,10 +73,40 @@
     <label for="subject">问卷主题:</label>
     <input type="text" class="form-control" id="subject" ng-model="questionaire.subject" required autofocus />
   </div>
-  <div class="form-group compo" style="margin-bottom: 15px;">
-    <label for="description">问卷说明:</label>
-    <div class="ueditor" config="config" ready="ready" style="width:100%;height:500px;" ng-model="questionaire.description"></div>
+
+  <div class="form-group compo" ng-if="currentRole == 'system_admin'">
+    <label for="brand">品牌:</label>
+    <input type="text" class="form-control" id="brand" ng-model="questionaire.brand" />
   </div>
+
+  <div class="form-group compo">
+    <label>是否收集隐私:</label>
+    <input class="unchecked" ng-class='{"checked": questionaire.isProvicy}' type="checkbox" ng-model="questionaire.isProvicy" />
+  </div>
+
+  <div ng-show="questionaire.isProvicy">
+    <div class="form-group compo" style="margin-bottom: 15px;">
+      <label for="description">问卷说明:</label>
+      <div class="ueditor" config="config" ready="ready" style="width:100%;height:500px;" ng-model="questionaire.description"></div>
+    </div>
+
+    <div class="form-group compo">
+      <label for="agree_fst">
+        同意说明1: &nbsp;&nbsp;是否必须同意
+        <input class="unchecked" ng-class='{"checked": questionaire.required_fst}' type="checkbox" ng-model="questionaire.required_fst" />
+      </label> 
+      <input type="text" class="form-control" id="agree_fst" ng-model="questionaire.agree_fst" />
+    </div>
+
+    <div class="form-group compo" style="margin-bottom: 15px;">
+      <label for="agree_snd">
+        同意说明2: &nbsp;&nbsp;是否必须同意
+        <input class="unchecked" ng-class='{"checked": questionaire.required_snd}' type="checkbox" ng-model="questionaire.required_snd" />
+      </label> 
+      <input type="text" class="form-control" id="agree_snd" ng-model="questionaire.agree_snd" />
+    </div>
+  </div>
+
   <div style="text-align:right;">
     <button type="button" class="btn btn-success btn-sm" style="margin-right:30px;" ng-disabled="isSubmit" ng-click="saveQuestionaire(questionaire.id)">保存问卷信息</button>
   </div>
