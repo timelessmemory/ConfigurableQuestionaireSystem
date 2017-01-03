@@ -35,7 +35,7 @@
     <input class="unchecked" ng-class='{"checked": questionaire.isProvicy}' type="checkbox" ng-model="questionaire.isProvicy" />
   </div>
 
-  <div ng-if="questionaire.isProvicy">
+  <div ng-show="questionaire.isProvicy">
     <div class="form-group compo">
       <label for="description">问卷说明:</label>
       <div class="ueditor" config="config" ready="ready" style="width:100%;height:500px;" ng-model="questionaire.description"></div>
@@ -58,7 +58,7 @@
     </div>
   </div>
 
-  <div style="text-align:right;">
+  <div style="text-align:right;margin-bottom:20px;">
     <button type="submit" class="btn btn-success" style="margin-right:30px;" ng-click="createQuestion()">确定</button>
   </div>
 </form>

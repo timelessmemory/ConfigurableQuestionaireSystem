@@ -1,5 +1,5 @@
-create database questionaireWeb;
-use questionaireWeb;
+CREATE DATABASE IF NOT EXISTS questionaireWeb DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE questionaireWeb;
 create table questionaire (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         isProvicy TINYINT(1) NOT NULL,

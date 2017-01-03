@@ -294,7 +294,7 @@ app
       console.log(error);
     })
 
-    $scope.ready = function(editor){
+    $scope.ready = function(editor) {
         editor.focus();
     }
 

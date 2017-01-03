@@ -6,7 +6,7 @@
     $id = $_POST["id"];
     
 	try {
-		$sql = "insert into answer(questionaireId, content) values(:questionaireId, :content)";
+		$sql = "insert into answer(questionaireId, content, answerTime) values(:questionaireId, :content, :answerTime)";
 
 	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
 	    $db = new PDO($dsn, 'root', 'root');
@@ -15,8 +15,9 @@
 	    $preparedStatement = $db->prepare($sql);
 
 	    $params =[
-	        ":content" => json_encode($data),
-	        ":questionaireId" => $id
+	        ":content" => $data,
+	        ":questionaireId" => $id,
+	        ":answerTime" => date('Y-m-d H:i:s', time())
 	    ];
 
 	    $result = $preparedStatement->execute($params);
