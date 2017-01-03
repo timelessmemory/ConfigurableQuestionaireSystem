@@ -15,7 +15,7 @@
 	    $preparedStatement = $db->prepare($sql);
 
 	    $params =[
-	        ":content" => json_encode($data),
+	        ":content" => $data,
 	        ":questionaireId" => $id
 	    ];
 
