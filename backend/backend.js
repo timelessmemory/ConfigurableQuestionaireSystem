@@ -342,7 +342,7 @@ app
       })
     }
 
-    $scope.switchSkipIndex = function($event, item, group) {
+    $scope.switchSkipIndex = function(item, group) {
       if (item.isSkipOne) {
         item.skipIndex =  group.gp1;
       } else {
@@ -668,7 +668,10 @@ app
     .success(function(data, header, config) {
         if (data.code == 500) {
           $scope.tip = "请求数据错误!";
-          tipWork();
+
+          tipWork(function() {
+            window.location.href = "#/list";
+          });
           return;
         }
         
@@ -694,51 +697,56 @@ app
         angular.forEach($scope.questionaire.questions, function(it) {
           it.addOptions = [];
 
-          $scope.$watch(function() {
-            return it.group
-          }, function() {
-            angular.forEach(it.options, function(op) {
-              if (op.isSkipOne) {
-                op.skipIndex = it.group.gp1;
-              } else {
-                op.skipIndex = it.group.gp2;
-              }
-            })
-
-            angular.forEach(it.addOptions, function(op) {
-              if (op.isSkipOne) {
-                op.skipIndex = it.group.gp1;
-              } else {
-                op.skipIndex = it.group.gp2;
-              }
-            })
-          }, true)
-
           angular.forEach(it.options, function(op) {
             op.isSkip = op.isSkip == '1' ? true : false;
             op.isSkipOne = op.isSkipOne == '1' ? true : false;
             op.isHasNext = op.isHasNext == '1' ? true : false;
             op.isCustomized = op.isCustomized == '1' ? true : false;
+            op.skipIndex = parseInt(op.skipIndex);
           });
+
+          $scope.$watch(function() {
+            return it.group
+          }, function() {
+            angular.forEach(it.options, function(op) {
+              if (!it.isSingle) {
+                if (op.isSkipOne) {
+                  op.skipIndex = it.group.gp1;
+                } else {
+                  op.skipIndex = it.group.gp2;
+                }
+              }
+            })
+
+            angular.forEach(it.addOptions, function(op) {
+              if (!it.isSingle) {
+                if (op.isSkipOne) {
+                  op.skipIndex = it.group.gp1;
+                } else {
+                  op.skipIndex = it.group.gp2;
+                }
+              }
+            })
+          }, true)
 
           it.isSingle = it.isSingle == '1' ? true : false;
           it.isSetSkip = it.options[0].isSkip;
           it.originIsSetSkip = it.options[0].isSkip;
           
-          var gp1 = "", gp2 = "";
+          var gp1 = null, gp2 = null;
 
-          if (it.isSetSkip) {
+          if (it.isSetSkip && !it.isSingle) {
             angular.forEach(it.options, function(op) {
               if (op.isSkipOne) {
-                gp1 = op.skipIndex;
+                gp1 = parseInt(op.skipIndex);
               }
 
               if (!op.isSkipOne) {
-                gp2 = op.skipIndex;
+                gp2 = parseInt(op.skipIndex);
               }
             });
           }
-
+          
           it.group = {
             'gp1' : gp1,
             'gp2' : gp2
@@ -813,8 +821,8 @@ app
         tipWork();
         return;
       }
-      console.log(index)
-      console.log(options)
+      // console.log(index)
+      // console.log(options)
       options.splice(index, 1);
     }
 
@@ -824,8 +832,8 @@ app
         tipWork();
         return;
       }
-      console.log(index)
-      console.log(options)
+      // console.log(index)
+      // console.log(options)
       options.splice(index, 1);
     }
 
@@ -836,9 +844,19 @@ app
           tipWork();
           return;
         }
+
+        if (question.isSetSkip && question.isSingle) {
+          var skipIndex = question.addOptions[length - 1].skipIndex;
+
+          if (skipIndex == '' || !isPositiveInteger(skipIndex) || parseInt(skipIndex) <= index) {
+            $scope.tip = "索引不合法!";
+            tipWork();
+            return;
+          }
+        }
       }
 
-      if (question.isSetSkip) {
+      if (question.isSetSkip && !question.isSingle) {
         var group = question.group;
 
         if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= index || parseInt(group.gp2) <= index || group.gp1 == group.gp2) {
@@ -869,11 +887,19 @@ app
       })
     }
 
+    $scope.returnOrigin = function(value, options) {
+      if (value) {
+        angular.forEach(options, function(item) {
+          item.skipIndex = "";
+        })
+      }
+    }
+
     $scope.addQuestion = function(questionaire) {
         if ((length = questionaire.addQuestions.length) != 0) {
           var maxQues = questionaire.addQuestions[length - 1];
 
-          if (maxQues.isSetSkip) {
+          if (maxQues.isSetSkip && !maxQues.isSingle) {
             var group = maxQues.group;
             var index = questionaire.questions.length + length;
 
@@ -891,6 +917,17 @@ app
             $scope.tip = "问题或选项不得为空!";
             tipWork();
             return;
+          }
+
+          if (maxQues.isSetSkip && maxQues.isSingle) {
+            var skipIndex = maxOption.skipIndex;
+            var index = questionaire.questions.length + length;
+
+            if (skipIndex == '' || !isPositiveInteger(skipIndex) || parseInt(skipIndex) <= index) {
+              $scope.tip = "索引不合法!";
+              tipWork();
+              return;
+            }
           }
         }
 
@@ -959,6 +996,17 @@ app
           $scope.tip = "问题或选项不得为空!";
           tipWork();
           return;
+        }
+
+        if (maxQues.isSetSkip && maxQues.isSingle) {
+          var skipIndex = maxOption.skipIndex;
+          var index = questionaire.questions.length + length;
+          
+          if (skipIndex == '' || !isPositiveInteger(skipIndex) || parseInt(skipIndex) <= index) {
+            $scope.tip = "索引不合法!";
+            tipWork();
+            return;
+          }
         }
       }
 
@@ -1053,23 +1101,47 @@ app
       data.isSetSkip = question.isSetSkip;
 
       if (question.isSetSkip) {
-        var group = question.group;
+        if (!question.isSingle) {
 
-        if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= index || parseInt(group.gp2) <= index || group.gp1 == group.gp2) {
-          $scope.tip = "索引不合法!";
-          tipWork();
-          $scope.isSubmit = false;
-          return;
+          var group = question.group;
+
+          if (!isPositiveInteger(group.gp1) || !isPositiveInteger(group.gp2) || parseInt(group.gp1) <= index || parseInt(group.gp2) <= index || group.gp1 == group.gp2) {
+            $scope.tip = "索引不合法!";
+            tipWork();
+            $scope.isSubmit = false;
+            return;
+          }
+
+          var pairs = [];
+
+          angular.forEach(question.options, function(op) {
+            pairs.push({"id" : op.id, 'isSkipOne' : op.isSkipOne, "skipIndex" : op.skipIndex})
+          });
+
+          data.pairs = pairs;
+        } else {
+          var flag = false;
+          angular.forEach(question.options, function(op) {
+            if (op.skipIndex == '' || !isPositiveInteger(op.skipIndex) || parseInt(op.skipIndex) <= index) {
+              flag = true;
+              return;
+            }
+          });
+
+          if (flag) {
+            $scope.tip = "索引不合法!";
+            tipWork();
+            $scope.isSubmit = false;
+            return;
+          }
+          
+          var pairs = [];
+
+          angular.forEach(question.options, function(op) {
+            pairs.push({"id" : op.id, "skipIndex" : op.skipIndex})
+          });
+          data.pairs = pairs;
         }
-
-        var pairs = [];
-
-        angular.forEach(question.options, function(op) {
-          pairs.push({"id" : op.id, 'isSkipOne' : op.isSkipOne, "skipIndex" : op.skipIndex})
-        });
-
-        data.pairs = pairs;
-
       } else {
         if (question.originIsSetSkip) {
           var optionUpdateIds = [];

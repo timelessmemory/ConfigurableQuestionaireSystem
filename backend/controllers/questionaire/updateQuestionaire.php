@@ -21,7 +21,7 @@
 
 	    $preparedStatement = $db->prepare($sql);
 
-	    $params =[
+	    $params = [
 	        ":questionaireId" => $questionaireId,
 	        ":subject" => $subject,
 	        ":brand" => $brand,

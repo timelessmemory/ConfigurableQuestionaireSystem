@@ -117,17 +117,17 @@
       <div class="ueditor" config="config" ready="ready" style="width:100%;height:200px;" ng-model="question.title"></div>
       <br/>
       <span>是否单选:</span>
-      <input class="unchecked" ng-class='{"checked": question.isSingle}' type="checkbox" ng-model="question.isSingle" />
+      <input class="unchecked" ng-class='{"checked": question.isSingle}' type="checkbox" ng-model="question.isSingle" ng-click="returnOrigin(question.isSingle, question.options)"/>
       <br/><br/>
       <span>是否为选项设置跳题索引:</span>
       <input class="unchecked" ng-class='{"checked": question.isSetSkip}' type="checkbox" ng-model="question.isSetSkip" ng-click="switchIsSetSkip(question)" />
       <br/>
-      <div ng-if="question.isSetSkip">
+      <div ng-if="question.isSetSkip && !question.isSingle">
         <div style="margin-left:20px;">
           <span>Group1索引</span>
-          <input type="text" class="form-control" ng-model="question.group.gp1" />
+          <input type="number" class="form-control" ng-model="question.group.gp1" />
           <span>Group2索引</span>
-          <input type="text" class="form-control" ng-model="question.group.gp2" />
+          <input type="number" class="form-control" ng-model="question.group.gp2" />
         </div>
       </div>
       <div style="text-align:right;">
@@ -146,12 +146,17 @@
         <span>此选项是否由被调查者自行输入:</span>
         <input class="unchecked" ng-class='{"checked": item.isCustomized}' type="checkbox" ng-model="item.isCustomized" />
         <br/>
-        <div ng-if="question.isSetSkip">
+        <div ng-if="question.isSetSkip && !question.isSingle">
           <span>是否跳题至Group1:</span>
           <input class="unchecked" ng-class='{"checked": item.isSkipOne}' type="checkbox" ng-model="item.isSkipOne" ng-click="switchSkipIndex(item, question.group)" />
           (跳题设置修改后请点击题干修改保存按钮进行保存)
         </div>
-        <div style="text-align:right;">
+        <div ng-if="question.isSetSkip && question.isSingle">
+          <span>跳题索引:</span>
+          (跳题索引修改后请点击题干修改保存按钮进行保存)
+          <input type="number" class="form-control" ng-model="item.skipIndex" />
+        </div>
+        <div style="text-align:right;margin-top: 10px;">
           <button class="btn btn-danger btn-sm" style="margin-right:30px;" data-target="#optionModal" data-toggle="modal" ng-click="sendQuestionOptionId(item.id)">删除问题{{outerIndex + 1}}选项{{$index + 1}}</button>      
           <button class="btn btn-success btn-sm" ng-disabled="isSubmit" ng-click="saveQuestionOption(item.id, item)">保存问题{{outerIndex + 1}}选项{{$index + 1}}的修改</button>      
         </div>
@@ -168,11 +173,15 @@
         <span>此选项是否由被调查者自行输入:</span>
         <input class="unchecked" ng-class='{"checked": option.isCustomized}' type="checkbox" ng-model="option.isCustomized" />
         <br/>
-        <div ng-if="question.isSetSkip">
+        <div ng-if="question.isSetSkip && !question.isSingle">
           <span>是否跳题至Group1:</span>
           <input class="unchecked" ng-class='{"checked": option.isSkipOne}' type="checkbox" ng-model="option.isSkipOne" ng-click="switchSkipIndex(option, question.group)" />
         </div>
-        <div style="text-align:right;margin-top: -20px;">
+        <div ng-if="question.isSetSkip && question.isSingle">
+          <span>跳题索引:</span>
+          <input type="number" class="form-control" ng-model="option.skipIndex" />
+        </div>
+        <div style="text-align:right;margin-top: 10px;">
           <button class="btn btn-danger btn-xs" ng-click="deleteOption(question.addOptions, $index, question)">删除该选项</button>
         </div>
         <br/><br/><br/>
@@ -193,12 +202,12 @@
       <div class="ueditor" config="config" ready="ready" style="width:100%;height:200px;" ng-model="question.title"></div>
       <br/>
       <span>是否单选:</span>
-      <input class="unchecked" ng-class='{"checked": question.isSingle}' type="checkbox" ng-model="question.isSingle" />
+      <input class="unchecked" ng-class='{"checked": question.isSingle}' type="checkbox" ng-model="question.isSingle" ng-click="returnOrigin(question.isSingle, question.options)"/>
       <br/><br/>
       <span>是否为选项设置跳题索引:</span>
       <input class="unchecked" ng-class='{"checked": question.isSetSkip}' type="checkbox" ng-model="question.isSetSkip" ng-click="switchIsSetSkipAdd(question)" />
       <br/>
-      <div ng-if="question.isSetSkip">
+      <div ng-if="question.isSetSkip && !question.isSingle">
         <div style="margin-left:20px;">
           <span>Group1索引</span>
           <input type="text" class="form-control" ng-model="question.group.gp1" />
@@ -221,11 +230,15 @@
         <span>此选项是否由被调查者自行输入:</span>
         <input class="unchecked" ng-class='{"checked": item.isCustomized}' type="checkbox" ng-model="item.isCustomized" />
         <br/>
-        <div ng-if="question.isSetSkip">
+        <div ng-if="question.isSetSkip && !question.isSingle">
           <span>是否跳题至Group1:</span>
           <input class="unchecked" ng-class='{"checked": item.isSkipOne}' type="checkbox" ng-model="item.isSkipOne" ng-click="switchSkipIndex(item, question.group)" />
         </div>
-        <div style="text-align:right;">
+        <div ng-if="question.isSetSkip && question.isSingle">
+          <span>跳题索引:</span>
+          <input type="number" class="form-control" ng-model="item.skipIndex" />
+        </div>
+        <div style="text-align:right;margin-top: 10px;">
           <button class="btn btn-danger btn-sm" ng-click="deleteOptionAdd(question.options, $index)">删除该选项</button>      
         </div>
         <br/><br/>

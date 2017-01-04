@@ -72,7 +72,7 @@
     <input class="unchecked" ng-class='{"checked": questions[currentIndex].isSingle}' type="checkbox" ng-model="questions[currentIndex].isSingle" ng-click="returnOrigin(questions[currentIndex].isSingle, questions[currentIndex].options)" />
     <br/><br/>
     <span>是否为选项设置跳题索引:</span>
-    <input class="unchecked" ng-class='{"checked": questions[currentIndex].isSetSkip}' type="checkbox" ng-model="questions[currentIndex].isSetSkip" ng-click="switchIsSetSkip($event, questions[currentIndex])" />
+    <input class="unchecked" ng-class='{"checked": questions[currentIndex].isSetSkip}' type="checkbox" ng-model="questions[currentIndex].isSetSkip" ng-click="switchIsSetSkip(questions[currentIndex])" />
     <br/>
     <div ng-if="questions[currentIndex].isSetSkip && !questions[currentIndex].isSingle">
       <div style="margin-left:20px;">
@@ -96,7 +96,7 @@
       <br/>
       <div ng-if="questions[currentIndex].isSetSkip && !questions[currentIndex].isSingle">
         <span>是否跳题至Group1:</span>
-        <input class="unchecked" ng-class='{"checked": item.isSkipOne}' type="checkbox" ng-model="item.isSkipOne" ng-click="switchSkipIndex($event, item, questions[currentIndex].group)" />
+        <input class="unchecked" ng-class='{"checked": item.isSkipOne}' type="checkbox" ng-model="item.isSkipOne" ng-click="switchSkipIndex(item, questions[currentIndex].group)" />
       </div>
       <div ng-if="questions[currentIndex].isSetSkip && questions[currentIndex].isSingle">
         <span>跳题索引:</span>
