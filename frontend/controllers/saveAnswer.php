@@ -2,11 +2,14 @@
 	header('Content-Type: application/json');
     header("Content-Type:text/html;charset=UTF-8");
     
-    $data = $_POST["data"];
+    $data = $_POST["answers"];
     $id = $_POST["id"];
+    $mobile = $_POST["mobile"];
+    $email = $_POST["email"];
+    $agree = $_POST["agree"] == "true" ? true : false;
     
 	try {
-		$sql = "insert into answer(questionaireId, content, answerTime) values(:questionaireId, :content, :answerTime)";
+		$sql = "insert into answer(questionaireId, content, mobile, email, agree, answerTime) values(:questionaireId, :content, :mobile, :email, :agree, :answerTime)";
 
 	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
 	    $db = new PDO($dsn, 'root', 'root');
@@ -17,6 +20,9 @@
 	    $params =[
 	        ":content" => $data,
 	        ":questionaireId" => $id,
+	        ":mobile" => $mobile,
+	        ":email" => $email,
+	        ":agree" => $agree,
 	        ":answerTime" => date('Y-m-d H:i:s', time())
 	    ];
 

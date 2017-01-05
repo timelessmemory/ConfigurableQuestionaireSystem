@@ -35,6 +35,9 @@ create table answer (
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
         questionaireId INT NOT NULL,
         content VARCHAR(5000) NOT NULL,
+        mobile VARCHAR(50),
+        email VARCHAR(100),
+        agree TINYINT(1),
         answerTime datetime NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 

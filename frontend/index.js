@@ -58,11 +58,19 @@ frontend
     });
 
     $scope.start = function() {
-    	if (!$scope.formData.isAgree || !$scope.tmp.isAgree) {
+    	if ($scope.questionaire.required_fst == '1' && !$scope.formData.isAgree || $scope.questionaire.required_snd == '1' && !$scope.tmp.isAgree) {
     		$scope.tip = "请同意以上说明!";
             tipWork();
             return;
     	}
+
+        var record = window.localStorage.getItem("record") ? window.localStorage.getItem("record").split(",") : [];
+        
+        if (record.indexOf($scope.questionaire.id) > -1) {
+            $scope.tip = "本机已进行过该问卷!";
+            tipWork();
+            return;
+        }
 
     	$scope.isStart = true;
     }
@@ -75,17 +83,25 @@ frontend
     	option.isSelect = true;
     }
 
-    $scope.operate = function(event, content) {
-    	if (event.target.checked)  {
-    		selecteds.push(content);
-    	} else {
-    		var index = selecteds.indexOf(content);
-    		selecteds.splice(index, 1);
-    	}
-    	// console.log(selecteds)
+    $scope.operate = function(event, content, option) {
+
+        var index = selecteds.indexOf(content);
+        
+        if (event.target.checked)  {
+            if (index > -1) {
+                selecteds.splice(index, 1);
+            } else {
+                selecteds.push(content);
+            }
+        } else {
+            if (index > -1) {
+                selecteds.splice(index, 1);
+            }
+        }
+        option.checkflag = isCheck(content)
     }
 
-    $scope.isCheck = function(content) {
+    var isCheck = function(content) {
     	if (selecteds.indexOf(content) > -1) {
     		return true;
     	}
@@ -94,10 +110,14 @@ frontend
     }
 
     $scope.next = function() {
+        if(answers.length == $scope.questions.length && $scope.qs.answer == "" && $scope.questionIndex == $scope.questions.length - 1) {
+            $scope.isSubmit = true;
+            return;
+        }
 
     	if ($scope.questions[$scope.questionIndex].isSingle == '1') {
     		//single
-
+            
     		if (backIndex.length != 0 && $scope.qs.custSingle == "" && $scope.qs.answer == "") {
     			questionLastIndexs.push($scope.questionIndex);
     			$scope.questionIndex = backIndex.pop();
@@ -152,6 +172,7 @@ frontend
     				}
     			})
     		} else {
+
     			if ($scope.qs.answer == "") {
 	    			$scope.tip = "请选择选项!";
 	            	tipWork();
@@ -213,6 +234,8 @@ frontend
 	    			$scope.isEnd = true;
 	    		}
     		} else {
+                $scope.qs.answer = "";
+                $scope.qs.custSingle = "";
     			$scope.isSubmit = true;
     		}
     	} else {
@@ -335,7 +358,7 @@ frontend
 
     				questionLastIndexs.push($scope.questionIndex);
 
-    				$scope.questionIndex = option.skipIndex - 1;
+    				$scope.questionIndex = skipIndex - 1;
     				return;
     			}
 
@@ -359,6 +382,8 @@ frontend
 
 	    		$scope.isEnd = true;
     		} else {
+                $scope.qs.answer = "";
+                selecteds = [];
     			$scope.isSubmit = true;
     		}
     	}
@@ -378,7 +403,7 @@ frontend
     	//clear data
     	if ($scope.qs.answer != "" || $scope.qs.custSingle != "") {
     		angular.forEach($scope.questions[$scope.questionIndex].options, function(item) {
-	    		item.isSelect = false;
+                item.isSelect = false;
 	    	})
     	}
 
@@ -425,54 +450,89 @@ frontend
     }
 
     $scope.submit = function() {
-    	if ($scope.formData.name == "" || $scope.formData.mobile == "" || $scope.formData.email == "") {
-    		$scope.tip = "请填写完整信息!";
-            tipWork();
-            return;
-    	}
+        if ($scope.questionaire.isProvicy == '1') {
+        	if ($scope.formData.name == "" || $scope.formData.mobile == "" || $scope.formData.email == "") {
+        		$scope.tip = "请填写完整信息!";
+                tipWork();
+                return;
+        	}
 
-    	var regMobile = /^\d{8}$/;
-        var regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+        	var regMobile = /^\d{8}$/;
+            var regEmail = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
 
-        if (!regMobile.test($scope.formData.mobile)) {
-            $scope.tip = "手机号格式不正确!";
-            tipWork();
-            return;
+            if (!regMobile.test($scope.formData.mobile)) {
+                $scope.tip = "手机号格式不正确!";
+                tipWork();
+                return;
+            }
+
+            if (!regEmail.test($scope.formData.email)) {
+                $scope.tip = "邮箱格式不正确!";
+                tipWork();
+                return;
+            }
+
+        	if (!$scope.formData.agree) {
+        		$scope.tip = "请同意以上说明!";
+                tipWork();
+                return;
+        	}
+
+            $http({
+                url : 'controllers/checkIsAnswer.php',
+                method : 'post',
+                data : $.param({mobile : $scope.formData.mobile, id : $scope.questionaire.id}),
+                headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
+                responseType : 'json'
+            })
+            .success(function(data) {
+                if (data.result) {
+                    $scope.tip = "该用户已回答过该问卷!";
+                    tipWork();
+                } else {
+                    $scope.formData.answers = JSON.stringify(answers);
+                    $scope.formData.id = $scope.questionaire.id;
+
+                    saveData($scope.formData, function(data, header, config) {
+                        if (data.code == 500) {
+                          $scope.tip = "请求错误,请稍后再试!";
+                          tipWork();
+                          return; 
+                        }
+                        
+                        $scope.isSubmit = false;
+                        $scope.final = true;
+                        recordHaveAnswer();
+                    });
+                }
+            })
+            .error(function(error, header, config) {
+                console.log(error);
+            });
+        } else {
+            $scope.formData.answers = JSON.stringify(answers);
+            $scope.formData.id = $scope.questionaire.id;
+
+            saveData($scope.formData, function(data, header, config) {
+                if (data.code == 500) {
+                  $scope.tip = "请求错误,请稍后再试!";
+                  tipWork();
+                  return; 
+                }
+                
+                $scope.isSubmit = false;
+                $scope.final = true;
+                recordHaveAnswer();
+            });
         }
-
-        if (!regEmail.test($scope.formData.email)) {
-            $scope.tip = "邮箱格式不正确!";
-            tipWork();
-            return;
-        }
-
-    	if (!$scope.formData.agree) {
-    		$scope.tip = "请同意以上说明!";
-            tipWork();
-            return;
-    	}
-
-    	$scope.formData.answers = answers;
-
-    	saveData($scope.questionaire.id, $scope.formData, function(data, header, config) {
-	        if (data.code == 500) {
-	          $scope.valid = false;
-	          $scope.tip = "请求错误,请稍后再试!";
-	          tipWork();
-	          return; 
-	        }
-	        
-	        $scope.isSubmit = false;
-	        $scope.final = true;
-	    });
     }
 
     $scope.submitBreak = function() {
-    	$scope.formData.answers = answers;
+    	$scope.formData.answers = JSON.stringify(answers);
+        $scope.formData.id = $scope.questionaire.id;
 
-    	saveData($scope.questionaire.id, $scope.formData, function(data, header, config) {
+    	saveData($scope.formData, function(data, header, config) {
 	        if (data.code == 500) {
-	          $scope.valid = false;
 	          $scope.tip = "请求错误,请稍后再试!";
 	          tipWork();
 	          return; 
@@ -480,7 +540,14 @@ frontend
 	        
 	        $scope.isEnd = false;
 	        $scope.final = true;
+            recordHaveAnswer();
 	    });
+    }
+
+    var recordHaveAnswer = function() {
+        var record = window.localStorage.getItem("record") ? window.localStorage.getItem("record").split(",") : [];
+        record.push($scope.questionaire.id);
+        window.localStorage.setItem("record", record);
     }
 
     $scope.return = function() {
@@ -497,11 +564,12 @@ frontend
       $('#hintDiv').fadeOut();
     };
 
-    function saveData(id, data, successCallBack) {
+    function saveData(data, successCallBack) {
+
     	$http({
 	        url : 'controllers/saveAnswer.php',
 	        method : 'post',
-	        data : $.param({ "data" : data, "id" : id}),
+	        data : $.param(data),
 	        headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
 	        responseType : 'json'
 	    })

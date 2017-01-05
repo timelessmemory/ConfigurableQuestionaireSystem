@@ -30,16 +30,16 @@
           <div class="subject">
             {{questionaire.subject}}
           </div>
-          <div class="description" ng-bind-html="questionaire.description | to_html">
+          <div ng-show="questionaire.isProvicy == '1'" class="description" ng-bind-html="questionaire.description | to_html">
           </div>
           <div class="head-footer">
-            <div style="text-align:left;">
+            <div style="text-align:left;" ng-show="questionaire.agree_fst">
               <input class="unchecked" ng-class='{"checked": formData.isAgree}' type="checkbox" ng-model="formData.isAgree" />
-              <span>同意以上收集個人資料說明及隱私保護政策並繼續填寫問卷。</span>
+              <span>{{questionaire.agree_fst}}</span>
             </div>
-            <div style="text-align:left;">
+            <div style="text-align:left;" ng-show="questionaire.agree_snd">
               <input class="unchecked" ng-class='{"checked": tmp.isAgree}' type="checkbox" ng-model="tmp.isAgree" />
-              <span>同意</span>
+              <span>{{questionaire.agree_snd}}</span>
             </div>
             <div style="text-align:center;margin-top: 100px;">
               <button style="width: 97px;" class="btn btn-info" ng-click="start()">Start</button>
@@ -65,7 +65,7 @@
           <div  class="option-multi" ng-if="!(questions[questionIndex].isSingle == '1')">
             <div ng-repeat="option in questions[questionIndex].options">
               <div class="option" ng-if="!(option.isCustomized == '1')">
-                  <input type="checkbox" class="unchecked" ng-class='{"checked": isCheck(option.content)}' ng-click="operate($event, option.content)">
+                  <input type="checkbox" class="unchecked" ng-class='{"checked": option.checkflag}' ng-click="operate($event, option.content, option)">
                   <label class="op-text">{{option.content}}</label>
               </div>
               <div ng-if="option.isCustomized == '1'">
@@ -93,8 +93,8 @@
           <div class="subject" style="margin-top: 10%;">
             {{questionaire.subject}}
           </div>
-
-          <div style="margin: 21px 86px;">
+          <div class="tip" ng-if="questionaire.isProvicy != '1'">請點擊”SUBMIT”以完成問卷，謝謝。</div>
+          <div style="margin: 21px 86px;" ng-if="questionaire.isProvicy == '1'">
             <div style="font-size:26px;">個人資料</div>
             <br/>
             <div>
