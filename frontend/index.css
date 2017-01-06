@@ -69,10 +69,12 @@ body {
 
 .description {
 	padding: 30px;
+  margin: 0px 32px;
 }
 
 .head-footer {
-	width: 100%;
+	  width: 100%;
+    margin: 0px 32px;
     padding-left: 32px;
     margin-top: -44px;
     margin-bottom: 30px;
@@ -154,4 +156,18 @@ body {
     width: 100%;
     text-align: center;
     margin-top: 6%;
+}
+
+.signature {
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-bottom: 1px solid #ccc;
+  width: 20%;
+  padding: 6px 12px;
+  background-color: #fff;
+  font-size: 14px;
+  display: inline-block;
+  height: 20px;
+  outline: none;
 }

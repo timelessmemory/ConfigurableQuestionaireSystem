@@ -124,7 +124,8 @@ frontend
 
     			//show answer
     			if ($scope.questions[$scope.questionIndex].isSingle != '1') {
-		    		selecteds = getMultiAns($scope.questions[$scope.questionIndex].title, answers);
+                    var questionTitle = $scope.questions[$scope.questionIndex].title;
+		    		selecteds = getMultiAns(questionTitle, answers);
 
 		    		angular.forEach(selecteds, function(select) {
 		    			var isIn = false;
@@ -139,7 +140,8 @@ frontend
 		    			}
 		    		})
 		    	} else {
-		    		singleAns = getMultiAns($scope.questions[$scope.questionIndex].title, answers);
+                    var questionTitle = $scope.questions[$scope.questionIndex].title;
+		    		singleAns = getMultiAns(questionTitle, answers);
 		    		
 		    		var isIn = false;
 		    		
@@ -188,7 +190,7 @@ frontend
 	    		})
     		}
 
-            var questionTitle = $("#qt").find('span').html() == undefined ? $scope.questions[$scope.questionIndex].title : $("#qt").find('span').html();
+            var questionTitle = $scope.questions[$scope.questionIndex].title;
     		// var questionTitle = $scope.questions[$scope.questionIndex].title;
     		var isExist = false;
 
@@ -248,7 +250,8 @@ frontend
 
     			//show answer
     			if ($scope.questions[$scope.questionIndex].isSingle != '1') {
-		    		selecteds = getMultiAns($scope.questions[$scope.questionIndex].title, answers);
+                    var questionTitle = $scope.questions[$scope.questionIndex].title;
+		    		selecteds = getMultiAns(questionTitle, answers);
 
 		    		angular.forEach(selecteds, function(select) {
 		    			var isIn = false;
@@ -263,7 +266,8 @@ frontend
 		    			}
 		    		})
 		    	} else {
-		    		singleAns = getMultiAns($scope.questions[$scope.questionIndex].title, answers);
+                    var questionTitle = $scope.questions[$scope.questionIndex].title;
+		    		singleAns = getMultiAns(questionTitle, answers);
 		    		
 		    		var isIn = false;
 		    		
@@ -312,7 +316,7 @@ frontend
     			selecteds.push($scope.qs.answer)
     		}
 
-            var questionTitle = $("#qt").find('span').html() == undefined ? $scope.questions[$scope.questionIndex].title : $("#qt").find('span').html();
+            var questionTitle = $scope.questions[$scope.questionIndex].title;
     		// var questionTitle = $scope.questions[$scope.questionIndex].title;
     		var isExist = false;
 
@@ -418,7 +422,8 @@ frontend
 
     	//show answer
     	if ($scope.questions[$scope.questionIndex].isSingle != '1') {
-    		selecteds = getMultiAns($scope.questions[$scope.questionIndex].title, answers);
+            var questionTitle = $scope.questions[$scope.questionIndex].title;
+    		selecteds = getMultiAns(questionTitle, answers);
 
     		angular.forEach(selecteds, function(select) {
     			var isIn = false;
@@ -433,7 +438,9 @@ frontend
     			}
     		})
     	} else {
-    		singleAns = getMultiAns($scope.questions[$scope.questionIndex].title, answers);
+            var questionTitle = $scope.questions[$scope.questionIndex].title;
+            
+            singleAns = getMultiAns(questionTitle, answers);
     		
     		var isIn = false;
     		angular.forEach($scope.questions[$scope.questionIndex].options, function(option) {
@@ -492,6 +499,7 @@ frontend
                     $scope.tip = "该用户已回答过该问卷!";
                     tipWork();
                 } else {
+                    answers = formatAnswer(answers);
                     $scope.formData.answers = JSON.stringify(answers);
                     $scope.formData.id = $scope.questionaire.id;
 
@@ -512,6 +520,7 @@ frontend
                 console.log(error);
             });
         } else {
+            answers = formatAnswer(answers);
             $scope.formData.answers = JSON.stringify(answers);
             $scope.formData.id = $scope.questionaire.id;
 
@@ -530,6 +539,7 @@ frontend
     }
 
     $scope.submitBreak = function() {
+        answers = formatAnswer(answers);
     	$scope.formData.answers = JSON.stringify(answers);
         $scope.formData.id = $scope.questionaire.id;
 
@@ -565,6 +575,13 @@ frontend
     $scope.close = function() {
       $('#hintDiv').fadeOut();
     };
+
+    function formatAnswer(answers) {
+        angular.forEach(answers, function(item) {
+            item.question = $(item.question).find('span').html() == undefined ? ($(item.question).find('p').html() == undefined ? ($(item.question).html()) : $(item.question).find('p').html()) : $(item.question).find('span').html();
+        })
+        return answers;
+    }
 
     function saveData(data, successCallBack) {
 
