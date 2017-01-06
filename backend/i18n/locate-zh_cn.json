@@ -1,0 +1,7 @@
+{
+	"system_title" : "問卷系統",
+	"system_username" : "用戶名",
+	"system_password" : "密碼",
+	"system_login" : "登錄",
+	"not_consist_tip" : "用戶名或密碼錯誤!"
+}

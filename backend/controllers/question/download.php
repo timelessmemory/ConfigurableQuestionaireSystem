@@ -17,7 +17,7 @@
     $db->query('set names utf8;');
 
 	try {
-		$sql = "select content from answer where questionaireId = :id";
+		$sql = "select * from answer where questionaireId = :id";
 
     	$params = [
     		":id" => $id
@@ -60,14 +60,22 @@
 		$objPHPExcel->setActiveSheetIndex(0);
 
 		$objPHPExcel->getActiveSheet()
-		      		->setCellValue('A1', "answer");
+		      		->setCellValue('A1', "mobile")
+		      		->setCellValue('B1', "email")
+		      		->setCellValue('C1', "agree")
+		      		->setCellValue('D1', "content")
+		      		->setCellValue('E1', "answerTime");
 		
 		$index = 2;
 		
 		foreach ($result as $item) {
 			
 		    $objPHPExcel->getActiveSheet()
-		      			->setCellValue('A' . $index, $item['content']);
+		      			->setCellValue('A' . $index, $item['mobile'])
+		      			->setCellValue('B' . $index, $item['email'])
+		      			->setCellValue('C' . $index, $item['agree'])
+		      			->setCellValue('D' . $index, $item['content'])
+		      			->setCellValue('E' . $index, $item['answerTime']);
 			$index++;
 		}
 

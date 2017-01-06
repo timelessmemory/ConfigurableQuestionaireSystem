@@ -188,7 +188,8 @@ frontend
 	    		})
     		}
 
-    		var questionTitle = $scope.questions[$scope.questionIndex].title;
+            var questionTitle = $("#qt").find('span').html() == undefined ? $scope.questions[$scope.questionIndex].title : $("#qt").find('span').html();
+    		// var questionTitle = $scope.questions[$scope.questionIndex].title;
     		var isExist = false;
 
     		angular.forEach(answers, function(item) {
@@ -311,7 +312,8 @@ frontend
     			selecteds.push($scope.qs.answer)
     		}
 
-    		var questionTitle = $scope.questions[$scope.questionIndex].title;
+            var questionTitle = $("#qt").find('span').html() == undefined ? $scope.questions[$scope.questionIndex].title : $("#qt").find('span').html();
+    		// var questionTitle = $scope.questions[$scope.questionIndex].title;
     		var isExist = false;
 
     		angular.forEach(answers, function(item) {

@@ -1,4 +1,4 @@
-var app = angular.module("backend", ['ngRoute', 'ng.ueditor', 'ngclipboard', 'angular-md5']);
+var app = angular.module("backend", ['ngRoute', 'ng.ueditor', 'ngclipboard', 'angular-md5', 'pascalprecht.translate']);
 
 app.config(function($routeProvider) {
     $routeProvider
@@ -25,8 +25,24 @@ app.config(function($routeProvider) {
     .otherwise("/");
 });
 
+app.config(function($translateProvider) {
+
+    if (!window.localStorage.getItem("lang")) {
+        window.localStorage.setItem("lang", navigator.language.toLowerCase() == "en-us" ? "locate-en_us" : "locate-zh_cn");
+    }
+
+    var lang = window.localStorage.getItem("lang");
+
+    $translateProvider.preferredLanguage(lang);
+
+    $translateProvider.useStaticFilesLoader({
+        prefix: 'i18n/',
+        suffix: '.json'
+    });
+});
+
 //clear route cache, reload
-app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', function ($rootScope, $window, $location, $templateCache, $http) {  
+app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', '$translate', function ($rootScope, $window, $location, $templateCache, $http, $translate) {  
     var routeChangeSuccessOff = $rootScope.$on('$routeChangeSuccess', routeChangeSuccess);  
 
     function routeChangeSuccess(event, params) {
@@ -52,6 +68,20 @@ app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', functi
           window.location.href = "#/list";
       });
     };
+
+    $rootScope.lang = window.localStorage.getItem("lang") == "locate-zh_cn" ? "English" : "中文";
+
+    $rootScope.togglelang = function() {
+        if ($translate.use() == "locate-zh_cn") {
+            $translate.use("locate-en_us");
+            window.localStorage.setItem("lang", "locate-en_us");
+            $rootScope.lang = "中文";
+        } else {
+            $translate.use("locate-zh_cn");
+            window.localStorage.setItem("lang", "locate-zh_cn");
+            $rootScope.lang = "English";
+        }
+    }
 }]);
 
 app

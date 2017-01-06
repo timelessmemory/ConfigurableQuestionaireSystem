@@ -12,6 +12,8 @@
     <script src="../common/js/bootstrap.min.js"></script>
     <script src="../common/js/angular.js"></script>
     <script src="../common/js/angular-md5.js"></script>
+    <script src="../common/js/angular-translate.js"></script>
+    <script src="../common/js/angular-translate-loader-static-files.js"></script>
     <script type="text/javascript" src="../common/js/angular-route.min.js"></script>
     <script type="text/javascript" src="../common/js/clipboard.js"></script>
     <script type="text/javascript" src="../common/js/ngclipboard.js"></script>
@@ -24,6 +26,10 @@
     <script type="text/javascript" src="backend.js"></script>
   </head>
   <body>
+    <a class="btn-lang" ng-click="togglelang()">
+      {{lang}}
+    </a>
+
   	<div ng-view></div>
   </body>
 </html>

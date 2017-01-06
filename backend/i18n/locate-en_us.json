@@ -1,0 +1,7 @@
+{
+	"system_title" : "Questionaire System",
+	"system_username" : "Username",
+	"system_password" : "Password",
+	"system_login" : "Login",
+	"not_consist_tip" : "The user and password aren't consistent！"
+}

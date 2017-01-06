@@ -48,7 +48,7 @@
         </div>
         <div class="content" ng-if="isStart && !isEnd && !isSubmit && !final">
           <label class="sort-number">第{{questionIndex + 1}}题</label>
-          <div class="title" ng-bind-html="questions[questionIndex].title | to_html">
+          <div id="qt" class="title" ng-bind-html="questions[questionIndex].title | to_html">
           </div>
           <div class="option-single" ng-if="questions[questionIndex].isSingle == '1'">
             <div ng-repeat="option in questions[questionIndex].options">

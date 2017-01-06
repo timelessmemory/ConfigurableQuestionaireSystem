@@ -2,19 +2,19 @@
    <a class="close" ng-click="close()">
       &times;
    </a>
-   <strong>The user and password aren't consistent！</strong>
+   <strong>{{'not_consist_tip' | translate}}</strong>
 </div>
 
 <div class="container">
       <form class="form-signin">
-        <h1 style="text-align:center;">Questionaire System</h1>
+        <h1 style="text-align:center;">{{'system_title' | translate}}</h1>
         
-        <label for="inputUsername" class="sr-only">Username</label>
-        <input type="text" id="inputUsername" class="form-control" placeholder="Username" ng-model="username" required autofocus>
+        <label for="inputUsername" class="sr-only">{{'system_username' | translate}}</label>
+        <input type="text" id="inputUsername" class="form-control" placeholder="{{'system_username' | translate}}" ng-model="username" required autofocus>
         
-        <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" ng-model="password" required>
+        <label for="inputPassword" class="sr-only">{{'system_password' | translate}}</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="{{'system_password' | translate}}" ng-model="password" required>
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login()">Login</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="login()">{{'system_login' | translate}}</button>
       </form>
 </div>
