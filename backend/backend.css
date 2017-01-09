@@ -24,9 +24,14 @@ body {
 
 .btn-lang {
   position: fixed;
-  top: 10px;
-  right: 10px;
+  top: 50px;
+  right: 21px;
+  z-index: 999;
   cursor: pointer;
+}
+
+a.btn-lang {
+  color: #777;
 }
 
 .nav-top .navbar .container{
@@ -105,8 +110,14 @@ body {
 
 .search-div {
   position: absolute;
-  top: 75px;
+  top: 115px;
   width: 200px;
+}
+
+.search-div-role {
+  width:75%;
+  margin-left: 20%;
+  top: 88px;
 }
 
 .input-group-addon {

@@ -72,14 +72,14 @@
          <td style="max-width:40%;">{{questionaire.brand}}</td>
          <td style="width:20%;">{{questionaire.createTime}}</td>
          <td style="width:10%;">
-           <button type="button" title="复制链接" class="btn btn-default btn-xs" ngclipboard data-clipboard-text="{{domain}}/questionaire/frontend/index.html?questionaireId={{questionaire.id}}">
-             <i class="glyphicon  glyphicon-link"></i>
-           </button>
            <button type="button" title="编辑" class="btn btn-default btn-xs" ng-click="edit(questionaire.id)">
              <i class="glyphicon glyphicon-edit"></i>
            </button>
            <button type="button" title="删除" class="btn btn-default btn-xs" data-target="#myModal" data-toggle="modal" ng-click="sendId(questionaire.id)">
              <i class="glyphicon glyphicon-trash"></i>
+           </button>
+           <button type="button" title="复制链接" class="btn btn-default btn-xs" ngclipboard data-clipboard-text="{{domain}}/questionaire/frontend/index.html?questionaireId={{questionaire.id}}">
+             <i class="glyphicon  glyphicon-link"></i>
            </button>
            <button type="button" title="下载答案" class="btn btn-default btn-xs" ng-click="download(questionaire.id)">
              <i class="glyphicon glyphicon-download"></i>
@@ -91,5 +91,10 @@
       </tr>
    </tbody>
   </table>
+  <div class="row" style="margin-left:350px;">
+    <uib-pagination total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages" items-per-page="formData.pageSize">
+    </uib-pagination>
+    <pre>Page: {{bigCurrentPage}} / {{numPages}}</pre>
+  </div>
 </div>
 

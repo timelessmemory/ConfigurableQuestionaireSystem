@@ -78,6 +78,10 @@
 
 	<div class="tab-content">
 	  <div ng-if="isShowAdmin">
+	  	<div class="input-group search-div search-div-role">
+		  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="kwd.brand" placeholder="品牌" aria-describedby="basic-addon2">
+		  <span class="input-group-addon" id="basic-addon2" ng-click="searchBrand()"><i class="glyphicon glyphicon-search"></i> </span>
+		</div>
 	  	<div style="text-align:right;margin-top:10px;">
 	  		<button class="btn btn-info btn-sm" ng-click="addAdmin()">
 	  			<label class="glyphicon glyphicon-plus"></label> 添加品牌管理员
@@ -160,6 +164,14 @@
 	  </div>
 
 	  <div ng-if="!isShowAdmin || currentRole == 'brand_admin'">
+	  	<div class="input-group search-div search-div-role" ng-if="currentRole != 'brand_admin'">
+		  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="kwd.brand" placeholder="品牌" aria-describedby="basic-addon2">
+		  <span class="input-group-addon" id="basic-addon2" ng-click="searchBrand()"><i class="glyphicon glyphicon-search"></i> </span>
+		</div>
+		<div class="input-group search-div search-div-role" ng-if="currentRole == 'brand_admin'">
+		  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="kwd.name" placeholder="用户名" aria-describedby="basic-addon2">
+		  <span class="input-group-addon" id="basic-addon2" ng-click="searchName()"><i class="glyphicon glyphicon-search"></i> </span>
+		</div>
 	  	<div style="text-align:right;margin-top:10px;">
 	  		<button class="btn btn-info btn-sm" ng-click="addOperator()">
 	  			<label class="glyphicon glyphicon-plus"></label> 添加品牌操作员

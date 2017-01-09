@@ -1,4 +1,4 @@
-var app = angular.module("backend", ['ngRoute', 'ng.ueditor', 'ngclipboard', 'angular-md5', 'pascalprecht.translate']);
+var app = angular.module("backend", ['ngRoute', 'ng.ueditor', 'ngclipboard', 'angular-md5', 'pascalprecht.translate', 'ui.bootstrap']);
 
 app.config(function($routeProvider) {
     $routeProvider
@@ -1308,12 +1308,16 @@ app
     };
 }])
 
-.controller('roleController', ['$scope', 'md5', 'httpService', function($scope, md5, httpService) {
+.controller('roleController', ['$scope', '$document', 'md5', 'httpService', function($scope, $document, md5, httpService) {
   $scope.isShowAdmin = false;
   var deleteAdminId;
   var deleteOperatorId;
   var deleteOperatorIndex;
   $scope.currentRole = ""
+  $scope.kwd = {
+    brand : '',
+    name : ''
+  }
   var currentBrand = "";
 
   var queryparams = {
@@ -1351,6 +1355,8 @@ app
             }, function(error, header, config) {
                 console.log(error);
             })
+         } else {
+            window.location.href = "#/list";
          }
       }
   }, function(error, header, config) {
@@ -1366,6 +1372,48 @@ app
       password : ''
     })
   }
+
+  $scope.searchBrand = function() {
+    if ($scope.kwd.brand == "") {
+      return;
+    }
+
+    var url = $scope.isShowAdmin ? "controllers/index.php?module=user&action=getBrandAdmin" : "controllers/index.php?module=user&action=getBrandOperator";
+
+    httpService.get(url, {brand : $scope.kwd.brand, flag : "search"}, function(data, header, config) {
+        if (data.code != 500) {
+          $scope.isShowAdmin ? $scope.admins = data : $scope.operators = data;
+          $scope.kwd.brand = ""
+        }
+    }, function(error, header, config) {
+        console.log(error);
+    })
+  }
+
+  $scope.searchName = function() {
+    if ($scope.kwd.name == "") {
+      return;
+    }
+
+    httpService.get("controllers/index.php?module=user&action=getBrandOperator", {brand : currentBrand, name : $scope.kwd.name}, function(data, header, config) {
+        if (data.code != 500) {
+          $scope.operators = data;
+          $scope.kwd.name = ""
+        }
+    }, function(error, header, config) {
+        console.log(error);
+    })
+  }
+
+  $document.bind("keypress", function(event) {
+      if (event.keyCode == 13) {
+        if ($scope.currentRole == 'system_admin') {
+          $scope.searchBrand();
+        } else {
+          $scope.searchName();
+        }
+      }
+  });
 
   $scope.saveAddAdmin = function(ad, index) {
       if (ad.brand =="" || ad.name == "" || ad.password == "") {

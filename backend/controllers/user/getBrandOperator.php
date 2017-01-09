@@ -3,11 +3,12 @@
     header("Content-Type:text/html;charset=UTF-8");
     
     $brand = $_GET['brand'];
+    $flag = $_GET['flag'];
+    $name = $_GET['name'];
 
     $dsn = "mysql:host=localhost;dbname=questionaireWeb";
     $db = new PDO($dsn, 'root', 'root');
     $db->query('set names utf8;');
-
 
     if ($brand == "") {
     	$sql = "select * from user where role = 'brand_operator'";
@@ -15,7 +16,7 @@
     	$preparedStatement = $db->prepare($sql);
 
 	    $preparedStatement->execute([]);
-    } else {
+    } else if ($brand != "" && $name == "" && $flag == "") {
     	$sql = "select * from user where role = 'brand_operator' and brand = :brand";
 
     	$params = [
@@ -25,6 +26,17 @@
     	$preparedStatement = $db->prepare($sql);
 
 	    $preparedStatement->execute($params);
+    } else if ($brand != "" && $name == "" && $flag != "") {
+        $sql = "select * from user where role = 'brand_operator' and brand like :brand";
+        $preparedStatement = $db->prepare($sql);
+        $preparedStatement->bindValue(':brand', '%' . $brand . '%', PDO::PARAM_STR);
+        $preparedStatement->execute();
+    } else if ($brand != "" && $name != "") {
+        $sql = "select * from user where role = 'brand_operator' and brand = :brand and name like :name";
+        $preparedStatement = $db->prepare($sql);
+        $preparedStatement->bindValue(':brand', $brand, PDO::PARAM_STR);
+        $preparedStatement->bindValue(':name', '%' . $name . '%', PDO::PARAM_STR);
+        $preparedStatement->execute();
     }
 
 	try {
