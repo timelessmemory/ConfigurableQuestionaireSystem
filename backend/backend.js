@@ -50,7 +50,7 @@ app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', '$tran
           window.location.href = "#/";
           return;
         }
-        $templateCache.removeAll();
+        // $templateCache.removeAll();
     }
 
     $rootScope.logout = function () {
@@ -61,6 +61,8 @@ app.run(['$rootScope', '$window', '$location', '$templateCache', '$http', '$tran
       .success(function() {
         window.localStorage.removeItem("isLogin");
         window.localStorage.removeItem("userId");
+        window.sessionStorage.removeItem("keyword");
+        window.sessionStorage.removeItem("currentPage");
         window.location.href = "#/";
       })
       .error(function(error, header, config, status) {
@@ -136,6 +138,12 @@ app
     $scope.questionaire = {};
     $scope.keyword = '';
     $scope.domain = window.location.host;
+    var brand = "";
+
+    $scope.maxSize = 8;
+    $scope.pageSize = 3;
+
+    $scope.bigTotalItems = 100;
 
     var queryparams = {
       id : window.localStorage.getItem("userId")
@@ -143,51 +151,65 @@ app
 
     httpService.get('controllers/index.php?module=user&action=getRole', queryparams, function(data, header, config) {
         if (data.code == 200) {
+          $scope.currentRole = data.role;
+          brand = data.brand;
 
-           $scope.currentRole = data.role;
+          var curpage = window.sessionStorage.getItem("currentPage");
+          $scope.bigCurrentPage = curpage ? curpage : 1;
 
-           if (data.role == "system_admin") {
-                $http({
-                  url : 'controllers/index.php?module=questionaire&action=queryQuestionaires',
-                  method : 'get',
-                  headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-                  responseType : 'json'
-                })
-                .success(function(data, header, config) {
-                  $scope.questionaires = data;
-                })
-                .error(function(error, header, config) {
-                  console.log(error);
-                });
-
-                $document.bind("keypress", function(event) {
-                    if (event.keyCode == 13) {
-                        $scope.search();
-                    }
-                });
-           } else {
-                $http({
-                  url : 'controllers/index.php?module=questionaire&action=queryQuestionaires&brand=' + data.brand,
-                  method : 'get',
-                  headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-                  responseType : 'json'
-                })
-                .success(function(data, header, config) {
-                  $scope.questionaires = data;
-                })
-                .error(function(error, header, config) {
-                  console.log(error);
-                });
-
-                $document.bind("keypress", function(event) {
-                    if (event.keyCode == 13) {
-                        $scope.search();
-                    }
-                });
-           }
+          $document.bind("keypress", function(event) {
+              if (event.keyCode == 13) {
+                  $scope.search();
+              }
+          });
         }
     }, function(error, header, config) {
         console.log(error);
+    })
+
+    var getQuestionaireList = function(currentPage, origin) {
+      if ($scope.keyword != "") {
+        window.sessionStorage.setItem("keyword", $scope.keyword);
+      } else {
+        if (origin == "search") {
+          window.sessionStorage.setItem("keyword", "");
+        } else {
+          $scope.keyword = window.sessionStorage.getItem("keyword") ? window.sessionStorage.getItem("keyword") : "";
+        }
+      }
+      var formdata = {
+        brand : brand,
+        keyword : window.sessionStorage.getItem("keyword")
+      };
+
+      httpService.post('controllers/index.php?module=questionaire&action=queryQuestionairesCount', formdata, function(data, header, config) {
+        if (data.code != 500) {
+          $scope.bigTotalItems = parseInt(data.total);
+          var numPages = $scope.bigTotalItems < $scope.pageSize ? 1 : Math.ceil($scope.bigTotalItems / $scope.pageSize);
+          currentPage = parseInt(currentPage);
+          formdata.start = (currentPage - 1) * $scope.pageSize;
+          formdata.offset = currentPage == numPages ? ($scope.bigTotalItems % $scope.pageSize == 0 ? $scope.pageSize : $scope.bigTotalItems % $scope.pageSize) : $scope.pageSize;
+          
+          httpService.post('controllers/index.php?module=questionaire&action=queryQuestionaires', formdata, function(data, header, config) {
+            $scope.questionaires = data;
+          }, function() {
+            console.log(error);
+          })
+        }
+      }, function(error, header, config) {
+        console.log(error);
+        $scope.questionaires = []
+      })
+    }
+
+    $scope.$watch('bigCurrentPage', function(newValue) {
+       //prevent http delay and reset currentPage
+       // console.log(newValue)
+       if (newValue != undefined) {
+         // $scope.bigTotalItems = 1000000;
+         getQuestionaireList(newValue);
+         window.sessionStorage.setItem("currentPage", newValue);
+       }
     })
 
     $scope.edit = function(num) {
@@ -238,35 +260,7 @@ app
     };
 
     $scope.search = function() {
-      if ($scope.keyword != '') {
-          $http({
-            url : 'controllers/index.php?module=questionaire&action=searchQuestionaire',
-            method : 'post',
-            data : $.param({ "keyword" : $scope.keyword}),
-            headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-          })
-          .success(function(data, header, config) {
-              $scope.questionaires = data;
-              $scope.keyword = '';
-          })
-          .error(function(error, header, config) {
-              console.log(error);
-              window.location.href = "#/list";
-          });
-      } else {
-        $http({
-          url : 'controllers/index.php?module=questionaire&action=queryQuestionaires',
-          method : 'get',
-          headers : { 'Content-Type': 'application/x-www-form-urlencoded' },
-          responseType : 'json'
-        })
-        .success(function(data, header, config) {
-          $scope.questionaires = data;
-        })
-        .error(function(error, header, config) {
-          console.log(error);
-        });
-      }
+      getQuestionaireList(1, "search");
     };
 
     //delay realTime search

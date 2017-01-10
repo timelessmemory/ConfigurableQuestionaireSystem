@@ -91,10 +91,10 @@
       </tr>
    </tbody>
   </table>
-  <div class="row" style="margin-left:350px;">
-    <uib-pagination total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages" items-per-page="formData.pageSize">
+  <div style="text-align:right;">
+    <uib-pagination total-items="bigTotalItems" ng-model="bigCurrentPage" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages" items-per-page="pageSize">
     </uib-pagination>
-    <pre>Page: {{bigCurrentPage}} / {{numPages}}</pre>
+    <!-- <pre>Page: {{bigCurrentPage}} / {{numPages}}</pre> -->
   </div>
 </div>
 
