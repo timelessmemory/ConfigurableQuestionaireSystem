@@ -583,7 +583,7 @@ app
     $scope.createQuestion = function() {
 
       if ($scope.questionaire.subject == "" || $scope.questionaire.subject == undefined) {
-        $scope.tip = "问卷主题不得为空!";
+        $scope.tip = "subject_required";
         tipWork();
         return;
       }
