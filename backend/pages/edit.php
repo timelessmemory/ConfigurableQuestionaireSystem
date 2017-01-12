@@ -2,19 +2,19 @@
    <a class="close" ng-click="close()">
       &times;
    </a>
-   <strong>{{tip}}</strong>
+   <strong>{{ tip | translate}}</strong>
 </div>
 <header class="nav-top">
   <nav class="navbar navbar-default">
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand">Questionaire Backend Configuration Management</a>
+        <a class="navbar-brand">{{ 'system_full_title' | translate}}</a>
       </div>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#/list"><i class="glyphicon glyphicon-th-list"></i> Questionaire List</a></li>
-        <li><a href="#/create"><i class="glyphicon glyphicon-file"></i> Create Questionaire</a></li>
-        <li><a href='#/' ng-click="logout()"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
-        <li><a>Welcome, <?php session_start(); $name = $_SESSION['username'] == '' ? '<script>window.localStorage.setItem("isLogin", "false");window.location.href = "#/";</script>' : $_SESSION['username']; echo $name; ?></a></li>
+        <li><a href="#/list"><i class="glyphicon glyphicon-th-list"></i> {{ 'questionaire_list' | translate}}</a></li>
+        <li><a href="#/create"><i class="glyphicon glyphicon-file"></i> {{ 'create_questionaire' | translate}}</a></li>
+        <li><a href='#/' ng-click="logout()"><i class="glyphicon glyphicon-off"></i> {{'log_out' | translate}}</a></li>
+        <li><a>{{ 'welcome' | translate}}, <?php session_start(); $name = $_SESSION['username'] == '' ? '<script>window.localStorage.setItem("isLogin", "false");window.location.href = "#/";</script>' : $_SESSION['username']; echo $name; ?></a></li>
       </ul>
     </div>
   </nav>
@@ -30,15 +30,15 @@
                   &times;
             </button>
             <h4 class="modal-title" id="myModalLabel">
-               Delete
+               {{ 'delete' | translate}}
             </h4>
          </div>
          <div class="modal-body">
-            确认删除你所选择的问题?
+            {{ 'confirm_delete_question_tip' | translate}}
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-danger" ng-click="deleteQuestion(deleteQuestionId)">确认</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | translate}}</button>
+            <button type="button" class="btn btn-danger" ng-click="deleteQuestion(deleteQuestionId)">{{ 'confirm' | translate}}</button>
          </div>
       </div><!-- /.modal-content -->
   </div>
@@ -54,15 +54,15 @@
                   &times;
             </button>
             <h4 class="modal-title" id="myModalLabel">
-               Delete
+               {{ 'delete' | translate}}
             </h4>
          </div>
          <div class="modal-body">
-            确认删除你所选择的选项?
+           {{ 'confirm_delete_option_tip' | translate}}
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-danger" ng-click="deleteQuestionOption(deleteQuestionOptionId)">确认</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | translate}}</button>
+            <button type="button" class="btn btn-danger" ng-click="deleteQuestionOption(deleteQuestionOptionId)">{{ 'confirm' | translate}}</button>
          </div>
       </div><!-- /.modal-content -->
   </div>
@@ -70,29 +70,29 @@
 
 <form class="top-div" style="top:100px;" novalidate>
   <div class="form-group compo">
-    <label for="subject">问卷主题:</label>
+    <label for="subject">{{'questionaire_subject' | translate}}:</label>
     <input type="text" class="form-control" id="subject" ng-model="questionaire.subject" required autofocus />
   </div>
 
   <div class="form-group compo" ng-if="currentRole == 'system_admin'">
-    <label for="brand">品牌:</label>
+    <label for="brand">{{'questionaire_brand' | translate}}:</label>
     <input type="text" class="form-control" id="brand" ng-model="questionaire.brand" />
   </div>
 
   <div class="form-group compo">
-    <label>是否收集隐私:</label>
+    <label>{{'is_collect_privacy' | translate}}:</label>
     <input class="unchecked" ng-class='{"checked": questionaire.isProvicy}' type="checkbox" ng-model="questionaire.isProvicy" />
   </div>
 
   <div ng-show="questionaire.isProvicy">
     <div class="form-group compo" style="margin-bottom: 15px;">
-      <label for="description">问卷说明:</label>
+      <label for="description">{{'questionaire_description' | translate}}:</label>
       <div class="ueditor" config="config" ready="ready" style="width:100%;height:500px;" ng-model="questionaire.description"></div>
     </div>
 
     <div class="form-group compo">
       <label for="agree_fst">
-        同意说明1: &nbsp;&nbsp;是否必须同意
+        {{'agree_des_one' | translate}}: &nbsp;&nbsp;{{'is_required_agree' | translate}}
         <input class="unchecked" ng-class='{"checked": questionaire.required_fst}' type="checkbox" ng-model="questionaire.required_fst" />
       </label> 
       <input type="text" class="form-control" id="agree_fst" ng-model="questionaire.agree_fst" />
@@ -100,7 +100,7 @@
 
     <div class="form-group compo" style="margin-bottom: 15px;">
       <label for="agree_snd">
-        同意说明2: &nbsp;&nbsp;是否必须同意
+        {{'agree_des_two' | translate}}: &nbsp;&nbsp;{{'is_required_agree' | translate}}
         <input class="unchecked" ng-class='{"checked": questionaire.required_snd}' type="checkbox" ng-model="questionaire.required_snd" />
       </label> 
       <input type="text" class="form-control" id="agree_snd" ng-model="questionaire.agree_snd" />
@@ -108,57 +108,57 @@
   </div>
 
   <div style="text-align:right;">
-    <button type="button" class="btn btn-success btn-sm" style="margin-right:30px;" ng-disabled="isSubmit" ng-click="saveQuestionaire(questionaire.id)">保存问卷信息</button>
+    <button type="button" class="btn btn-success btn-sm" style="margin-right:30px;" ng-disabled="isSubmit" ng-click="saveQuestionaire(questionaire.id)">{{'save_questionaire' | translate}}</button>
   </div>
 
   <div class="form-group compo">
     <div ng-repeat="question in questionaire.questions" ng-init="outerIndex = $index">
-      <label for="question">问题{{outerIndex + 1}}:</label>
+      <label for="question">{{'questionNo' | translate : {questionNo : outerIndex + 1} }}:</label>
       <div class="ueditor" config="config" ready="ready" style="width:100%;height:200px;" ng-model="question.title"></div>
       <br/>
-      <span>是否单选:</span>
+      <span>{{'is_single_choice' | translate}}:</span>
       <input class="unchecked" ng-class='{"checked": question.isSingle}' type="checkbox" ng-model="question.isSingle" ng-click="returnOrigin(question.isSingle, question.options)"/>
       <br/><br/>
-      <span>是否为选项设置跳题索引:</span>
+      <span>{{'is_set_skip_index_for_option' | translate}}:</span>
       <input class="unchecked" ng-class='{"checked": question.isSetSkip}' type="checkbox" ng-model="question.isSetSkip" ng-click="switchIsSetSkip(question)" />
       <br/>
       <div ng-if="question.isSetSkip && !question.isSingle">
         <div style="margin-left:20px;">
-          <span>Group1索引</span>
+          <span>{{'group_one' | translate}}</span>
           <input type="number" class="form-control" ng-model="question.group.gp1" />
-          <span>Group2索引</span>
+          <span>{{'group_two' | translate}}</span>
           <input type="number" class="form-control" ng-model="question.group.gp2" />
         </div>
       </div>
       <div style="text-align:right;">
-        <button class="btn btn-danger btn-sm" style="margin-right:30px;margin-top:28px;" data-target="#questionModal" data-toggle="modal" ng-click="sendQuestionId(question.id)">删除问题{{outerIndex + 1}}</button>      
-        <button class="btn btn-success btn-sm" style="margin-top:30px;" ng-disabled="isSubmit" ng-click="saveQuestion(question.id, question, outerIndex + 1)">保存问题{{outerIndex + 1}}题干的修改</button>      
+        <button class="btn btn-danger btn-sm" style="margin-right:30px;margin-top:28px;" data-target="#questionModal" data-toggle="modal" ng-click="sendQuestionId(question.id)">{{'delete_question_index' | translate : {index : outerIndex + 1} }}</button>      
+        <button class="btn btn-success btn-sm" style="margin-top:30px;" ng-disabled="isSubmit" ng-click="saveQuestion(question.id, question, outerIndex + 1)">{{'save_question_title' | translate : {index : outerIndex + 1} }}</button>      
       </div>
       <br/>
       <br/>
-      <label>选项:</label>
+      <label>{{'option' | translate}}:</label>
       <div ng-repeat="item in question.options">
-        <span>选项内容:</span>
+        <span>{{'option_content' | translate}}:</span>
         <textarea class="form-control" rows="5" ng-disabled="item.isCustomized" ng-model="item.content"></textarea>
-        <span>选择此选项是否让被调查者继续回答下一题:</span>
+        <span>{{'is_continue_next' | translate}}:</span>
         <input class="unchecked" ng-class='{"checked": item.isHasNext}' type="checkbox" ng-model="item.isHasNext" />
         <br/>
-        <span>此选项是否由被调查者自行输入:</span>
+        <span>{{'is_allow_customize_content' | translate}}:</span>
         <input class="unchecked" ng-class='{"checked": item.isCustomized}' type="checkbox" ng-model="item.isCustomized" />
         <br/>
         <div ng-if="question.isSetSkip && !question.isSingle">
-          <span>是否跳题至Group1:</span>
+          <span>{{'is_skip_group_one' | translate}}:</span>
           <input class="unchecked" ng-class='{"checked": item.isSkipOne}' type="checkbox" ng-model="item.isSkipOne" ng-click="switchSkipIndex(item, question.group)" />
-          (跳题设置修改后请点击题干修改保存按钮进行保存)
+          ({{'skip_index_modify_tip' | translate}})
         </div>
         <div ng-if="question.isSetSkip && question.isSingle">
-          <span>跳题索引:</span>
-          (跳题索引修改后请点击题干修改保存按钮进行保存)
+          <span>{{'skip_index' | translate}}:</span>
+          ({{'skip_index_modify_tip' | translate}})
           <input type="number" class="form-control" ng-model="item.skipIndex" />
         </div>
         <div style="text-align:right;margin-top: 10px;">
-          <button class="btn btn-danger btn-sm" style="margin-right:30px;" data-target="#optionModal" data-toggle="modal" ng-click="sendQuestionOptionId(item.id)">删除问题{{outerIndex + 1}}选项{{$index + 1}}</button>      
-          <button class="btn btn-success btn-sm" ng-disabled="isSubmit" ng-click="saveQuestionOption(item.id, item)">保存问题{{outerIndex + 1}}选项{{$index + 1}}的修改</button>      
+          <button class="btn btn-danger btn-sm" style="margin-right:30px;" data-target="#optionModal" data-toggle="modal" ng-click="sendQuestionOptionId(item.id)">{{'delete_option_index' | translate : {questionIndex : outerIndex + 1, optionIndex : $index + 1} }}</button>      
+          <button class="btn btn-success btn-sm" ng-disabled="isSubmit" ng-click="saveQuestionOption(item.id, item)">{{'save_option_index' | translate : {questionIndex : outerIndex + 1, optionIndex : $index + 1} }}</button>      
         </div>
         <br/><br/>
       </div>
@@ -167,97 +167,97 @@
       <!--show add options-->
       <div ng-repeat="option in question.addOptions">
         <textarea class="form-control" rows="5" ng-disabled="option.isCustomized" ng-model="option.content"></textarea>
-        <span>选择此选项是否让被调查者继续回答下一题:</span>
+        <span>{{'is_continue_next' | translate}}:</span>
         <input class="unchecked" ng-class='{"checked": option.isHasNext}' type="checkbox" ng-model="option.isHasNext" />
         <br/>
-        <span>此选项是否由被调查者自行输入:</span>
+        <span>{{'is_allow_customize_content' | translate}}:</span>
         <input class="unchecked" ng-class='{"checked": option.isCustomized}' type="checkbox" ng-model="option.isCustomized" />
         <br/>
         <div ng-if="question.isSetSkip && !question.isSingle">
-          <span>是否跳题至Group1:</span>
+          <span>{{'is_skip_group_one' | translate}}:</span>
           <input class="unchecked" ng-class='{"checked": option.isSkipOne}' type="checkbox" ng-model="option.isSkipOne" ng-click="switchSkipIndex(option, question.group)" />
         </div>
         <div ng-if="question.isSetSkip && question.isSingle">
-          <span>跳题索引:</span>
+          <span>{{'skip_index' | translate}}:</span>
           <input type="number" class="form-control" ng-model="option.skipIndex" />
         </div>
         <div style="text-align:right;margin-top: 10px;">
-          <button class="btn btn-danger btn-xs" ng-click="deleteOption(question.addOptions, $index, question)">删除该选项</button>
+          <button class="btn btn-danger btn-xs" ng-click="deleteOption(question.addOptions, $index, question)">{{'delete_option' | translate}}</button>
         </div>
         <br/><br/><br/>
       </div>
       <div style="text-align:right;" ng-if="question.addOptions.length > 0">
-        <button class="btn btn-success btn-sm" ng-disabled="isSubmit" ng-click="saveAddQuestionOptions(question, outerIndex + 1)">保存问题{{outerIndex + 1}}添加的选项</button>      
+        <button class="btn btn-success btn-sm" ng-disabled="isSubmit" ng-click="saveAddQuestionOptions(question, outerIndex + 1)">{{'save_add_option' | translate : {questionIndex : outerIndex + 1} }}</button>      
       </div>
       <br/><br/><br/>
 
       <div style="text-align:left;">
-        <button class="btn btn-info btn-sm" style="margin-top:-160px;" ng-click="addOption(question)">添加选项</button>      
+        <button class="btn btn-info btn-sm" style="margin-top:-160px;" ng-click="addOption(question)">{{'add_option' | translate}}</button>      
       </div>
     </div>
 
     <!--add questions-->
     <div ng-repeat="question in questionaire.addQuestions">
-      <label for="question">问题{{questionaire.questions.length + $index + 1}}:</label>
+      <label for="question">{{'questionNo' | translate : {questionNo : questionaire.questions.length + $index + 1} }}:</label>
       <div class="ueditor" config="config" ready="ready" style="width:100%;height:200px;" ng-model="question.title"></div>
       <br/>
-      <span>是否单选:</span>
+      <span>{{'is_single_choice' | translate}}:</span>
       <input class="unchecked" ng-class='{"checked": question.isSingle}' type="checkbox" ng-model="question.isSingle" ng-click="returnOrigin(question.isSingle, question.options)"/>
       <br/><br/>
-      <span>是否为选项设置跳题索引:</span>
+      <span>{{'is_set_skip_index_for_option' | translate}}:</span>
       <input class="unchecked" ng-class='{"checked": question.isSetSkip}' type="checkbox" ng-model="question.isSetSkip" ng-click="switchIsSetSkipAdd(question)" />
       <br/>
       <div ng-if="question.isSetSkip && !question.isSingle">
         <div style="margin-left:20px;">
-          <span>Group1索引</span>
+          <span>{{'group_one' | translate}}</span>
           <input type="text" class="form-control" ng-model="question.group.gp1" />
-          <span>Group2索引</span>
+          <span>{{'group_two' | translate}}</span>
           <input type="text" class="form-control" ng-model="question.group.gp2" />
         </div>
       </div>
       <div style="text-align:right;">
-        <button class="btn btn-danger btn-sm" style="margin-top:28px;" ng-click="deleteQuestionAdd($index)">删除问题{{questionaire.questions.length + $index + 1}}</button>      
+        <button class="btn btn-danger btn-sm" style="margin-top:28px;" ng-click="deleteQuestionAdd($index)">{{'delete_question_index' | translate : {index : questionaire.questions.length + $index + 1} }}</button>      
       </div>
       <br/>
       <br/>
-      <label>选项:</label>
+      <label>{{'option' | translate}}:</label>
       <div ng-repeat="item in question.options">
-        <span>选项内容:</span>
+        <span>{{'option_content' | translate}}:</span>
         <textarea class="form-control" rows="5" ng-disabled="item.isCustomized" ng-model="item.content"></textarea>
-        <span>选择此选项是否让被调查者继续回答下一题:</span>
+        <span>{{'is_continue_next' | translate}}:</span>
         <input class="unchecked" ng-class='{"checked": item.isHasNext}' type="checkbox" ng-model="item.isHasNext" />
         <br/>
-        <span>此选项是否由被调查者自行输入:</span>
+        <span>{{'is_allow_customize_content' | translate}}:</span>
         <input class="unchecked" ng-class='{"checked": item.isCustomized}' type="checkbox" ng-model="item.isCustomized" />
         <br/>
         <div ng-if="question.isSetSkip && !question.isSingle">
-          <span>是否跳题至Group1:</span>
+          <span>{{'is_skip_group_one' | translate}}:</span>
           <input class="unchecked" ng-class='{"checked": item.isSkipOne}' type="checkbox" ng-model="item.isSkipOne" ng-click="switchSkipIndex(item, question.group)" />
         </div>
         <div ng-if="question.isSetSkip && question.isSingle">
-          <span>跳题索引:</span>
+          <span>{{'skip_index' | translate}}:</span>
           <input type="number" class="form-control" ng-model="item.skipIndex" />
         </div>
         <div style="text-align:right;margin-top: 10px;">
-          <button class="btn btn-danger btn-sm" ng-click="deleteOptionAdd(question.options, $index)">删除该选项</button>      
+          <button class="btn btn-danger btn-sm" ng-click="deleteOptionAdd(question.options, $index)">{{'delete_option' | translate}}</button>      
         </div>
         <br/><br/>
       </div>
       <br/><br/><br/>
       <div style="text-align:left;">
-        <button class="btn btn-info btn-sm" style="margin-top:-160px;" ng-click="addOptionAddQuestion(question)">添加选项</button>      
+        <button class="btn btn-info btn-sm" style="margin-top:-160px;" ng-click="addOptionAddQuestion(question)">{{'add_option' | translate}}</button>      
       </div>
     </div>
 
   </div>
   <div style="text-align:left;margin-left:3%">
-    <button class="btn btn-default" ng-click="cancel()">返回</button>
+    <button class="btn btn-default" ng-click="cancel()">{{'return' | translate}}</button>
   </div>
   <div style="text-align:right;margin-top:-30px;margin-right: 22%;margin-bottom: 20px;">
-    <button class="btn btn-info btn-sm" ng-click="addQuestion(questionaire)">添加问题</button>
+    <button class="btn btn-info btn-sm" ng-click="addQuestion(questionaire)">{{'add_question' | translate}}</button>
   </div>
   <div style="text-align:right;margin-top:-50px;margin-right: 2%;">
-    <button class="btn btn-success btn-sm" ng-disabled="isSubmit" ng-if="questionaire.addQuestions.length > 0" ng-click="saveAddQuestion(questionaire)">保存添加的问题</button>      
+    <button class="btn btn-success btn-sm" ng-disabled="isSubmit" ng-if="questionaire.addQuestions.length > 0" ng-click="saveAddQuestion(questionaire)">{{'save_add_question' | translate}}</button>      
   </div>
 </form>
 

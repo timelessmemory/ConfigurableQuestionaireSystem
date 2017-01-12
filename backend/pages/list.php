@@ -2,7 +2,7 @@
    <a class="close" ng-click="close()">
       &times;
    </a>
-   <strong>{{tip | translate}}</strong>
+   <strong>{{ tip | translate}}</strong>
 </div>
 <header class="nav-top">
   <nav class="navbar navbar-default">
