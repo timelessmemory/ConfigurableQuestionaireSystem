@@ -10,8 +10,6 @@
 	try {
 	    $sql = "update questionOption set content = :content, isHasNext = :isHasNext, isCustomized = :isCustomized where id = :optionId";
 
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
 	    $db->query('set names utf8;');
 
 	    $preparedStatement = $db->prepare($sql);

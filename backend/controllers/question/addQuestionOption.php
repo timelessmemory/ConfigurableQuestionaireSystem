@@ -16,8 +16,6 @@
 
 			$sql = "insert into questionOption(content, isHasNext, isCustomized, isSkip, isSkipOne, skipIndex, questionId) values(:content, :isHasNext, :isCustomized, :isSkip, :isSkipOne, :skipIndex, :questionId)";
 
-		    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-		    $db = new PDO($dsn, 'root', 'root');
 		    $db->query('set names utf8;');
 
 		    $preparedStatement = $db->prepare($sql);

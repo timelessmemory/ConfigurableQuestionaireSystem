@@ -13,8 +13,6 @@
 	try {
 	    $sql = "select id from user where name = :name and password = :password";
 
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
 	    $db->query('set names utf8;');
 
 	    $preparedStatement = $db->prepare($sql);

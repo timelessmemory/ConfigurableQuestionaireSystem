@@ -7,8 +7,6 @@
 	try {
 	    $sql = "select * from user where name = :name";
 
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
 	    $db->query('set names utf8;');
 
 	    $preparedStatement = $db->prepare($sql);

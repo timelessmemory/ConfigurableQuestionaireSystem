@@ -9,8 +9,6 @@
 	try {
 	    $sql = "update question set title = :title, isSingle = :isSingle where id = :questionId";
 
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
 	    $db->query('set names utf8;');
 
 	    $preparedStatement = $db->prepare($sql);

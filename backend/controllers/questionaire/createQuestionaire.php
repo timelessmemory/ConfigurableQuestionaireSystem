@@ -16,8 +16,6 @@
 		$questionaireId = 0;
 	    $sql = "insert into questionaire(subject, description, brand, isProvicy, agree_fst, required_fst, agree_snd, required_snd, createTime) values(:subject, :description, :brand, :isProvicy, :agree_fst, :required_fst, :agree_snd, :required_snd, :createTime)";
 
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
 	    $db->query('set names utf8;');
 
 	    $preparedStatement = $db->prepare($sql);

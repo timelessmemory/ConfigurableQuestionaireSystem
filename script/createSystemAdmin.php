@@ -1,13 +1,16 @@
 <?php
+	require "../config/config.php";
 
 	$flag = true;
+	$dsn = "mysql:host=" . MYSQL_HOST . ";dbname=" . DB_NAME;
+	$db = new PDO($dsn, USERNAME, PASSWORD);
 
 	do {
 		if ($flag) {
-			fwrite(STDOUT, '请输入用户名：');
+			fwrite(STDOUT, '請輸入用戶名:');
 			$flag = false;
 		} else {
-			fwrite(STDOUT, '用户名不能为空，请重新输入：');
+			fwrite(STDOUT, '用戶名不能爲空，請重新輸入');
 		}
 		
 		$name = trim(fgets(STDIN));
@@ -17,9 +20,7 @@
 	try {
 
 		$sql = "select * from user where name = :name";
-
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
+	    
 	    $db->query('set names utf8;');
 
 	    $preparedStatement = $db->prepare($sql);
@@ -33,12 +34,12 @@
 	    $result = $preparedStatement->fetchAll(PDO::FETCH_ASSOC);
 
 	    if (count($result) != 0) {
-	    	echo "用户名已存在" . "\n";
+	    	echo "用戶名已存在" . "\n";
 	    	exit;
 	    }
 
     } catch (Exception $e) {
-    	echo "未知错误,请稍后再试" . "\n";
+    	echo "未知錯誤,請稍後再試" . "\n";
     	exit;
     }
 
@@ -46,10 +47,10 @@
 
 	do {
 		if ($flag) {
-			fwrite(STDOUT, '请输入密码：');
+			fwrite(STDOUT, '請輸入密碼:');
 			$flag = false;
 		} else {
-			fwrite(STDOUT, '密码不能为空，请重新输入：');
+			fwrite(STDOUT, '密碼不能爲空，請重新輸入');
 		}
 		
 		$password = trim(fgets(STDIN));
@@ -61,8 +62,6 @@
 	try {
 		$sql = "insert into user(role, name, password, createTime) values('system_admin', :name, :password, :createTime)";
 
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
 	    $db->query('set names utf8;');
 
 	    $preparedStatement = $db->prepare($sql);
@@ -76,12 +75,12 @@
 	    $result = $preparedStatement->execute($params);
 	    
 	    if (!$result) {
-	    	echo "创建失败,请稍后再试" . "\n";
+	    	echo "創建失敗,請稍後再試" . "\n";
 	    	return;
 	    }
 	   
-	    echo "创建成功" . "\n";
+	    echo "創建成功" . "\n";
     } catch (Exception $e) {
-        echo "创建失败,请稍后再试" . "\n";
+        echo "創建失敗,請稍後再試" . "\n";
     }
 ?>

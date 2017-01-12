@@ -10,8 +10,6 @@
 
 		$sql = "insert into user(role, brand, name, password, createTime) values('brand_admin', :brand, :name, :password, :createTime)";
 
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
 	    $db->query('set names utf8;');
 
 	    $preparedStatement = $db->prepare($sql);

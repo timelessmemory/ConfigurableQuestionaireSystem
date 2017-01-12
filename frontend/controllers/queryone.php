@@ -1,4 +1,6 @@
 <?php
+	require "../../config/config.php";
+	
 	header('Content-Type: application/json');
     header("Content-Type:text/html;charset=UTF-8");
     
@@ -12,8 +14,8 @@
 	try {
 		$sql = "select * from questionaire where id = :questionaireId";
 
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
+	    $dsn = "mysql:host=" . MYSQL_HOST . ";dbname=" . DB_NAME;
+	    $db = new PDO($dsn, USERNAME, PASSWORD);
 	    $db->query('set names utf8;');
 
 	    $preparedStatement = $db->prepare($sql);

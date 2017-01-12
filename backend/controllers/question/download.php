@@ -12,8 +12,6 @@
 
 	// if (!file_exists($file_path)) {
 
-	$dsn = "mysql:host=localhost;dbname=questionaireWeb";
-    $db = new PDO($dsn, 'root', 'root');
     $db->query('set names utf8;');
 
 	try {

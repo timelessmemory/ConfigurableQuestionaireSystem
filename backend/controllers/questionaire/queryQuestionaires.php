@@ -7,8 +7,6 @@
     $start = $_POST['start'];
     $offset = $_POST['offset'];
 
-    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-    $db = new PDO($dsn, 'root', 'root');
     $db->query('set names utf8;');
 
     if ($brand == "" && $keyword == "") {

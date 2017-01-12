@@ -44,7 +44,7 @@
 	"option" : "選項",
 	"option_content_index" : "選項{{optionNo}}內容",
 	"option_content" : "選項內容",
-	"is_continue_next" : "選擇此選項是否讓被調查者回答下一體",
+	"is_continue_next" : "選擇此選項是否讓被調查者回答下一題",
 	"is_allow_customize_content" : "此選項是否由被調查者自行輸入",
 	"is_skip_group_one" : "是否跳題至Group1",
 	"skip_index" : "跳題索引",

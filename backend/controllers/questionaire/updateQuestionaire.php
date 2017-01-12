@@ -15,8 +15,6 @@
 	try {
 	    $sql = "update questionaire set subject = :subject, description = :description, brand = :brand, isProvicy = :isProvicy, required_fst = :required_fst, agree_fst = :agree_fst, required_snd = :required_snd, agree_snd = :agree_snd where id = :questionaireId";
 
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
 	    $db->query('set names utf8;');
 
 	    $preparedStatement = $db->prepare($sql);

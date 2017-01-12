@@ -6,8 +6,6 @@
     $flag = $_GET['flag'];
     $name = $_GET['name'];
 
-    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-    $db = new PDO($dsn, 'root', 'root');
     $db->query('set names utf8;');
 
     if ($brand == "") {

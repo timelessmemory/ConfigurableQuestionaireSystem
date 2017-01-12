@@ -6,8 +6,6 @@
     $addQuestions = $_POST["addQuestions"];
     
 	try {
-	    $dsn = "mysql:host=localhost;dbname=questionaireWeb";
-	    $db = new PDO($dsn, 'root', 'root');
 	    $db->query('set names utf8;');
 	    
 	    foreach ($addQuestions as $question) {
