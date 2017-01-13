@@ -1,4 +1,20 @@
-var frontend = angular.module('frontend', []);
+var frontend = angular.module('frontend', ['pascalprecht.translate']);
+
+frontend.config(function($translateProvider) {
+
+    if (!window.localStorage.getItem("lang")) {
+        window.localStorage.setItem("lang", navigator.language.toLowerCase() == "en-us" ? "locate-en_us" : "locate-zh_cn");
+    }
+
+    var lang = window.localStorage.getItem("lang");
+
+    $translateProvider.preferredLanguage(lang);
+
+    $translateProvider.useStaticFilesLoader({
+        prefix: 'i18n/',
+        suffix: '.json'
+    });
+});
 
 frontend
 .controller('mainController', ['$scope', '$http', function($scope, $http) {

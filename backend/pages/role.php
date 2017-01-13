@@ -1,18 +1,18 @@
 <div class="alert alert-warning" id="hintDiv" style="margin-top: -90px;">
-   <strong>{{tip}}</strong>
+   <strong>{{ tip | translate}}</strong>
 </div>
 
 <header class="nav-top">
   <nav class="navbar navbar-default">
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand">Questionaire Backend Configuration Management</a>
+        <a class="navbar-brand">{{ 'system_full_title' | translate}}</a>
       </div>
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#/list"><i class="glyphicon glyphicon-th-list"></i> Questionaire List</a></li>
-        <li><a href="#/create"><i class="glyphicon glyphicon-file"></i> Create Questionaire</a></li>
-        <li><a href='#/' ng-click="logout()"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
-        <li><a>Welcome, <?php session_start(); $name = $_SESSION['username'] == '' ? '<script>window.localStorage.setItem("isLogin", "false");window.location.href = "#/";</script>' : $_SESSION['username']; echo $name; ?></a></li>
+        <li><a href="#/list"><i class="glyphicon glyphicon-th-list"></i> {{ 'questionaire_list' | translate}}</a></li>
+        <li><a href="#/create"><i class="glyphicon glyphicon-file"></i> {{ 'create_questionaire' | translate}}</a></li>
+        <li><a href='#/' ng-click="logout()"><i class="glyphicon glyphicon-off"></i> {{'log_out' | translate}}</a></li>
+        <li><a>{{ 'welcome' | translate}}, <?php session_start(); $name = $_SESSION['username'] == '' ? '<script>window.localStorage.setItem("isLogin", "false");window.location.href = "#/";</script>' : $_SESSION['username']; echo $name; ?></a></li>
       </ul>
     </div>
   </nav>
@@ -28,15 +28,15 @@
                   &times;
             </button>
             <h4 class="modal-title" id="myModalLabel">
-               Delete
+               {{ 'delete' | translate}}
             </h4>
          </div>
          <div class="modal-body">
-            确认删除?
+            {{ 'confirm_delete_tip' | translate}}
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-danger" ng-click="deleteAdmin()">确定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | translate}}</button>
+            <button type="button" class="btn btn-danger" ng-click="deleteAdmin()">{{ 'confirm' | translate}}</button>
          </div>
       </div><!-- /.modal-content -->
   </div>
@@ -52,15 +52,15 @@
                   &times;
             </button>
             <h4 class="modal-title" id="myModalLabel">
-               Delete
+               {{ 'delete' | translate}}
             </h4>
          </div>
          <div class="modal-body">
-            确认删除?
+            {{ 'confirm_delete_tip' | translate}}
          </div>
          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-            <button type="button" class="btn btn-danger" ng-click="deleteOperator()">确定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel' | translate}}</button>
+            <button type="button" class="btn btn-danger" ng-click="deleteOperator()">{{ 'confirm' | translate}}</button>
          </div>
       </div><!-- /.modal-content -->
   </div>
@@ -68,23 +68,23 @@
 
 <div style="margin:-136px 50px 10px 50px;" ng-if="currentRole != 'brand_oprator'">
 	<ul class="nav nav-tabs" ng-if="currentRole == 'system_admin'">
-	  <li class="active"><a href="javascript:void(0)" ng-click="switchAdmin()" data-toggle="tab">admin</a></li>
-	  <li ><a href="javascript:void(0)" ng-click="switchOperator()" data-toggle="tab">operator</a></li>
+	  <li class="active"><a href="javascript:void(0)" ng-click="switchAdmin()" data-toggle="tab">{{'admin' | translate}}</a></li>
+	  <li ><a href="javascript:void(0)" ng-click="switchOperator()" data-toggle="tab">{{'operator' | translate}}</a></li>
 	</ul>
 
 	<ul class="nav nav-tabs" ng-if="currentRole == 'brand_admin'">
-	  <li><a href="javascript:void(0)">operator</a></li>
+	  <li><a href="javascript:void(0)">{{'operator' | translate}}</a></li>
 	</ul>
 
 	<div class="tab-content">
 	  <div ng-if="isShowAdmin">
 	  	<div class="input-group search-div search-div-role">
-		  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="kwd.brand" placeholder="品牌" aria-describedby="basic-addon2">
+		  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="kwd.brand" placeholder="{{'questionaire_brand' | translate}}" aria-describedby="basic-addon2">
 		  <span class="input-group-addon" id="basic-addon2" ng-click="searchBrand()"><i class="glyphicon glyphicon-search"></i> </span>
 		</div>
 	  	<div style="text-align:right;margin-top:10px;">
 	  		<button class="btn btn-info btn-sm" ng-click="addAdmin()">
-	  			<label class="glyphicon glyphicon-plus"></label> 添加品牌管理员
+	  			<label class="glyphicon glyphicon-plus"></label> {{'add_brand_admin' | translate}}
 	  		</button>
 	  	</div>
 	  	<div class="table-responsive" style="position:relative;margin-left:0px;top:0px;width:100%;">
@@ -92,17 +92,17 @@
 		   <caption></caption>
 		   <thead style="font-size:15px;">
 		      <tr class="text-capitalize">
-		         <th>ID</th>
-		         <th>品牌</th>
-		         <th>用户名</th>
-		         <th>密码</th>
-		         <th>创建时间</th>
-		         <th>操作</th>
+		         <th>{{'user_id' | translate}}</th>
+		         <th>{{'user_brand' | translate}}</th>
+		         <th>{{'user_name' | translate}}</th>
+		         <th>{{'user_password' | translate}}</th>
+		         <th>{{'user_create_time' | translate}}</th>
+		         <th>{{'user_operation' | translate}}</th>
 		      </tr>
 		   </thead>
 
 		   <tbody ng-if="admins.length < 1">
-		     <tr><td colspan="6" class="active">暂无数据</td></tr>
+		     <tr><td colspan="6" class="active">{{'no_data' | translate}}</td></tr>
 		   </tbody>
 
 		   <tbody>
@@ -116,16 +116,16 @@
 		         <td style="width:15%;" ng-if="admin.editMode"><input type="text" class="form-control" ng-model="admin.editPassword"></td>
 		         <td style="width:10%;">{{admin.createTime}}</td>
 		         <td style="width:38%;">
-		           <button ng-if="!admin.editMode" type="button" title="编辑" class="btn btn-default btn-xs" ng-click="enterEditMode(admin)">
+		           <button ng-if="!admin.editMode" type="button" title="{{'edit_user' | translate}}" class="btn btn-default btn-xs" ng-click="enterEditMode(admin)">
 		             <i class="glyphicon glyphicon-edit"></i>
 		           </button>
-		           <button ng-if="admin.editMode" type="button" title="保存" class="btn btn-default btn-xs" ng-click="saveEditAdmin(admin)">
+		           <button ng-if="admin.editMode" type="button" title="{{'save_user' | translate}}" class="btn btn-default btn-xs" ng-click="saveEditAdmin(admin)">
 		             <i class="glyphicon glyphicon-ok"></i>
 		           </button>
-		           <button ng-if="admin.editMode" type="button" title="取消" class="btn btn-default btn-xs" ng-click="cancelEditAdmin(admin)">
+		           <button ng-if="admin.editMode" type="button" title="{{'cancel' | translate}}" class="btn btn-default btn-xs" ng-click="cancelEditAdmin(admin)">
 		             <i class="glyphicon glyphicon-remove"></i>
 		           </button>
-		           <button type="button" title="删除" class="btn btn-default btn-xs" data-target="#myModal" data-toggle="modal" ng-click="showDeleteAdminDialog(admin)">
+		           <button type="button" title="{{'delete_user' | translate}}" class="btn btn-default btn-xs" data-target="#myModal" data-toggle="modal" ng-click="showDeleteAdminDialog(admin)">
 		             <i class="glyphicon glyphicon-trash"></i>
 		           </button>
 		         </td>
@@ -136,11 +136,11 @@
 		  <table class="table table-hover table-bordered" style="text-align:center;table-layout:fixed;">
 			   <thead style="font-size:15px;" ng-if="addAdmins.length > 0">
 			      <tr class="text-capitalize">
-			         <th>编号</th>
-			         <th>品牌</th>
-			         <th>用户名</th>
-			         <th>密码</th>
-			         <th>操作</th>
+			         <th>{{'number' | translate}}</th>
+			         <th>{{'user_brand' | translate}}</th>
+			         <th>{{'user_name' | translate}}</th>
+			         <th>{{'user_password' | translate}}</th>
+			         <th>{{'user_operation' | translate}}</th>
 			      </tr>
 			   </thead>
 			   <tbody>
@@ -150,10 +150,10 @@
 				      	<td><input type="text" class="form-control" ng-model="ad.name"></td>
 				      	<td><input type="text" class="form-control" ng-model="ad.password"></td>
 				      	<td>
-				      		<button type="button" title="保存" class="btn btn-default btn-xs" ng-click="saveAddAdmin(ad, $index)">
+				      		<button type="button" title="{{'save_user' | translate}}" class="btn btn-default btn-xs" ng-click="saveAddAdmin(ad, $index)">
 					            <i class="glyphicon glyphicon-ok"></i>
 					        </button>
-					        <button type="button" title="取消" class="btn btn-default btn-xs" ng-click="cancelAddAdmin($index)">
+					        <button type="button" title="{{'cancel' | translate}}" class="btn btn-default btn-xs" ng-click="cancelAddAdmin($index)">
 					            <i class="glyphicon glyphicon-remove"></i>
 					        </button>
 				      	</td>
@@ -165,16 +165,16 @@
 
 	  <div ng-if="!isShowAdmin || currentRole == 'brand_admin'">
 	  	<div class="input-group search-div search-div-role" ng-if="currentRole != 'brand_admin'">
-		  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="kwd.brand" placeholder="品牌" aria-describedby="basic-addon2">
+		  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="kwd.brand" placeholder="{{'user_brand' | translate}}" aria-describedby="basic-addon2">
 		  <span class="input-group-addon" id="basic-addon2" ng-click="searchBrand()"><i class="glyphicon glyphicon-search"></i> </span>
 		</div>
 		<div class="input-group search-div search-div-role" ng-if="currentRole == 'brand_admin'">
-		  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="kwd.name" placeholder="用户名" aria-describedby="basic-addon2">
+		  <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="kwd.name" placeholder="{{'user_name' | translate}}" aria-describedby="basic-addon2">
 		  <span class="input-group-addon" id="basic-addon2" ng-click="searchName()"><i class="glyphicon glyphicon-search"></i> </span>
 		</div>
 	  	<div style="text-align:right;margin-top:10px;">
 	  		<button class="btn btn-info btn-sm" ng-click="addOperator()">
-	  			<label class="glyphicon glyphicon-plus"></label> 添加品牌操作员
+	  			<label class="glyphicon glyphicon-plus"></label> {{'add_brand_operator' | translate}}
 	  		</button>
 	  	</div>
 	  	<div class="table-responsive" style="position:relative;margin-left:0px;top:0px;width:100%;">
@@ -182,17 +182,17 @@
 		   <caption></caption>
 		   <thead style="font-size:15px;">
 		      <tr class="text-capitalize">
-		         <th>ID</th>
-		         <th>品牌</th>
-		         <th>用户名</th>
-		         <th>密码</th>
-		         <th>创建时间</th>
-		         <th>操作</th>
+		         <th>{{'user_id' | translate}}</th>
+		         <th>{{'user_brand' | translate}}</th>
+		         <th>{{'user_name' | translate}}</th>
+		         <th>{{'user_password' | translate}}</th>
+		         <th>{{'user_create_time' | translate}}</th>
+		         <th>{{'user_operation' | translate}}</th>
 		      </tr>
 		   </thead>
 
 		   <tbody ng-if="operators.length < 1">
-		     <tr><td colspan="6" class="active">暂无数据</td></tr>
+		     <tr><td colspan="6" class="active">{{'no_data' | translate}}</td></tr>
 		   </tbody>
 
 		   <tbody>
@@ -206,16 +206,16 @@
 		         <td style="width:15%;" ng-if="operator.editMode"><input type="text" class="form-control" ng-model="operator.editPassword"></td>
 		         <td style="width:10%;">{{operator.createTime}}</td>
 		         <td style="width:38%;">
-		           <button ng-if="!operator.editMode" type="button" title="编辑" class="btn btn-default btn-xs" ng-click="enterOperatorEditMode(operator)">
+		           <button ng-if="!operator.editMode" type="button" title="{{'edit_user' | translate}}" class="btn btn-default btn-xs" ng-click="enterOperatorEditMode(operator)">
 		             <i class="glyphicon glyphicon-edit"></i>
 		           </button>
-		           <button ng-if="operator.editMode" type="button" title="保存" class="btn btn-default btn-xs" ng-click="saveEditOperator(operator)">
+		           <button ng-if="operator.editMode" type="button" title="{{'save_user' | translate}}" class="btn btn-default btn-xs" ng-click="saveEditOperator(operator)">
 		             <i class="glyphicon glyphicon-ok"></i>
 		           </button>
-		           <button ng-if="operator.editMode" type="button" title="取消" class="btn btn-default btn-xs" ng-click="cancelEditOperator(operator)">
+		           <button ng-if="operator.editMode" type="button" title="{{'cancel' | translate}}" class="btn btn-default btn-xs" ng-click="cancelEditOperator(operator)">
 		             <i class="glyphicon glyphicon-remove"></i>
 		           </button>
-		           <button type="button" title="删除" class="btn btn-default btn-xs" data-target="#operatorModal" data-toggle="modal" ng-click="showDeleteOperatorDialog(operator, $index)">
+		           <button type="button" title="{{'delete_user' | translate}}" class="btn btn-default btn-xs" data-target="#operatorModal" data-toggle="modal" ng-click="showDeleteOperatorDialog(operator, $index)">
 		             <i class="glyphicon glyphicon-trash"></i>
 		           </button>
 		         </td>
@@ -226,11 +226,11 @@
 		  <table class="table table-hover table-bordered" style="text-align:center;table-layout:fixed;">
 			   <thead style="font-size:15px;" ng-if="addOperators.length > 0">
 			      <tr class="text-capitalize">
-			         <th>编号</th>
-			         <th>品牌</th>
-			         <th>用户名</th>
-			         <th>密码</th>
-			         <th>操作</th>
+			         <th>{{'number' | translate}}</th>
+			         <th>{{'user_brand' | translate}}</th>
+			         <th>{{'user_name' | translate}}</th>
+			         <th>{{'user_password' | translate}}</th>
+			         <th>{{'user_operation' | translate}}</th>
 			      </tr>
 			   </thead>
 			   <tbody>
@@ -241,10 +241,10 @@
 				      	<td><input type="text" class="form-control" ng-model="ad.name"></td>
 				      	<td><input type="text" class="form-control" ng-model="ad.password"></td>
 				      	<td>
-				      		<button type="button" title="保存" class="btn btn-default btn-xs" ng-click="saveAddOperator(ad, $index)">
+				      		<button type="button" title="{{'save_user' | translate}}" class="btn btn-default btn-xs" ng-click="saveAddOperator(ad, $index)">
 					            <i class="glyphicon glyphicon-ok"></i>
 					        </button>
-					        <button type="button" title="取消" class="btn btn-default btn-xs" ng-click="cancelAddOperator($index)">
+					        <button type="button" title="{{'cancel' | translate}}" class="btn btn-default btn-xs" ng-click="cancelAddOperator($index)">
 					            <i class="glyphicon glyphicon-remove"></i>
 					        </button>
 				      	</td>

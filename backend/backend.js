@@ -90,6 +90,7 @@ app
 .controller("loginController", ['$scope', '$rootScope', '$http', '$timeout', 'md5', function($scope, $rootScope, $http, $timeout, md5) {
     $scope.username = '';
     $scope.password = '';
+    $scope.isSubmit = false;
 
     if (window.localStorage.getItem('isLogin') == 'true') {
       window.location.href = "#/list";
@@ -97,7 +98,9 @@ app
     }
 
     $scope.login = function() {
+      
       if ($scope.username != '' && $scope.password != '') {
+        $scope.isSubmit = true;
         $http({
             url : 'controllers/index.php?module=user&action=login',
             method : 'POST',
@@ -109,15 +112,22 @@ app
             var code = data.code;
 
             if (code == 500) {
+              $scope.tip = "not_consist_tip"
               $('#hintDiv').fadeIn(500);
-              $timeout(function() {
-                $('#hintDiv').fadeOut(2000);
-              }, 1000);
-              return;
+              $('#hintDiv').fadeOut(1000, function() {
+                $scope.$apply(function() {
+                  $scope.isSubmit = false;
+                })
+              });
+            } else {
+              $scope.tip = "login_success"
+              $('#hintDiv').fadeIn(500);
+              $('#hintDiv').fadeOut(1000, function() {
+                window.localStorage.setItem("isLogin", true);
+                window.localStorage.setItem("userId", data.id);
+                window.location.href = "#/list";
+              });
             }
-            window.localStorage.setItem("isLogin", true);
-            window.localStorage.setItem("userId", data.id);
-            window.location.href = "#/list";
         })
         .error(function(error, header, config) {
             window.location.href = "#/";
