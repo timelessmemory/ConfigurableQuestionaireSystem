@@ -80,5 +80,18 @@
 	"delete_user" : "delete",
 	"number" : "NO",
 	"add_brand_operator" : "add brand operator",
-	"backend_page" : "Backend Operation Page"
+	"backend_page" : "Backend Operation Page",
+	"delete_success" : "delete successfully",
+	"delete_fail" : "fail to delete, please try again later",
+	"option_not_empty_tip" : "option is empty",
+	"index_invalid_tip" : "invalid index",
+	"question_empty_tip" : "question is empty",
+	"option_one_required" : "option is required",
+	"finish_current_question_tip" : "please finish current question firstly",
+	"description_required" : "description is required",
+	"fail_create" : "fail to create, please try again later",
+	"request_error" : "request error",
+	"update_sucess" : "update successfully",
+	"fail_update" : "fail to update, please try again later",
+	"question_or_option_not_empty" : "qeustion or option is required"
 }

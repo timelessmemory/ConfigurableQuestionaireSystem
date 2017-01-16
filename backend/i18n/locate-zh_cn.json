@@ -80,5 +80,18 @@
 	"delete_user" : "刪除",
 	"number" : "編號",
 	"add_brand_operator" : "添加品牌操作員",
-	"backend_page" : "後臺管理"
+	"backend_page" : "後臺管理",
+	"delete_success" : "刪除成功",
+	"delete_fail" : "刪除失敗，請稍後再試",
+	"option_not_empty_tip" : "選項不得爲空",
+	"index_invalid_tip" : "索引不合法",
+	"question_empty_tip" : "問卷問題不得爲空",
+	"option_one_required" : "問題至少需要一個選項",
+	"finish_current_question_tip" : "請先完成當前問題",
+	"description_required" : "問卷說明不得爲空",
+	"fail_create" : "創建失敗，請稍後再試",
+	"request_error" : "請求錯誤",
+	"update_sucess" : "更新成功",
+	"fail_update" : "更新失敗，請稍後再試",
+	"question_or_option_not_empty" : "問題或選項不得爲空"
 }

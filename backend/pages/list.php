@@ -45,7 +45,7 @@
 </div><!-- /.modal -->
 
 <div class="input-group search-div" style="width:98%;">
-  <!-- <input style="width:150px;" type="text" class="form-control" ng-model="searchWord" placeholder="Real time search" aria-describedby="basic-addon2"> -->
+  <!-- <input style="width:150px;" type="text" class="form-control" ng-model="searchWord" placeholder="Real-time search" aria-describedby="basic-addon2"> -->
   <input style="display:inline-block;float:right;width:200px;" type="text" class="form-control" ng-model="keyword" placeholder="{{'questionaire_subject' | translate}}" aria-describedby="basic-addon2">
   <span class="input-group-addon" id="basic-addon2" ng-click="search()"><i class="glyphicon glyphicon-search"></i> </span>
 </div>
@@ -84,9 +84,6 @@
            <button type="button" title="{{'download_answer' | translate}}" class="btn btn-default btn-xs" ng-click="download(questionaire.id)">
              <i class="glyphicon glyphicon-download"></i>
            </button>
-           <!-- <a class="btn btn-default btn-xs" href="http://localhost/questionaire/backend/controllers/question/answer_files/answer1.xlsx" title="下载答案">
-             <i class="glyphicon glyphicon-download"></i>
-           </a> -->
          </td>
       </tr>
    </tbody>
