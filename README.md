@@ -1,5 +1,10 @@
 # Custom Questionaire System
-The system is configurable, flexible, including frontend and backend. Backend can configure questionaire information and questions. There are The frontend show the questionaire you configured and i18n is supported. Technology mainly includes angularjs, jquery, bootstrap, mysql and php. In addition, ueditor is used to edit questionaire.
+The system is configurable, flexible, including frontend and backend. Backend can configure questionaire information and questions. There are three roles in the backend which includes super administrator, brand administrator, common operator. Following I will introduct their own permission. The frontend show the questionaire you configured and i18n is supported. After user answered questionaire, administrator can download answer in the backend. Technology mainly includes angularjs, jquery, bootstrap, mysql and php. In addition, ueditor is used to edit questionaire.
+
+permission of role in backend
+super administrator: create questionaire, create any role except super administratot which created with SQL.
+branch adminstrator: can only create common operator and create questionaire.
+common operator: can only create questionaire.
 
 * integrate angular and ueditor: http://www.open-open.com/lib/view/open1411391886875.html
 
@@ -12,7 +17,7 @@ The system is configurable, flexible, including frontend and backend. Backend ca
 ## Introduction
 ### login page
 ![login.png](https://github.com/timelessmemory/WikiLibrary/blob/master/qs/login.png)
-You can perform questionaitre in backend after sign in, if you can not, you will be redirect into this page to login.
+You can perform questionaitre in backend after sign in, if you can not, you will be redirect into this page to login.You can change language also in this page.
 
 ### list page
 ![list.png](http://7xqayl.com1.z0.glb.clouddn.com/lists.png)
@@ -21,6 +26,7 @@ This page shows all questionaires you have created. For these, you can edit and 
 ### create page
 ![creaetsubject.png](http://7xqayl.com1.z0.glb.clouddn.com/creaetsubject.png)
 ![createques.png](http://7xqayl.com1.z0.glb.clouddn.com/createques.png)
+![single_set_skip.png](https://github.com/timelessmemory/WikiLibrary/blob/master/qs/single_set_skip.png?raw=true)
 ![createwithindex.png](http://7xqayl.com1.z0.glb.clouddn.com/createwithindex.png)
 In this part, you can see subject, description of questionaire. For description and title of question, I use ueditor which is a rich text editor developed by baidu. You can insert word with various format and pictures, videos. To create questions of questionaire, you can create single choice and multiple choice and also you can allow users input by themselves. For each option of questions, you can set whether allow users to go on answering other questions. For multiple choice, you can set skip index for every option. For example, there are two options of one question and if you choose option one, them you wil be arranged to answer the fifth question but if you choose option two then you will redirect to sixth question. For these you can configure flexibly. The number of options is no-limited.
 
@@ -37,10 +43,22 @@ You can edit information of questionaires you created in this page. The most imp
 Based on configuration, questionaire shows at this page, and you can provide link for users to join research.
 
 ### role
-include three roles
+super administrator
+![admin_index.png](https://github.com/timelessmemory/WikiLibrary/blob/master/qs/admin_index.png?raw=true)
+![admin_rm_brand.png](https://github.com/timelessmemory/WikiLibrary/blob/master/qs/admin_rm_brand.png?raw=true)
+![admin_rm_brand_edit.png](https://github.com/timelessmemory/WikiLibrary/blob/master/qs/admin_rm_brand_edit.png?raw=true)
+![admin_rm_operator.png](https://github.com/timelessmemory/WikiLibrary/blob/master/qs/admin_rm_operator.png?raw=true)
+brand administrator
+![brand_admin_manage.png](https://github.com/timelessmemory/WikiLibrary/blob/master/qs/brand_admin_manage.png?raw=true)
+common operator
+![brand_op_index.png](https://github.com/timelessmemory/WikiLibrary/blob/master/qs/brand_op_index.png?raw=true)
 
 ### privacy collection
-whether collect privacy
+![create_qs_private.png](https://github.com/timelessmemory/WikiLibrary/blob/master/qs/create_qs_private.png?raw=true)
+
+### download answer
+![download.png](https://github.com/timelessmemory/WikiLibrary/blob/master/qs/download.png?raw=true)
+
 
 ### i18n
 support chinese and english
