@@ -1,10 +1,10 @@
 # Custom Questionaire System
-The system is configurable, flexible, including frontend and backend. Backend can configure questionaire information and questions. There are three roles in the backend which includes super administrator, brand administrator, common operator. Following I will introduct their own permission. The frontend show the questionaire you configured and i18n is supported. After user answered questionaire, administrator can download answer in the backend. Technology mainly includes angularjs, jquery, bootstrap, mysql and php. In addition, ueditor is used to edit questionaire.
+The system is configurable, flexible, including frontend and backend. Backend can configure questionaire information and questions. There are three roles in the backend which includes super administrator, brand administrator, common operator. Following I will introduct their own permission. The frontend shows the questionaire you have configured and i18n is supported. After the user answered questionaire, administrator can download answer in the backend. Technology mainly includes angularjs, jquery, bootstrap, mysql and php. In addition, and ueditor is used to edit questionaire.
 
-permission of role in backend
-super administrator: create questionaire, create any role except super administratot which created with SQL.
-branch adminstrator: can only create common operator and create questionaire.
-common operator: can only create questionaire.
+Permission of role in backend
+### super administrator: create questionaire, create any role except super administratot which created with SQL.
+### branch adminstrator: can only create common operator and create questionaire.
+### common operator: can only create questionaire.
 
 * integrate angular and ueditor: http://www.open-open.com/lib/view/open1411391886875.html
 
